@@ -117,8 +117,9 @@ class ChessTable(XYTable):
         for p in board.pieces:
             #find piece that correlates to the position that the piece was moved from
             if p.position[0] == moveFrom[0] and p.position[1] == moveFrom[1]:   #reverse indexing
-                #print("Test1: \n")
+                print(p.position)
                 for move in p.getPossibleMoves():
+                    print(move)
                     if move.pieceToCapture != None:     #move includes the capturing of a piece
                         print("Captured Piece \n")
                         print(move.pieceToCapture)
@@ -134,8 +135,15 @@ class ChessTable(XYTable):
                         print("No Piece to Capture")
                         #if no pieces were captured then find which moves new position lines up with the position
                         #that the piece was moved to
-                        if moveTo[0] == move.newPos[0] and moveTo[1] == move.newPos[1]:
-                            moveMade = move
+                        print(moveTo)
+                        print(move.newPos)
+                        if len(moveTo) != 0:
+                            if moveTo[0] == move.newPos[0] and moveTo[1] == move.newPos[1]:
+                                moveMade = move
+                            else:
+                                print("balaknah")
+                        else:
+                            print("testing...")
 
         print("\nMove Made: \n")                   
         return moveMade
