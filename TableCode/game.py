@@ -126,7 +126,7 @@ class Game:
                 else:
                     move = parser.moveForShortNotation(command)
                 if move:
-                    #self.table.getmove(self.board)
+                    #move = self.table.getmove(self.board)
                     self.makeMove(move)
 
                 else:
