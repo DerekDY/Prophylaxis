@@ -23,7 +23,7 @@ print(move)
 
 
 
-
+print()
 print("###############################################")
 print("Test 2: Simple Paun Capture")
 board2 = Board(testing = 2)
@@ -31,7 +31,7 @@ print(board2)
 print()
 
 
-
+print()
 print("###############################################")
 print("Test 3: Paun with 2 captures possible")
 board3 = Board(testing = 3)
@@ -39,7 +39,7 @@ print(board3)
 print()
 
 
-
+print()
 print("###############################################")
 print("Test 4: Piece able to be captured by 2 pieces")
 board4 = Board(testing = 4)
@@ -48,5 +48,5 @@ print()
 
 
 
-
+print()
 print("###############################################")
