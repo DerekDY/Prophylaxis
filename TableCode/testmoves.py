@@ -28,7 +28,7 @@ print(board1)
 
 print()
 print("###############################################")
-print("Test 2: Simple Paun Capture")
+print("Test 2: Simple White Pawn Capture")
 board2 = Board(testing = 2)
 print(board2)
 print()
@@ -47,10 +47,10 @@ print(move)
 print()
 board2.makeChosenMove(move)
 print(board2)
-'''
+
 print()
 print("###############################################")
-print("Test 3: Paun with 2 captures possible")
+print("Test 3: White Pawn with 2 captures possible")
 board3 = Board(testing = 3)
 print(board3)
 print()
@@ -70,7 +70,7 @@ print()
 board3.makeChosenMove(move)
 print(board3)
 
-'''
+
 
 print()
 print("###############################################")
@@ -78,10 +78,49 @@ print("Test 4: Piece able to be captured by 2 pieces")
 board4 = Board(testing = 4)
 print(board4)
 print()
+newReed =  [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+table4 = ChessTable()
+table4.reedBoard.testingInput(newReed) 
+move = table4.getMove(board4)
+print(move)
+print()
+board4.makeChosenMove(move)
+print(board4)
 
 
 
 print()
 print("###############################################")
+print("Test 5: Black Queen able to capture 1 piece")
+board5 = Board(testing = 5)
+print(board5)
+print()
+newReed =  [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0], \
+			[0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+table5 = ChessTable()
+table5.reedBoard.testingInput(newReed) 
+move = table5.getMove(board5)
+print(move)
+print()
+board5.makeChosenMove(move)
+print(board5)
 
 '''
+
+
+
+
+

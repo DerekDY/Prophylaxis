@@ -98,21 +98,25 @@ class Board:
             self.makeMove(firstMove)
             self.currentSide = WHITE
             return
-        #paun being able to capture 1 piece 
+        #white pawn being able to capture 1 piece 
         elif testing == 2:
             self.pieces.extend([Bishop(self, BLACK, C(5, 3), 0)])
             self.pieces.extend([Pawn(self, WHITE, C(6, 2), 0)])
-        #testing for paun being able to capture 2 pieces 
+        #testing for pawn being able to capture 2 pieces 
         elif testing ==3:
             self.pieces.extend([Bishop(self, BLACK, C(4, 3), 0)])
             self.pieces.extend([Knight(self, BLACK, C(2, 3), 0)])
             self.pieces.extend([Pawn(self, WHITE, C(3, 2), 0)])
-        #testing taking a pice that can be captured by 2 pieces
+        #testing taking a piece that can be captured by 2 pieces
         elif testing ==4:
             self.pieces.extend([Bishop(self, WHITE, C(3, 1), 0)])
             self.pieces.extend([Knight(self, BLACK, C(2, 2), 0)])
             self.pieces.extend([Queen(self, WHITE, C(5, 2), 0)])
-
+        #black queen capturing 1 piece
+        elif testing ==5:
+            self.pieces.extend([Rook(self, WHITE, C(3, 4), 0)])
+            self.pieces.extend([Knight(self, WHITE, C(7, 5), 0)])
+            self.pieces.extend([Queen(self, BLACK, C(4, 5), 0)])
 
     def __str__(self):
         return self.wrapStringRep(self.makeStringRep(self.pieces))
