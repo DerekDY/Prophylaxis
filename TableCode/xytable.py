@@ -66,8 +66,8 @@ class XYTable:
 		#initialize the coordinates	
 		self.x = 0
 		self.y = 0
-		print ("Table is initialized")
-		print ("Coordinates are: " + str(self.x) + ", " + str(self.y))
+		#print ("Table is initialized")
+		#print ("Coordinates are: " + str(self.x) + ", " + str(self.y))
 	
 	
 	

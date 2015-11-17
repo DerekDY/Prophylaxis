@@ -47,14 +47,13 @@ class ChessTable(XYTable):
 		#self.boardRep = [[]]
 
     def goto(self, space, carrying):
-        if carrying:
-            x = None #fill with oobstruction code
-        else:
-            x = None # can go straight there 
-            column = space[0]
-            row = space[1]
-            self.moveto(column, row)
-            #print (str(column) + " & " + str(row))
+        print("MADE IT TO GOTO IN TABLE")
+        column = space[0]
+        print(column)
+        row = 7-space[1]
+        print(row)
+        self.moveto(column, row)
+        #print (str(column) + " & " + str(row))
 
     def splitBoard(self):
         fullBoard = self.reedBoard.getBoard() #board from reed switches
@@ -181,41 +180,42 @@ class ChessTable(XYTable):
 
 
     def move(self, move):
+        print("MADE IT TO MOVE IN TABLE")
         print ("Moving: " + str(move.piece))
         print()
         firstSpace = move.oldPos + C(2,0)
-        #print "From: " + firstSpace
+        print ("From: " + str(firstSpace[0]) + "," + str(firstSpace[1]))
         secondSpace = move.newPos + C(2,0)
-		#print "To: " + secondSpace
+        print ("To: " + str(secondSpace[0]) + "," + str(secondSpace[1]))
         captured = move.pieceToCapture
         if (captured):
-			#if all crazy things
+            #if all crazy things
             print ("Captured: " + str(captured))
             print()
             letter = captured.stringRep
             number = captured.number
-            if captured.side == BLACK:
+            if captured.side == WHITE:
                 if letter == "p":
-                    capturedspace = C(0, 7- number)
+                    capturedspace = C(0, number)
                 elif letter == "R":
-                    capturedspace = C(1, 7 - R - number)
+                    capturedspace = C(1, R + number)
                 elif letter == "N":
-                    capturedspace = C(1, 7 - N - number)
+                    capturedspace = C(1, N + number)
                 elif letter == "Q":
-                    capturedspace = C(1, 7 - Q - number)
+                    capturedspace = C(1, Q + number)
                 elif letter == "B":
-                    capturedspace = C(1, 7 - B - number)
+                    capturedspace = C(1, B + number)
             else:
                 if letter == "p":
-                    capturedspace = C(11, number)
+                    capturedspace = C(11, 7-number)
                 elif letter == "R":
-                    capturedspace = C(10, (R + number))
+                    capturedspace = C(10, 7-(R + number))
                 elif letter == "N":
-                    capturedspace = C(10, (N + number))
+                    capturedspace = C(10, 7-(N + number))
                 elif letter == "Q":
-                    capturedspace = C(10, (Q + number))
+                    capturedspace = C(10, 7-(Q + number))
                 elif letter == "B":
-                    capturedspace = C(10, (B + number))
+                    capturedspace = C(10, 7-(B + number))
             self.goto(secondSpace, False)
             self.grab()
             self.goto(capturedspace, True)
