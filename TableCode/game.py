@@ -84,7 +84,11 @@ class Game:
 
     def startGame(self):
         parser = InputParser(self.board, self.playerSide)
+        movecount = 0
         while True:
+            print("player side")
+            print(self.playerSide)
+            print()
             print(self.board)
             print()
             if self.board.isCheckmate():
@@ -129,13 +133,6 @@ class Game:
                     print("Couldn't parse input, enter a valid command or move.")
 
             else:
-                '''
-                print("AI thinking...")
-                move = self.ai.getBestMove()
-                move.notation = parser.notationForMove(move)
-                self.table.move(move)
-                self.makeMove(move)
-                '''
                 print("AI thinking...")
                 movecount = movecount + 1
                 print(movecount)
@@ -152,7 +149,7 @@ class Game:
                         #black side counter moves
                         else:
                             parser.side = BLACK
-                            playersMove = board.getLastMove()
+                            playersMove = self.board.getLastMove()
                             if playersMove.oldPos == (4,1) and playersMove.newPos == (4,3):
                                 move = parser.moveForShortNotation('e5')    #Mirror
                                 #move = parser.moveForShortNotation('c5')    #Sicilian Defense
@@ -162,12 +159,12 @@ class Game:
                             else:
                                 move = parser.moveForShortNotation('d5')
                                 
-                        parser.side = playerSide  #reset parser side
+                        parser.side = self.playerSide  #reset parser side
                     if movecount == 2:
                         #white side moves
                         if self.playerSide == BLACK:
                             parser.side = WHITE
-                            playersMove = board.getLastMove()
+                            playersMove = self.board.getLastMove()
                             #print(playersMove.oldPos)  #for testing purposes
                             #print(playersMove.newPos)  #for testing purposes
                             if playersMove.oldPos == (4,6) and playersMove.newPos == (4,4):
@@ -184,7 +181,7 @@ class Game:
                         #black side moves  
                         else:
                             parser.side = BLACK
-                            playersMove = board.getLastMove()
+                            playersMove = self.board.getLastMove()
                             if playersMove.oldPos == (3,1) and playersMove.newPos == (3,3):
                                 move = parser.moveForShortNotation('d5') #French Defense / Caro-Kann Continued
                             elif playersMove.oldPos == (4,3) and playersMove.newPos == (3,4):
@@ -194,7 +191,7 @@ class Game:
                             elif playersMove.oldPos == (6,0) and playersMove.newPos == (5,2):
                                 move = parser.moveForShortNotation('Nc6') #Ruy Lopex
                             else:
-                                move = ai.getBestMove()
+                                move = self.ai.getBestMove()
                                 move.notation = parser.notationForMove(move)
                                 
                         parser.side = self.playerSide  #reset parser side 
@@ -203,27 +200,27 @@ class Game:
                         #white side moves
                         if self.playerSide == BLACK:
                             parser.side = WHITE
-                            playersMove = board.getLastMove()
+                            playersMove = self.board.getLastMove()
                             if playersMove.oldPos == (1,7) and playersMove.newPos == (2,5):
                                 move = parser.moveForShortNotation('Bb5') #Ruy Lopex
                             else:
-                                move = ai.getBestMove()
+                                move = self.ai.getBestMove()
                                 move.notation = parser.notationForMove(move)
                         else:
-                            move = ai.getBestMove()
+                            move = self.ai.getBestMove()
                             move.notation = parser.notationForMove(move)
                             
                         parser.side = self.playerSide  #reset parser side 
                 
                 #following starting moves use the node tree to look for the best move  
                 else:
-                    move = ai.getBestMove()
+                    move = self.ai.getBestMove()
                     move.notation = parser.notationForMove(move)
                 
-            #print("move: \n")      #for testing purposes
-            #print(move)            #for testing purposes   
-            table.move(move)
-            self.makeMove(move)
+                #print("move: \n")      #for testing purposes
+                #print(move)            #for testing purposes   
+                self.table.move(move)
+                self.makeMove(move)
 
 
 
