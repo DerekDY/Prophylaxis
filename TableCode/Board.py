@@ -117,7 +117,18 @@ class Board:
             self.pieces.extend([Rook(self, WHITE, C(3, 4), 0)])
             self.pieces.extend([Knight(self, WHITE, C(7, 5), 0)])
             self.pieces.extend([Queen(self, BLACK, C(4, 5), 0)])
-
+        #black castle queen side with scattered pieces
+        elif testing ==6:
+            self.pieces.extend([Rook(self, BLACK, C(0, 7), 0)])
+            self.pieces.extend([King(self, BLACK, C(4, 7), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(2, 3), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(3, 2), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(4, 3), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(5, 2), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(6, 3), 0)])
+            self.pieces.extend([Rook(self, WHITE, C(0, 3), 0)])
+            
+            
     def __str__(self):
         return self.wrapStringRep(self.makeStringRep(self.pieces))
 
