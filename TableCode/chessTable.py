@@ -57,7 +57,7 @@ class ChessTable(XYTable):
 
     def splitBoard(self):
         readBoard = readBoard()
-        fullBoard = reedBoard.updateBoard() #board from reed switches
+        fullBoard = reedBoard.getBoard() #board from reed switches
         for i in range(8):
             for j in range(2):
                 self.whiteCaptured[i][j] = fullBoard[i][j]
