@@ -120,16 +120,46 @@ class ChessTable(XYTable):
                 print(p.position)
                 for move in p.getPossibleMoves():
                     print(move)
-                    if move.pieceToCapture != None:     #move includes the capturing of a piece
+                    if move.pieceToCapture:     #move includes the capturing of a piece
                         print("Captured Piece \n")
                         print(move.pieceToCapture)
+                        captured = move.pieceToCapture
                         #check for piece capture
-                        for i in range(8):
-                            for j in range(2):
-                                if whiteCaptured[i][j] == 1:
-                                    caploc = ['white',i,j]                               
-                                elif blackCaptured[i][j] == 1:
-                                    caploc = ['black',i,j]
+                        print (blackCaptured)
+                        print (whiteCaptured)
+                        if captured.side == BLACK:
+                            if captured.stringRep == "P":
+                                if whiteCaptured[captured.number][0]== 1:
+                                    moveMade = move
+                            elif captured.stringRep == "B":
+                                if whiteCaptured[B + captured.number][1]== 1:
+                                    moveMade = move
+                            elif captured.stringRep == "N":
+                                if whiteCaptured[N + captured.number][1]== 1:
+                                    moveMade = move
+                            elif captured.stringRep == "R":
+                                if whiteCaptured[R + captured.number][1]== 1:
+                                    moveMade = move
+                            elif captured.stringRep == "Q":
+                                if whiteCaptured[Q + captured.number][1]== 1:
+                                    moveMade = move
+                        else:
+                            if captured.stringRep == "P":
+                                if blackCaptured[7 - captured.number][1]== 1:
+                                    moveMade = move
+                            elif captured.stringRep == "B":
+                                if blackCaptured[7 - B - captured.number][0]== 1:
+                                    moveMade = move
+                            elif captured.stringRep == "N":
+                                if blackCaptured[7 - N - captured.number][0]== 1:
+                                    moveMade = move
+                            elif captured.stringRep == "R":
+                                if blackCaptured[7 - R - captured.number][0]== 1:
+                                    moveMade = move
+                            elif captured.stringRep == "Q":
+                                if blackCaptured[7 - Q - captured.number][0]== 1:
+                                    moveMade = move
+
                                 #print(caploc)   #for testing purposes
                     else:
                         print("No Piece to Capture")
