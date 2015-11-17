@@ -43,8 +43,6 @@ class ChessTable(XYTable):
         self.whiteCaptured = [[0 for x in range(2)] for y in range(8)]
         self.blackCaptured = [[0 for x in range(2)] for y in range(8)]
         self.playableBoard = [[0 for x in range(8)] for y in range(8)]
-		#self.whiteCaptured = [[]]
-		#self.blackCaptured = [[]]
 		#self.boardRep = [[]]
 
     def goto(self, space, carrying):
@@ -56,13 +54,6 @@ class ChessTable(XYTable):
             row = space[1]
             self.moveto(column, row)
             #print (str(column) + " & " + str(row))
-
-	
-	#def getCurrentBoard(self):	
-		#fullboard = self.board.getboard()
-		#self.boardrep = fullboard [2:8]
-		#self.whitecaptured = fullboard [2:iiii]
-		#self.blackcaptured = fullboard [2:iiii]
 
     def splitBoard(self):
         fullBoard = self.reedBoard #board from reed switches
@@ -83,7 +74,6 @@ class ChessTable(XYTable):
         update = self.playableBoard
         whiteCaptured = self.whiteCaptured
         blackCaptured = self.blackCaptured
-        engineBoard = self.engineBoard
         changes = []
         legalMoves = []
         moveTo = []
