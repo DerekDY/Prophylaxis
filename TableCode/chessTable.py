@@ -194,28 +194,28 @@ class ChessTable(XYTable):
             print()
             letter = captured.stringRep
             number = captured.number
-            if captured.side == WHITE:
+            if captured.side == BLACK:
                 if letter == "p":
-                    capturedspace = C(0, number)
+                    capturedspace = C(0, 7- number)
                 elif letter == "R":
-                    capturedspace = C(1, R + number)
+                    capturedspace = C(1, 7 - R - number)
                 elif letter == "N":
-                    capturedspace = C(1, N + number)
+                    capturedspace = C(1, 7 - N - number)
                 elif letter == "Q":
-                    capturedspace = C(1, Q + number)
+                    capturedspace = C(1, 7 - Q - number)
                 elif letter == "B":
-                    capturedspace = C(1, B + number)
+                    capturedspace = C(1, 7 - B - number)
             else:
                 if letter == "p":
-                    capturedspace = C(11, 7-number)
+                    capturedspace = C(11, number)
                 elif letter == "R":
-                    capturedspace = C(10, 7-(R + number))
+                    capturedspace = C(10, (R + number))
                 elif letter == "N":
-                    capturedspace = C(10, 7-(N + number))
+                    capturedspace = C(10, (N + number))
                 elif letter == "Q":
-                    capturedspace = C(10, 7-(Q + number))
+                    capturedspace = C(10, (Q + number))
                 elif letter == "B":
-                    capturedspace = C(10, 7-(B + number))
+                    capturedspace = C(10, (B + number))
             self.goto(secondSpace, False)
             self.grab()
             self.goto(capturedspace, True)

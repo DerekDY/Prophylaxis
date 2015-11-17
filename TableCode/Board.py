@@ -490,15 +490,15 @@ class Board:
                 self.whiteCaptured.extend([Captured( letter, WHITE, C(1, B + number), number)])
         else:
             if letter == "p":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(1, 7-number), number)])
+                self.blackCaptured.extend([Captured( letter, BLACK, C(1, 7 - number), number)])
             elif letter == "R":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(0, 7-(R + number)), number)])
+                self.blackCaptured.extend([Captured( letter, BLACK, C(0, 7- (R + number)), number)])
             elif letter == "N":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(0, 7-(N + number)), number)])
+                self.blackCaptured.extend([Captured( letter, BLACK, C(0, 7- (N + number)), number)])
             elif letter == "Q":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(0, 7-(Q + number)), number)])
+                self.blackCaptured.extend([Captured( letter, BLACK, C(0, 7- (Q + number)), number)])
             elif letter == "B":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(0, 7-(B + number)), number)])
+                self.blackCaptured.extend([Captured( letter, BLACK, C(0, 7- (B + number)), number)])
         #removing the piece from the 
         self.pieces.remove(pieceToRemove)
         print("Piece added to Captured bin")
