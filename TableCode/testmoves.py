@@ -1,7 +1,7 @@
 #import stuff
 from Board import Board
 from chessTable import *
-
+'''
 print("###############################################")
 print("Testing Moves:")
 print("Test 1: Single Knight Move - Normal setup")
@@ -47,7 +47,7 @@ print(move)
 print()
 board2.makeChosenMove(move)
 print(board2)
-
+'''
 print()
 print("###############################################")
 print("Test 3: Paun with 2 captures possible")
