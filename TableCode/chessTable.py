@@ -125,39 +125,40 @@ class ChessTable(XYTable):
                         print(move.pieceToCapture)
                         captured = move.pieceToCapture
                         #check for piece capture
-                        print (blackCaptured)
-                        print (whiteCaptured)
-                        if captured.side == BLACK:
+                        print(blackCaptured)
+                        print(whiteCaptured)
+                        print(blackCaptured[0][0])
+                        if captured.side == WHITE:
                             if captured.stringRep == "P":
-                                if whiteCaptured[captured.number][0]== 1:
+                                if whiteCaptured[7 - captured.number][0]== 1:
                                     moveMade = move
                             elif captured.stringRep == "B":
-                                if whiteCaptured[B + captured.number][1]== 1:
+                                if whiteCaptured[7 - B + captured.number][1]== 1:
                                     moveMade = move
                             elif captured.stringRep == "N":
-                                if whiteCaptured[N + captured.number][1]== 1:
+                                if whiteCaptured[7 - N + captured.number][1]== 1:
                                     moveMade = move
                             elif captured.stringRep == "R":
-                                if whiteCaptured[R + captured.number][1]== 1:
+                                if whiteCaptured[7 - R + captured.number][1]== 1:
                                     moveMade = move
                             elif captured.stringRep == "Q":
-                                if whiteCaptured[Q + captured.number][1]== 1:
+                                if whiteCaptured[7 - Q + captured.number][1]== 1:
                                     moveMade = move
                         else:
                             if captured.stringRep == "P":
-                                if blackCaptured[7 - captured.number][1]== 1:
+                                if blackCaptured[captured.number][1]== 1:
                                     moveMade = move
                             elif captured.stringRep == "B":
-                                if blackCaptured[7 - B - captured.number][0]== 1:
+                                if blackCaptured[B - captured.number][0]== 1:
                                     moveMade = move
                             elif captured.stringRep == "N":
-                                if blackCaptured[7 - N - captured.number][0]== 1:
+                                if blackCaptured[N - captured.number][0]== 1:
                                     moveMade = move
                             elif captured.stringRep == "R":
-                                if blackCaptured[7 - R - captured.number][0]== 1:
+                                if blackCaptured[R - captured.number][0]== 1:
                                     moveMade = move
                             elif captured.stringRep == "Q":
-                                if blackCaptured[7 - Q - captured.number][0]== 1:
+                                if blackCaptured[Q - captured.number][0]== 1:
                                     moveMade = move
 
                                 #print(caploc)   #for testing purposes

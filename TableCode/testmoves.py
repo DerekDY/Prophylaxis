@@ -25,14 +25,14 @@ board1.makeChosenMove(move)
 print(board1)
 
 
-'''
+
 print()
 print("###############################################")
 print("Test 2: Simple Paun Capture")
 board2 = Board(testing = 2)
 print(board2)
 print()
-newReed =  [[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+newReed =  [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0], \
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
@@ -54,7 +54,23 @@ print("Test 3: Paun with 2 captures possible")
 board3 = Board(testing = 3)
 print(board3)
 print()
+newReed =  [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+table3 = ChessTable()
+table3.reedBoard.testingInput(newReed) 
+move = table3.getMove(board3)
+print(move)
+print()
+board3.makeChosenMove(move)
+print(board3)
 
+'''
 
 print()
 print("###############################################")
@@ -67,7 +83,5 @@ print()
 
 print()
 print("###############################################")
-
-
 
 '''
