@@ -55,13 +55,6 @@ class ChessTable(XYTable):
             self.moveto(column, row)
             #print (str(column) + " & " + str(row))
 
-	
-	#def getCurrentBoard(self):	
-		#fullboard = self.board.getboard()
-		#self.boardrep = fullboard [2:8]
-		#self.whitecaptured = fullboard [2:iiii]
-		#self.blackcaptured = fullboard [2:iiii]
-
     def splitBoard(self):
         fullBoard = self.reedBoard #board from reed switches
         for i in range(8):
