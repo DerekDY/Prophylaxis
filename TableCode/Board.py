@@ -494,15 +494,15 @@ class Board:
         #adding a captured piece to the bins 
         if side == WHITE:
             if letter == "p":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, number), number)])
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, 7 - number), number)])
             elif letter == "R":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, R + number), number)])
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, 7 - R + number), number)])
             elif letter == "N":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, N + number), number)])
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, 7 - N + number), number)])
             elif letter == "Q":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, Q + number), number)])
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, 7 - Q + number), number)])
             elif letter == "B":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, B + number), number)])
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, 7 - B + number), number)])
         else:
             if letter == "p":
                 self.blackCaptured.extend([Captured( letter, BLACK, C(1, number), number)])
