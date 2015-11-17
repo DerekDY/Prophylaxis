@@ -124,15 +124,11 @@ class ChessTable(XYTable):
                         #check for piece capture
                         for i in range(8):
                             for j in range(2):
-                                if whiteCaptured[i][j] == 1 or blackCaptured[i][j] == 1:
-                                    caploc.extend([i,j]) #probably not needed
-                                    moveMade = move
-                                    #this will work if there is only one capture option for the piece however 
-                                    #if there is more than one capture option this will take the last option which
-                                    #is not correct. To fix this it needs to look at which piece has been captured
-                                    #in either the whiteCaptured or blackCaptured and then possibly check that pieces
-                                    #old position and then you will know which piece was captured
-
+                                if whiteCaptured[i][j] == 1:
+                                    caploc = ['white',i,j]                               
+                                elif blackCaptured[i][j] == 1:
+                                    caploc = ['black',i,j]
+                                print(caploc)   #for testing purposes
                     else:
                         print("No Piece to Capture")
                         #if no pieces were captured then find which moves new position lines up with the position
