@@ -152,11 +152,17 @@ class Game:
                             parser.side = BLACK
                             playersMove = self.board.getLastMove()  #white sides last move
                             if playersMove.oldPos == (4,1) and playersMove.newPos == (4,3):
-                                move = parser.moveForShortNotation('e5')    #Mirror
-                                #move = parser.moveForShortNotation('c5')    #Sicilian Defense
-                                #move = parser.moveForShortNotation('e6')    #French Defense
-                                #move = parser.moveForShortNotation('d5')    #Scandinavian Defense
-                                #move = parser.moveForShortNotation('c6')    #Caro-Kann
+                                moves = ['e5','c5','e6','d5','c6']
+                                alpha = random.choice(moves)
+                                '''
+                                alpha values:
+                                    e5 = Mirror
+                                    c5 = Sicilian Defense
+                                    e6 = French Defense
+                                    d5 = Scandinavian Defense
+                                    c6 = Caro-Kann
+                                '''
+                                move = parser.moveForShortNotation(alpha)          
                             else:
                                 move = parser.moveForShortNotation('d5')
                                 
@@ -166,15 +172,21 @@ class Game:
                         if self.playerSide == BLACK:
                             parser.side = WHITE
                             playersMove = self.board.getLastMove()  #black sides last move
-                            if playersMove.oldPos == (4,6) and playersMove.newPos == (4,4):
-                                #move = parser.moveForShortNotation('f4')    #King's Gambit
-                                move = parser.moveForShortNotation('Nf3')    #Ruy Lopex
+                            if playersMove.oldPos == (4,6) and playersMove.newPos == (4,4): 
+                                moves = ['f4','Nf3']
+                                alpha = random.choice(moves)
+                                '''
+                                alpha values:
+                                    f4 = King's Gambit
+                                    Nf3 = Ruy Lopex
+                                '''
+                                move = parser.moveForShortNotation(alpha)          
                             elif playersMove.oldPos == (4,6) and playersMove.newPos == (4,5):
                                 move = parser.moveForShortNotation('d4')    #French Defense Response
                             elif playersMove.oldPos == (3,6) and playersMove.newPos == (3,4):
                                 move = parser.moveForShortNotation('exd5')  #Scandinavian Defense Response
                             elif playersMove.oldPos == (2,6) and playersMove.newPos == (2,5):
-                                move = parser.moveForShortNotation('d4')  #Caro-Kann Response
+                                move = parser.moveForShortNotation('d4')    #Caro-Kann Response
                             else:
                                 move = parser.moveForShortNotation('Nc3')
                         #black side moves  

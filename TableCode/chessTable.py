@@ -1,5 +1,6 @@
 from xytable import *
 from Move import *
+from reedBoard import *
 
 '''
 Class: 			chessTable
@@ -37,7 +38,6 @@ class ChessTable(XYTable):
         self.x = None  #need to initialize table before knowing 
         self.y = None
         self.win = GraphWin('XY Table Testing', 310, 210)
-        self.reedBoard = [[0 for x in range(12)] for y in range(8)]  #from reed switches 
         self.lightsW = "lights"
         self.lightsB = "lights"
         self.whiteCaptured = [[0 for x in range(2)] for y in range(8)]
@@ -56,7 +56,8 @@ class ChessTable(XYTable):
             #print (str(column) + " & " + str(row))
 
     def splitBoard(self):
-        fullBoard = self.reedBoard #board from reed switches
+        readBoard = readBoard()
+        fullBoard = reedBoard.getBoard() #board from reed switches
         for i in range(8):
             for j in range(2):
                 self.whiteCaptured[i][j] = fullBoard[i][j]
@@ -124,15 +125,11 @@ class ChessTable(XYTable):
                         #check for piece capture
                         for i in range(8):
                             for j in range(2):
-                                if whiteCaptured[i][j] == 1 or blackCaptured[i][j] == 1:
-                                    caploc.extend([i,j]) #probably not needed
-                                    moveMade = move
-                                    #this will work if there is only one capture option for the piece however 
-                                    #if there is more than one capture option this will take the last option which
-                                    #is not correct. To fix this it needs to look at which piece has been captured
-                                    #in either the whiteCaptured or blackCaptured and then possibly check that pieces
-                                    #old position and then you will know which piece was captured
-
+                                if whiteCaptured[i][j] == 1:
+                                    caploc = ['white',i,j]                               
+                                elif blackCaptured[i][j] == 1:
+                                    caploc = ['black',i,j]
+                                print(caploc)   #for testing purposes
                     else:
                         print("No Piece to Capture")
                         #if no pieces were captured then find which moves new position lines up with the position
