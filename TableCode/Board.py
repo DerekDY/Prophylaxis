@@ -23,6 +23,18 @@ BLACK = False
 #[P6 Q0] 
 #[P7   ] 
 #
+
+#   #   #   #   #   #   #   #
+#7
+#6
+#5
+#4
+#3
+#2
+#1
+#0
+## 0  1   2   3   4   5   6   7
+
 B = 0
 N = 2
 R = 4
@@ -31,7 +43,7 @@ Q = 6
 class Board:
 
     def __init__(self, mateInOne=False, castleBoard=False,
-                 pessant=False, promotion=False):
+                 pessant=False, promotion=False, testing= 0):
         self.pieces = []
         self.whiteCaptured = []
         self.blackCaptured = []
@@ -41,7 +53,8 @@ class Board:
         self.movesMade = 0
         self.checkmate = False
 
-        if not mateInOne and not castleBoard and not pessant and not promotion:
+        #testing 1: normal board 
+        if not mateInOne and not castleBoard and not pessant and not promotion and testing < 2:
             self.pieces.extend([Rook(self, BLACK, C(0, 7), 0),
                                 Knight(self, BLACK, C(1, 7), 0),
                                 Bishop(self, BLACK, C(2, 7), 0),
@@ -85,6 +98,21 @@ class Board:
             self.makeMove(firstMove)
             self.currentSide = WHITE
             return
+        #paun being able to capture 1 piece 
+        elif testing == 2:
+            self.pieces.extend([Bishop(self, BLACK, C(5, 3), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(6, 2), 0)])
+        #testing for paun being able to capture 2 pieces 
+        elif testing ==3:
+            self.pieces.extend([Bishop(self, BLACK, C(4, 3), 0)])
+            self.pieces.extend([Knight(self, BLACK, C(2, 3), 0)])
+            self.pieces.extend([Paun(self, WHITE, C(3, 2), 0)])
+        #testing taking a pice that can be captured by 2 pieces
+        elif testing ==4:
+            self.pieces.extend([Bishop(self, WHITE, C(3, 1), 0)])
+            self.pieces.extend([Knight(self, BLACK, C(2, 2), 0)])
+            self.pieces.extend([Queen(self, WHITE, C(5, 2), 0)])
+
 
     def __str__(self):
         return self.wrapStringRep(self.makeStringRep(self.pieces))
