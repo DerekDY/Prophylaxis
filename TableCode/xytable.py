@@ -1,6 +1,7 @@
 from motor import *
 from magnet import *
 from Coordinate import Coordinate as C
+import multiprocessing as mp
 
 '''
 Class: 			XYTable
@@ -53,8 +54,15 @@ class XYTable:
 	'''
 	def initialize_Coord(self):
 		#leaving a 5 pixel boarder 
-		self.motorX.zero()
-		self.motorY.zero()
+		processes = [mp.Process(target=self.motorX.zero, args=()),mp.Process(target=self.motorY.zero, args=())]
+		#start multiprocessing
+		for p in processes:
+			p.start()
+		#end mulitprocessing
+		for p in processes:
+			p.join()
+		#self.motorX.zero()
+		#self.motorY.zero()
 		#initialize the coordinates	
 		self.x = 0
 		self.y = 0
