@@ -85,7 +85,11 @@ class Game:
 
     def startGame(self):
         parser = InputParser(self.board, self.playerSide)
+        movecount = 0
         while True:
+            print("player side")
+            print(self.playerSide)
+            print()
             print(self.board)
             print()
             if self.board.isCheckmate():
@@ -131,11 +135,93 @@ class Game:
 
             else:
                 print("AI thinking...")
-                move = self.ai.getBestMove()
-                move.notation = parser.notationForMove(move)
+                movecount = movecount + 1
+                print(movecount)
+                #starting moves
+                #have multiple options for some of the starting moves -- need to implement a method
+                #to choose between the options at random. Should also go deeper with the starting moves
+                #as it heavily speeds up execution time of the AI
+                if movecount < 4:
+                    if movecount == 1:
+                        #white side initial moves
+                        if self.playerSide == BLACK:
+                            parser.side = WHITE
+                            move = parser.moveForShortNotation('e4')
+                        #black side counter moves
+                        else:
+                            parser.side = BLACK
+                            playersMove = self.board.getLastMove()
+                            if playersMove.oldPos == (4,1) and playersMove.newPos == (4,3):
+                                move = parser.moveForShortNotation('e5')    #Mirror
+                                #move = parser.moveForShortNotation('c5')    #Sicilian Defense
+                                #move = parser.moveForShortNotation('e6')    #French Defense
+                                #move = parser.moveForShortNotation('d5')    #Scandinavian Defense
+                                #move = parser.moveForShortNotation('c6')    #Caro-Kann
+                            else:
+                                move = parser.moveForShortNotation('d5')
+                                
+                        parser.side = self.playerSide  #reset parser side
+                    if movecount == 2:
+                        #white side moves
+                        if self.playerSide == BLACK:
+                            parser.side = WHITE
+                            playersMove = self.board.getLastMove()
+                            #print(playersMove.oldPos)  #for testing purposes
+                            #print(playersMove.newPos)  #for testing purposes
+                            if playersMove.oldPos == (4,6) and playersMove.newPos == (4,4):
+                                #move = parser.moveForShortNotation('f4')    #King's Gambit
+                                move = parser.moveForShortNotation('Nf3')    #Ruy Lopex
+                            elif playersMove.oldPos == (4,6) and playersMove.newPos == (4,5):
+                                move = parser.moveForShortNotation('d4')    #French Defense Response
+                            elif playersMove.oldPos == (3,6) and playersMove.newPos == (3,4):
+                                move = parser.moveForShortNotation('exd5')  #Scandinavian Defense Response
+                            elif playersMove.oldPos == (2,6) and playersMove.newPos == (2,5):
+                                move = parser.moveForShortNotation('d4')  #Caro-Kann Response
+                            else:
+                                move = parser.moveForShortNotation('Nc3')
+                        #black side moves  
+                        else:
+                            parser.side = BLACK
+                            playersMove = self.board.getLastMove()
+                            if playersMove.oldPos == (3,1) and playersMove.newPos == (3,3):
+                                move = parser.moveForShortNotation('d5') #French Defense / Caro-Kann Continued
+                            elif playersMove.oldPos == (4,3) and playersMove.newPos == (3,4):
+                                move = parser.moveForShortNotation('Qxd5') #Scandinavian Defense Continued
+                            elif playersMove.oldPos == (5,1) and playersMove.newPos == (5,3):
+                                move = parser.moveForShortNotation('d5') #King's Gambit Defense
+                            elif playersMove.oldPos == (6,0) and playersMove.newPos == (5,2):
+                                move = parser.moveForShortNotation('Nc6') #Ruy Lopex
+                            else:
+                                move = self.ai.getBestMove()
+                                move.notation = parser.notationForMove(move)
+                                
+                        parser.side = self.playerSide  #reset parser side 
+                        
+                    if movecount == 3:
+                        #white side moves
+                        if self.playerSide == BLACK:
+                            parser.side = WHITE
+                            playersMove = self.board.getLastMove()
+                            if playersMove.oldPos == (1,7) and playersMove.newPos == (2,5):
+                                move = parser.moveForShortNotation('Bb5') #Ruy Lopex
+                            else:
+                                move = self.ai.getBestMove()
+                                move.notation = parser.notationForMove(move)
+                        else:
+                            move = self.ai.getBestMove()
+                            move.notation = parser.notationForMove(move)
+                            
+                        parser.side = self.playerSide  #reset parser side 
+                
+                #following starting moves use the node tree to look for the best move  
+                else:
+                    move = self.ai.getBestMove()
+                    move.notation = parser.notationForMove(move)
+                
+                #print("move: \n")      #for testing purposes
+                #print(move)            #for testing purposes   
                 self.table.move(move)
                 self.makeMove(move)
-
 
 
 

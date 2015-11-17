@@ -10,3 +10,4 @@ try:
     game.startGame()
 except KeyboardInterrupt:
     sys.exit()
+
