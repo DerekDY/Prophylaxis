@@ -169,14 +169,14 @@ class ChessTable(XYTable):
                         print(moveTo)
                         print(move.newPos)
                         if len(moveTo) != 0:
-                            if moveTo[0] == move.newPos[0] and moveTo[1] == move.newPos[1]:
-                                moveMade = move
-                            else:
-                                print("balaknah")
-                        else:
-                            print("testing...")
-
-        print("\nMove Made: \n")                   
+                            if move.piece.stringRep == 'R' or move.piece.stringRep == 'K':
+                                #deal with castling 
+                                #also will need to deal with other special cases
+                            else:    
+                                if moveTo[0] == move.newPos[0] and moveTo[1] == move.newPos[1]:
+                                    moveMade = move
+                                    
+        print("\nMove Made: ")                   
         return moveMade
 
 
