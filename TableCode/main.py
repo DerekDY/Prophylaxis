@@ -10,3 +10,6 @@ try:
     game.startGame()
 except KeyboardInterrupt:
     sys.exit()
+    
+    
+#richard cranium
