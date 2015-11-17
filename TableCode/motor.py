@@ -7,7 +7,7 @@ class Motor:
 		#direction 0 is horizontal
 		#direction 1 is vertical 
 		self.direction = dir # replace direction with pin info
-		print ("This motor is made with direction: " + str(self.direction))
+		#print ("This motor is made with direction: " + str(self.direction))
 		if (self.direction == 1):
 			initial = randint(5, 210-25)
 			self.body = Rectangle(Point(5,initial), Point(505,initial+25))
