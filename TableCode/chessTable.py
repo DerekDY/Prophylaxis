@@ -136,6 +136,8 @@ class ChessTable(XYTable):
                         #that the piece was moved to
                         if moveTo[1] == move.newPos[0] and moveTo[0] == move.newPos[1]:
                             moveMade = move
+                            moveMade.oldPos = (move.oldPos[0],7-move.oldPos[1])
+                            moveMade.newPos = (move.newPos[0],7-move.newPos[1])
 
         print("\nMove Made: \n")                   
         return moveMade
