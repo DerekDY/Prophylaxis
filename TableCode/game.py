@@ -72,7 +72,7 @@ class Game:
         self.board.makeChosenMove(move)
 
 
-    def printPointAdvantage():
+    def printPointAdvantage(self):
         print("Currently, the point difference is : " +
               str(self.board.getPointAdvantageOfSide(self.board.currentSide)))
 
@@ -112,16 +112,16 @@ class Game:
                 command = input("It's your move."
                                 " Type '?' for options. ? ").lower()
                 if command == 'u':
-                    undoLastTwoMoves()
+                    self.undoLastTwoMoves()
                     continue
                 elif command == '?':
-                    printCommandOptions()
+                    self.printCommandOptions()
                     continue
                 elif command == 'l':
-                    printAllLegalMoves(parser)
+                    self.printAllLegalMoves(parser)
                     continue
                 elif command == 'r':
-                    move = getRandomMove(parser)
+                    move = self.getRandomMove(parser)
                 elif command == 'quit':
                     return
                 else:
