@@ -106,7 +106,7 @@ class Board:
         elif testing ==3:
             self.pieces.extend([Bishop(self, BLACK, C(4, 3), 0)])
             self.pieces.extend([Knight(self, BLACK, C(2, 3), 0)])
-            self.pieces.extend([Paun(self, WHITE, C(3, 2), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(3, 2), 0)])
         #testing taking a pice that can be captured by 2 pieces
         elif testing ==4:
             self.pieces.extend([Bishop(self, WHITE, C(3, 1), 0)])

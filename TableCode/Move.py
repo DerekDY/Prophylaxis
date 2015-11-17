@@ -20,7 +20,8 @@ class Move:
         self.rookMove = None
 
     def __str__(self):
-        displayString = 'Old pos : ' + str(self.oldPos) + \
+        displayString = 'Piece Moving : ' + self.piece.stringRep + str(self.piece.number) +\
+                        ' Old pos : ' + str(self.oldPos) + \
                         ' -- New pos : ' + str(self.newPos) +\
                         ' --  pieceToCapture: ' +str(self.pieceToCapture)
         if self.notation:

@@ -9,8 +9,8 @@ class ReedBoard:
 	def testingInput(self, testArray):
 		self.currentBoard = testArray
 
-	def updateBoard():
+	def updateBoard(self):
 		self.currentBoard = self.currentBoard = [[0 for x in range(12)] for y in range(8)]
 
-	def getBoard():
+	def getBoard(self):
 		return self.currentBoard

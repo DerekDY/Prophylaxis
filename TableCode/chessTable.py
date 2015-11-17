@@ -35,6 +35,7 @@ class ChessTable(XYTable):
         self.motorX = Motor(0)
         self.motorY = Motor(1)
         self.magnet = Magnet(0)
+        self.reedBoard = ReedBoard(0)
         self.x = None  #need to initialize table before knowing 
         self.y = None
         self.win = GraphWin('XY Table Testing', 310, 210)
@@ -56,8 +57,7 @@ class ChessTable(XYTable):
             #print (str(column) + " & " + str(row))
 
     def splitBoard(self):
-        readBoard = readBoard()
-        fullBoard = reedBoard.getBoard() #board from reed switches
+        fullBoard = self.reedBoard.getBoard() #board from reed switches
         for i in range(8):
             for j in range(2):
                 self.whiteCaptured[i][j] = fullBoard[i][j]
