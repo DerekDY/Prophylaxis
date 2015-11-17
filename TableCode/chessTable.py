@@ -90,7 +90,8 @@ class ChessTable(XYTable):
         for p in board.pieces:
             #print(p.position)
             engineBoard[7 - p.position[1]][p.position[0]] = 1   #engine boards sides were flipped from the engine board
-        '''
+        
+        
         print()
         print("Engine Board: \n")
         for i in range(8):
@@ -101,22 +102,21 @@ class ChessTable(XYTable):
         for i in range(8):
             print(update[i])
         print()
-        '''
+        
         
         #check for changes and then assign the position that was moved to and moved from
         for i in range(8):
             for j in range(8):
                 if engineBoard[i][j] != update[i][j]:
-                    #changes.extend([chr(j + ord('A')) + str(i)])    #for testing purposes
                     if update[i][j] == 1:
-                        moveTo.extend([i,j])
+                        moveTo.extend([j,7-i])
                     else:
-                        moveFrom.extend([i,j])
+                        moveFrom.extend([j,7-i])
         
         #go through all of the pieces of the original engine board
         for p in board.pieces:
             #find piece that correlates to the position that the piece was moved from
-            if p.position[0] == moveFrom[1] and p.position[1] == moveFrom[0]:   #reverse indexing
+            if p.position[0] == moveFrom[0] and p.position[1] == moveFrom[1]:   #reverse indexing
                 #print("Test1: \n")
                 for move in p.getPossibleMoves():
                     if move.pieceToCapture != None:     #move includes the capturing of a piece
@@ -134,10 +134,8 @@ class ChessTable(XYTable):
                         #print("No Piece to Capture")
                         #if no pieces were captured then find which moves new position lines up with the position
                         #that the piece was moved to
-                        if moveTo[1] == move.newPos[0] and moveTo[0] == move.newPos[1]:
+                        if moveTo[1] == move.newPos[1] and moveTo[0] == move.newPos[0]:
                             moveMade = move
-                            moveMade.oldPos = (move.oldPos[0],7-move.oldPos[1])
-                            moveMade.newPos = (move.newPos[0],7-move.newPos[1])
 
         print("\nMove Made: \n")                   
         return moveMade
