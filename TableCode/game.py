@@ -15,6 +15,7 @@ class Game:
         self.playerSide = WHITE
         self.aiDepth = 2
         self.ai = AI(self.board, not self.playerSide, self.aiDepth)
+        #deleted
         self.table.drawMotors()  
         self.table.initialize_Coord()  
 
@@ -122,7 +123,7 @@ class Game:
                 else:
                     move = parser.moveForShortNotation(command)
                 if move:
-                    #self.table.getmove(self.board)
+                    #move = self.table.getmove(self.board)
                     self.makeMove(move)
 
                 else:
