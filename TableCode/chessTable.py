@@ -43,8 +43,6 @@ class ChessTable(XYTable):
         self.whiteCaptured = [[0 for x in range(2)] for y in range(8)]
         self.blackCaptured = [[0 for x in range(2)] for y in range(8)]
         self.playableBoard = [[0 for x in range(8)] for y in range(8)]
-		#self.whiteCaptured = [[]]
-		#self.blackCaptured = [[]]
 		#self.boardRep = [[]]
 
     def goto(self, space, carrying):
@@ -83,7 +81,6 @@ class ChessTable(XYTable):
         update = self.playableBoard
         whiteCaptured = self.whiteCaptured
         blackCaptured = self.blackCaptured
-        engineBoard = self.engineBoard
         changes = []
         legalMoves = []
         moveTo = []

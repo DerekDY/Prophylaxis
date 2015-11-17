@@ -150,7 +150,7 @@ class Game:
                         #black side counter moves
                         else:
                             parser.side = BLACK
-                            playersMove = self.board.getLastMove()
+                            playersMove = self.board.getLastMove()  #white sides last move
                             if playersMove.oldPos == (4,1) and playersMove.newPos == (4,3):
                                 move = parser.moveForShortNotation('e5')    #Mirror
                                 #move = parser.moveForShortNotation('c5')    #Sicilian Defense
@@ -165,9 +165,7 @@ class Game:
                         #white side moves
                         if self.playerSide == BLACK:
                             parser.side = WHITE
-                            playersMove = self.board.getLastMove()
-                            #print(playersMove.oldPos)  #for testing purposes
-                            #print(playersMove.newPos)  #for testing purposes
+                            playersMove = self.board.getLastMove()  #black sides last move
                             if playersMove.oldPos == (4,6) and playersMove.newPos == (4,4):
                                 #move = parser.moveForShortNotation('f4')    #King's Gambit
                                 move = parser.moveForShortNotation('Nf3')    #Ruy Lopex
@@ -182,15 +180,28 @@ class Game:
                         #black side moves  
                         else:
                             parser.side = BLACK
-                            playersMove = self.board.getLastMove()
+                            playersMove = self.board.getLastMove()  #white sides last move
+                            playersMove2 = self.board.history[-2][0]  #black sides last move
                             if playersMove.oldPos == (3,1) and playersMove.newPos == (3,3):
-                                move = parser.moveForShortNotation('d5') #French Defense / Caro-Kann Continued
+                                if playersMove2.newPos != (3,4):
+                                    move = parser.moveForShortNotation('d5') #French Defense / Caro-Kann Continued
+                                else:
+                                    move = self.ai.getBestMove()
+                                    move.notation = parser.notationForMove(move) 
                             elif playersMove.oldPos == (4,3) and playersMove.newPos == (3,4):
                                 move = parser.moveForShortNotation('Qxd5') #Scandinavian Defense Continued
                             elif playersMove.oldPos == (5,1) and playersMove.newPos == (5,3):
-                                move = parser.moveForShortNotation('d5') #King's Gambit Defense
+                                if playersMove2.newPos != (3,4):
+                                    move = parser.moveForShortNotation('d5') #King's Gambit Defense
+                                else:
+                                    move = self.ai.getBestMove()
+                                    move.notation = parser.notationForMove(move)
                             elif playersMove.oldPos == (6,0) and playersMove.newPos == (5,2):
-                                move = parser.moveForShortNotation('Nc6') #Ruy Lopex
+                                if playersMove2.newPos != (2,5):
+                                    move = parser.moveForShortNotation('Nc6') #Ruy Lopex
+                                else:
+                                    move = self.ai.getBestMove()
+                                    move.notation = parser.notationForMove(move)
                             else:
                                 move = self.ai.getBestMove()
                                 move.notation = parser.notationForMove(move)
