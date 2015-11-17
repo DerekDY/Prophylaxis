@@ -90,7 +90,7 @@ class ChessTable(XYTable):
         for p in board.pieces:
             #print(p.position)
             engineBoard[7 - p.position[1]][p.position[0]] = 1   #engine boards sides were flipped from the engine board
-        
+        '''
         print()
         print("Engine Board: \n")
         for i in range(8):
@@ -101,7 +101,7 @@ class ChessTable(XYTable):
         for i in range(8):
             print(update[i])
         print()
-        
+        '''
         
         #check for changes and then assign the position that was moved to and moved from
         for i in range(8):
