@@ -41,9 +41,9 @@ class Pawn(Piece):
                         move = Move(self, advanceOnePosition)
                         move.promotion = True
                         move.specialMovePiece = piece
-                        yield move
+                        yield (move)
                 else:
-                    yield Move(self, advanceOnePosition)
+                    yield (Move(self, advanceOnePosition))
 
         # Pawn moves two up
         if self.movesMade == 0:
@@ -75,10 +75,10 @@ class Pawn(Piece):
                             move = Move(self, advanceOnePosition)
                             move.promotion = True
                             move.specialMovePiece = piece
-                            yield move
+                            yield (move)
                     else:
-                        yield Move(self, newPosition,
-                                   pieceToCapture=pieceToTake)
+                        yield (Move(self, newPosition,
+                                   pieceToCapture=pieceToTake))
 
         # En pessant
         movements = [C(1, 1), C(-1, 1)] \
@@ -105,4 +105,4 @@ class Pawn(Piece):
                                 pieceToCapture=pieceBesidePawn)
                     move.pessant = True
                     move.specialMovePiece = pieceBesidePawn
-                    yield move
+                    yield (move)

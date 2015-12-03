@@ -6,7 +6,9 @@ from Knight import Knight
 from Queen import Queen
 from Captured import Captured  ### <- finish this 
 from Coordinate import Coordinate as C
+import multiprocessing as mp
 from termcolor import colored
+import time
 
 from Move import Move
 
@@ -541,13 +543,19 @@ class Board:
         if side == BLACK:
             return -self.points
 
+
+    #TRYING TO PARALELIZE!
     def getAllMovesUnfiltered(self, side, includeKing=True):
+        #pool = mp.Pool(processes=4)
+        #unfilteredMoves = mp.Queue()
+        #start_time = time.time()
         unfilteredMoves = []
         for piece in self.pieces:
             if piece.side == side:
                 if includeKing or piece.stringRep != 'K':
                     for move in piece.getPossibleMoves():
                         unfilteredMoves.append(move)
+        #print("--- %s seconds ---" % (time.time() - start_time))
         return unfilteredMoves
 
     def testIfLegalBoard(self, side):

@@ -4,6 +4,7 @@ from InputParser import InputParser
 import copy
 import random
 from multiprocessing import Pool
+import time
 
 
 WHITE = True
@@ -120,10 +121,13 @@ class AI:
             return node.pointAdvantage
 
     def getBestMove(self):
+        start_time = time.time()
+
         moveTree = self.generateMoveTree()
         bestMoves = self.bestMovesWithMoveTree(moveTree)
         randomBestMove = random.choice(bestMoves)
         randomBestMove.notation = self.parser.notationForMove(randomBestMove)
+        print("--- %s seconds ---" % (time.time() - start_time))
         return randomBestMove
 
     def makeBestMove(self):

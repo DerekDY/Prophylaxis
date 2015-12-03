@@ -47,9 +47,9 @@ class ChessTable(XYTable):
 		#self.boardRep = [[]]
 
     def goto(self, space, carrying):
-        print("MADE IT TO GOTO IN TABLE")
+        #print("MADE IT TO GOTO IN TABLE")
         column = space[0]
-        print(column)
+        #print(column)
         row = 7-space[1]
         print(row)
         self.moveto(column, row)
@@ -180,13 +180,13 @@ class ChessTable(XYTable):
 
 
     def move(self, move):
-        print("MADE IT TO MOVE IN TABLE")
-        print ("Moving: " + str(move.piece))
+        #print("MADE IT TO MOVE IN TABLE")
+        #print ("Moving: " + str(move.piece))
         print()
         firstSpace = move.oldPos + C(2,0)
-        print ("From: " + str(firstSpace[0]) + "," + str(firstSpace[1]))
+        #print ("From: " + str(firstSpace[0]) + "," + str(firstSpace[1]))
         secondSpace = move.newPos + C(2,0)
-        print ("To: " + str(secondSpace[0]) + "," + str(secondSpace[1]))
+        #print ("To: " + str(secondSpace[0]) + "," + str(secondSpace[1]))
         captured = move.pieceToCapture
         if (captured):
             #if all crazy things

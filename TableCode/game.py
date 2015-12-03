@@ -87,8 +87,8 @@ class Game:
         parser = InputParser(self.board, self.playerSide)
         movecount = 0
         while True:
-            print("player side")
-            print(self.playerSide)
+            #print("player side")
+            #print(self.playerSide)
             print()
             print(self.board)
             print()
