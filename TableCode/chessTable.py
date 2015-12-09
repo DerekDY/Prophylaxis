@@ -32,9 +32,10 @@ BLACK = False
 
 class ChessTable(XYTable):
     def __init__(self):
-        self.motorX = Motor(0)
-        self.motorY = Motor(1)
-        self.magnet = Magnet(0)
+        super(ChessTable, self).__init__()
+        #self.motorX = Motor(0)
+        #self.motorY = Motor(1)
+        #self.magnet = Magnet(0)
         self.reedBoard = ReedBoard(0)
         self.x = None  #need to initialize table before knowing 
         self.y = None
