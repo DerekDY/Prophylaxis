@@ -1,6 +1,11 @@
 from game import *
- 
-game = Game()
+
+
+testingOption = input(
+            "Are Motors Contected?[y/n]? ").lower()
+testingOption = 0 if testingOption == "y" else 1
+
+game = Game(testingOption)
 game.askForPlayerSide()
 print()
 game.askForDepthOfAI()

@@ -9,9 +9,9 @@ WHITE = True
 BLACK = False
 
 class Game:
-    def __init__(self):
+    def __init__(self, testingOptions = 0): #1 for use without motors
         self.board = Board()
-        self.table = ChessTable()
+        self.table = ChessTable(testingOptions)
         self.playerSide = WHITE
         self.aiDepth = 2
         self.ai = AI(self.board, not self.playerSide, self.aiDepth)

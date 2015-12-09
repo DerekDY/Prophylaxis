@@ -1,5 +1,10 @@
-from motor import *
-from motor1 import *  #real motor
+from motorGraphics import *
+test = 1
+try:
+	import RPi.GPIO as GPIO
+	from motor import *  #real motor
+except ImportError:
+	test = 0
 from magnet import *
 from Coordinate import Coordinate as C
 import multiprocessing as mp
@@ -18,11 +23,13 @@ To-Do: 			delete graphics objects
 
 class XYTable:
 
-	def __init__(self):
+	def __init__(self, testingOption = 0):   #when testing is 1 the physical motors will not be made 
+		self.testing = testingOption
 		self.motorXG = MotorG(0)
 		self.motorYG = MotorG(1)
-		self.motorX = Motor(21,16,20)
-		self.motorY = Motor(26,19,13)
+		if (test == 1): 
+			self.motorX = Motor(21,16,20) 
+			self.motorY = Motor(26,19,13)
 		self.magnet = Magnet(0)
 		self.x = None  #need to initialize table before knowing 
 		self.y = None
@@ -88,16 +95,16 @@ class XYTable:
 		dy = new_y - self.y 
 		if (dx < 0):
 			self.motorXG.cw(abs(dx))
-			self.motorX.cw(abs(dx))
+			if (self.testing == 1): self.motorX.cw(abs(dx))
 		else:
 			self.motorXG.ccw(abs(dx))
-			self.motorX.ccw(abs(dx))
+			if (self.testing == 1): self.motorX.ccw(abs(dx))
 		if (dy < 0):
 			self.motorYG.cw(abs(dy))
-			self.motorY.cw(abs(dy))
+			if (self.testing == 1): self.motorY.cw(abs(dy))
 		else:
 			self.motorYG.ccw(abs(dy))
-			self.motorY.ccw(abs(dy))
+			if (self.testing == 1): self.motorY.ccw(abs(dy))
 		self.x = new_x
 		self.y = new_y
 		print ("Coordinates are: " + str(self.x) + ", " + str(self.y))

@@ -30,12 +30,9 @@ Q = 6
 WHITE = True
 BLACK = False
 
-class ChessTable(XYTable):
-    def __init__(self):
-        super(ChessTable, self).__init__()
-        #self.motorX = Motor(0)
-        #self.motorY = Motor(1)
-        #self.magnet = Magnet(0)
+class ChessTable(XYTable):  #testing on when 1
+    def __init__(self, testingOption = 0):
+        super(ChessTable, self).__init__(testingOption)
         self.reedBoard = ReedBoard(0)
         self.x = None  #need to initialize table before knowing 
         self.y = None
