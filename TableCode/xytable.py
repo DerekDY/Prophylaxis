@@ -1,4 +1,5 @@
 from motor import *
+from motor1 import *  #real motor
 from magnet import *
 from Coordinate import Coordinate as C
 import multiprocessing as mp
@@ -18,8 +19,10 @@ To-Do: 			delete graphics objects
 class XYTable:
 
 	def __init__(self):
-		self.motorX = Motor(0)
-		self.motorY = Motor(1)
+		self.motorXG = MotorG(0)
+		self.motorYG = MotorG(1)
+		self.motorX = Motor(21,16,20)
+		self.motorY = Motor(26,19,13)
 		self.magnet = Magnet(0)
 		self.x = None  #need to initialize table before knowing 
 		self.y = None
@@ -27,42 +30,32 @@ class XYTable:
 
 	'''
 	Function: 		self.drawMotors()
-	Author: 		Derek De Young
-	Revision Date: 	9-28-15
-	Last revision: 
 	Description: 	This function will be removed in the actual version
 					it is using graphics.py to give a visual representative
 	Paramaters: 	self (XYTable object)
-	Return: 		graphics are drawn
-	To-Do: 			delete when move over 
+		delete when move over 
 	'''
 	def drawMotors(self):
-		self.motorX.body.draw(self.win)
-		self.motorY.body.draw(self.win)
+		self.motorXG.body.draw(self.win)
+		self.motorYG.body.draw(self.win)
 	
 	
 	'''
 	Function: 		self.initialize_Coord()
-	Author: 		Derek De Young
-	Revision Date: 	9-28-15
-	Last revision: 
 	Description: 	This function must be called to initialize the table at 0,0
-	Paramaters: 	self (XYTable object)
-	Return: 		none (Table is initialized
-	To-Do: 			multi treading instead of every other
 	
 	'''
 	def initialize_Coord(self):
 		#leaving a 5 pixel boarder 
-		#processes = [mp.Process(target=self.motorX.zero, args=()),mp.Process(target=self.motorY.zero, args=())]
+		#processes = [mp.Process(target=self.motorXG.zero, args=()),mp.Process(target=self.motorY.zero, args=())]
 		#start multiprocessing
 		#for p in processes:
 		#	p.start()
 		#end mulitprocessing
 		#for p in processes:
 		#	p.join()
-		self.motorX.zero()
-		self.motorY.zero()
+		self.motorXG.zero()
+		self.motorYG.zero()
 		#initialize the coordinates	
 		self.x = 0
 		self.y = 0
@@ -74,13 +67,8 @@ class XYTable:
 	'''
 	Function: 		self.turnoff()
 	Author: 		Derek De Young
-	Revision Date: 	9-28-15
-	Last revision: 
 	Description: 	This function must be called to power off the board and
-					set the motors back to 0,0 				
-	Paramaters: 	self (XYTable object)
-	Return: 		none (Table is initialized and ready to be powered down)
-	To-Do: 			Finish method
+					set the motors back to 0,0 			
 	
 	'''
 	def turnoff(self):
@@ -90,26 +78,25 @@ class XYTable:
 	
 	'''
 	Function: 		self.moveto()
-	Author: 		Derek De Young
-	Revision Date: 	9-28-15
-	Last revision: 
 	Description: 	This function is called to move the table to a point on 
 					the coordinate system 
 	Paramaters: 	new_x and new_y both int for new coordinate point 
-	Return: 		none (Motors are moved to new location)
-	To-Do: 			Finish method
 	
 	'''	
 	def moveto(self, new_x, new_y):
 		dx = new_x - self.x
 		dy = new_y - self.y 
 		if (dx < 0):
+			self.motorXG.cw(abs(dx))
 			self.motorX.cw(abs(dx))
 		else:
+			self.motorXG.ccw(abs(dx))
 			self.motorX.ccw(abs(dx))
 		if (dy < 0):
+			self.motorYG.cw(abs(dy))
 			self.motorY.cw(abs(dy))
 		else:
+			self.motorYG.ccw(abs(dy))
 			self.motorY.ccw(abs(dy))
 		self.x = new_x
 		self.y = new_y
@@ -118,18 +105,13 @@ class XYTable:
 	
 	'''
 	Function: 		self.grab()
-	Author: 		Derek De Young
-	Revision Date: 	9-28-15
-	Last revision: 
 	Description: 	This function will call magnet.grab to turn on the magnet  				
 	Paramaters: 	self (XYTable object)
-	Return: 		none (magnet is turned on)
-	To-Do: 			delete graphics when ready 
 	
 	'''	
 	def grab(self):
-		self.motorX.body.setFill('red')
-		self.motorY.body.setFill('red')
+		self.motorXG.body.setFill('red')
+		self.motorYG.body.setFill('red')
 		#self.magnet.grab()
 	
 	
@@ -145,8 +127,8 @@ class XYTable:
 	
 	'''	
 	def release(self):
-		self.motorX.body.setFill('')
-		self.motorY.body.setFill('')
+		self.motorXG.body.setFill('')
+		self.motorYG.body.setFill('')
 		#self.magnet.release()
 		
 		 
