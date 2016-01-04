@@ -1,10 +1,10 @@
 from motorGraphics import *
-test = 1
+test = 0
 try:
 	import RPi.GPIO as GPIO
 	from motor import *  #real motor
 except ImportError:
-	test = 0
+	test = 1
 from magnet import *
 from Coordinate import Coordinate as C
 import multiprocessing as mp
@@ -27,7 +27,7 @@ class XYTable:
 		self.testing = testingOption
 		self.motorXG = MotorG(0)
 		self.motorYG = MotorG(1)
-		if (test == 1): 
+		if (test == 0): 
 			self.motorX = Motor(21,16,20) 
 			self.motorY = Motor(26,19,13)
 		self.magnet = Magnet(0)
@@ -95,16 +95,16 @@ class XYTable:
 		dy = new_y - self.y 
 		if (dx < 0):
 			self.motorXG.cw(abs(dx))
-			if (self.testing == 1): self.motorX.cw(abs(dx))
+			if (test == 0): self.motorX.cw(abs(dx))
 		else:
 			self.motorXG.ccw(abs(dx))
-			if (self.testing == 1): self.motorX.ccw(abs(dx))
+			if (test == 0): self.motorX.ccw(abs(dx))
 		if (dy < 0):
 			self.motorYG.cw(abs(dy))
-			if (self.testing == 1): self.motorY.cw(abs(dy))
+			if (test == 0): self.motorY.cw(abs(dy))
 		else:
 			self.motorYG.ccw(abs(dy))
-			if (self.testing == 1): self.motorY.ccw(abs(dy))
+			if (test == 0): self.motorY.ccw(abs(dy))
 		self.x = new_x
 		self.y = new_y
 		print ("Coordinates are: " + str(self.x) + ", " + str(self.y))
