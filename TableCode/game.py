@@ -1,6 +1,8 @@
 from Board import Board
 from InputParser import InputParser
 from AI import AI
+import chess.uci
+import time
 from chessTable import *
 import sys
 import random
@@ -11,10 +13,13 @@ BLACK = False
 class Game:
     def __init__(self, testingOptions = 0): #1 for use without motors
         self.board = Board()
+        self.uciBoard = chess.Board()
         self.table = ChessTable(testingOptions)
         self.playerSide = WHITE
         self.aiDepth = 2
         self.ai = AI(self.board, not self.playerSide, self.aiDepth)
+        self.engine = chess.uci.popen_engine("/Users/derekdeyoung/Desktop/stockfish/Mac/stockfish-7-64")
+        self.engine.uci()
         #deleted
         self.table.drawMotors()  
         self.table.initialize_Coord()  
@@ -35,11 +40,9 @@ class Game:
     def askForDepthOfAI(self):
         depthInput = 2
         try:
-            depthInput = int(input("How deep should the AI look for moves?\n"
-                                   "Warning : values above 3 will be very slow."
-                                   " [n]? "))
+            depthInput = int(input("How long in seconds should the AI look for moves?\n"))
         except:
-            print("Invalid input, defaulting to 2")
+            print("Invalid input, defaulting to 2 sec")
         self.aiDepth = depthInput
 
 
@@ -70,6 +73,7 @@ class Game:
         print()
         print("Making move : " + move.notation)
         self.board.makeChosenMove(move)
+        self.uciBoard.push_san(move.notation)
 
 
     def printPointAdvantage(self):
@@ -82,6 +86,28 @@ class Game:
             self.board.undoLastMove()
             self.board.undoLastMove()
 
+    #convert move from uci to current board moves 
+    def findMove(self, moveFrom, moveTo):
+        pos = self.board.humanCoordToPosition(moveFrom)
+        endPos = self.board.humanCoordToPosition(moveTo)
+        piece = self.board.pieceAtPosition(pos)
+        for move in piece.getPossibleMoves():
+            if move.newPos == endPos:
+                print (move)
+                return move
+        print ("Move Not Found")
+
+    def getUCIEngineMove(self, time):
+        self.engine.position(self.uciBoard)
+        uciMove = self.engine.go(depth=20, ponder = False) # Gets tuple of bestmove and ponder move. movetime=time,
+        uciMove = uciMove[0].uci()
+        moveFrom = uciMove[:2]
+        #print(moveFrom)
+        moveTo = uciMove[2:]
+        #print(moveTo)
+        move = self.findMove(moveFrom, moveTo)
+        return move
+
 
     def startGame(self):
         parser = InputParser(self.board, self.playerSide)
@@ -91,6 +117,7 @@ class Game:
             #print(self.playerSide)
             print()
             print(self.board)
+            #print(self.uciBoard)
             print()
             if self.board.isCheckmate():
                 if self.board.currentSide == self.playerSide:
@@ -141,7 +168,7 @@ class Game:
                 #have multiple options for some of the starting moves -- need to implement a method
                 #to choose between the options at random. Should also go deeper with the starting moves
                 #as it heavily speeds up execution time of the AI
-                if movecount < 4:
+                if movecount < 1:
                     if movecount == 1:
                         #white side initial moves
                         if self.playerSide == BLACK:
@@ -198,7 +225,7 @@ class Game:
                                 if playersMove2.newPos != (3,4):
                                     move = parser.moveForShortNotation('d5') #French Defense / Caro-Kann Continued
                                 else:
-                                    move = self.ai.getBestMove()
+                                    move = self.getUCIEngineMove(self.aiDepth*1000)
                                     move.notation = parser.notationForMove(move) 
                             elif playersMove.oldPos == (4,3) and playersMove.newPos == (3,4):
                                 move = parser.moveForShortNotation('Qxd5') #Scandinavian Defense Continued
@@ -206,13 +233,13 @@ class Game:
                                 if playersMove2.newPos != (3,4):
                                     move = parser.moveForShortNotation('d5') #King's Gambit Defense
                                 else:
-                                    move = self.ai.getBestMove()
+                                    move = self.getUCIEngineMove(self.aiDepth*1000)
                                     move.notation = parser.notationForMove(move)
                             elif playersMove.oldPos == (6,0) and playersMove.newPos == (5,2):
                                 if playersMove2.newPos != (2,5):
                                     move = parser.moveForShortNotation('Nc6') #Ruy Lopex
                                 else:
-                                    move = self.ai.getBestMove()
+                                    move = self.getUCIEngineMove(self.aiDepth*1000)
                                     move.notation = parser.notationForMove(move)
                             else:
                                 move = self.ai.getBestMove()
@@ -228,18 +255,24 @@ class Game:
                             if playersMove.oldPos == (1,7) and playersMove.newPos == (2,5):
                                 move = parser.moveForShortNotation('Bb5') #Ruy Lopex
                             else:
-                                move = self.ai.getBestMove()
+                                move = self.getUCIEngineMove(self.aiDepth*1000)
                                 move.notation = parser.notationForMove(move)
                         else:
-                            move = self.ai.getBestMove()
+                            move = self.getUCIEngineMove(self.aiDepth*1000)
                             move.notation = parser.notationForMove(move)
                             
                         parser.side = self.playerSide  #reset parser side 
                 
                 #following starting moves use the node tree to look for the best move  
                 else:
-                    move = self.ai.getBestMove()
+                    
+                    move = self.getUCIEngineMove(self.aiDepth*1000)
                     move.notation = parser.notationForMove(move)
+                    #print(move.oldPos)
+                    #print(move.newPos)
+
+                    #move = self.ai.getBestMove()
+                    #move.notation = parser.notationForMove(move)
                 
                 #print("move: \n")      #for testing purposes
                 #print(move)            #for testing purposes   
