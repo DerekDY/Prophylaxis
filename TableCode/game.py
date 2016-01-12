@@ -18,8 +18,9 @@ class Game:
         self.playerSide = WHITE
         self.aiDepth = 2
         self.ai = AI(self.board, not self.playerSide, self.aiDepth)
-        self.engine = chess.uci.popen_engine("/Users/derekdeyoung/Desktop/stockfish/Mac/stockfish-7-64")
+        self.engine = chess.uci.popen_engine("stockfish")
         self.engine.uci()
+        self.engine.setoption({"Threads":4})
         #deleted
         self.table.drawMotors()  
         self.table.initialize_Coord()  
@@ -99,8 +100,9 @@ class Game:
 
     def getUCIEngineMove(self, time):
         self.engine.position(self.uciBoard)
-        uciMove = self.engine.go(depth=20, ponder = False) # Gets tuple of bestmove and ponder move. movetime=time,
+        uciMove = self.engine.go(depth=15, ponder = False) # Gets tuple of bestmove and ponder move. movetime=time,
         uciMove = uciMove[0].uci()
+        print(uciMove)
         moveFrom = uciMove[:2]
         #print(moveFrom)
         moveTo = uciMove[2:]
