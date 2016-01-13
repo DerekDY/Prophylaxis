@@ -52,9 +52,6 @@ class King (Piece):
                     queensideCastleBlocked = True
 
             if kingsideCastleBlocked and queensideCastleBlocked:
-                #print("is blocked")
-                #print(kingsideCastleBlocked)
-                #print(queensideCastleBlocked)
                 return
 
             otherSideMoves = \
@@ -63,7 +60,6 @@ class King (Piece):
             for move in otherSideMoves:
                 if move.newPos == self.position:
                     inCheck = True
-                    print("king was put in check")
                     break
                 if move.newPos == self.position + C(1, 0) or \
                    move.newPos == self.position + C(2, 0):
@@ -76,12 +72,9 @@ class King (Piece):
             kingsideRook = self.board.pieceAtPosition(kingsideRookPos) \
                 if self.board.isValidPos(kingsideRookPos) \
                 else None
-            print("kingsideRook.stringRep:")
-            print(kingsideRook.stringRep)
             if kingsideRook and \
                kingsideRook.stringRep == 'R' and \
                kingsideRook.movesMade == 0:
-                print("set king side rook moved to false")
                 kingsideRookMoved = False
 
             queensideRookPos = self.position - C(4, 0)
@@ -94,17 +87,9 @@ class King (Piece):
                 queensideRookMoved = False
 
             if not inCheck:
-                print("test if not in check")
-                print("kingsideRookMoved:")
-                print(kingsideRookMoved)
-                print("kingsideCastleBlocked:")
-                print(kingsideCastleBlocked)
-                print("kingsideCastleCheck:")
-                print(kingsideCastleCheck)
                 if not kingsideCastleBlocked and \
                    not kingsideCastleCheck and \
                    not kingsideRookMoved:
-                    print("should be able to castle")
                     move = Move(self, self.position + C(2, 0))
                     rookMove = Move(kingsideRook, self.position + C(1, 0))
                     move.specialMovePiece = \
@@ -122,4 +107,5 @@ class King (Piece):
                         self.board.pieceAtPosition(queensideRookPos)
                     move.queensideCastle = True
                     move.rookMove = rookMove
+                    move.rookMovePos = self.position - C(1, 0)
                     yield move
