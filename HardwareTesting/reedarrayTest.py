@@ -1,11 +1,11 @@
 '''
-File: arrayTest.py
+File: reedarrayTest.py
 Description: This file analyzes a reed switch array connected via
     Raspberry Pi GPIO, and creates and prints a matrix containing 0s
     for open reed switches and 1s for closed reed switches in the array
 
 Authors:  Alexis Bonnema and Paul Brouwer
-Purpose:  ENGR-325L-A Final Design Project
+Purpose:  Prophylaxis Senior Design
 Date:     12/09/15
 '''
 
