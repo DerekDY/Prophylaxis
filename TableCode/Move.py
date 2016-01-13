@@ -1,3 +1,5 @@
+from Coordinate import Coordinate as C
+
 class Move:
 
     def __init__(self, piece, newPos, pieceToCapture=None):
@@ -9,6 +11,8 @@ class Move:
         self.promotion = False
         self.pessant = False
         self.stalemate = False
+
+        self.rookMovePos = C(0,0)
 
         self.piece = piece
         self.oldPos = piece.position

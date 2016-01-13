@@ -103,6 +103,8 @@ class Game:
         uciMove = self.engine.go(depth=15, ponder = False) # Gets tuple of bestmove and ponder move. movetime=time,
         uciMove = uciMove[0].uci()
         print(uciMove)
+        if (uciMove == 'e8g8' or uciMove == 'e8c8' or uciMove == 'e1g1' or uciMove == 'e1c1'):
+            print( "Move is a castle")
         moveFrom = uciMove[:2]
         #print(moveFrom)
         moveTo = uciMove[2:]

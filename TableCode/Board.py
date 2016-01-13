@@ -44,7 +44,7 @@ Q = 6
 
 class Board:
 
-    def __init__(self, mateInOne=False, castleBoard=False,
+    def __init__(self, mateInOne=False, castleBoard=True,
                  pessant=False, promotion=False, testing= 0):
         self.pieces = []
         self.whiteCaptured = []
@@ -56,7 +56,7 @@ class Board:
         self.checkmate = False
 
         #testing 1: normal board 
-        if not mateInOne and not castleBoard and not pessant and not promotion and testing < 2:
+        if not mateInOne and not pessant and not promotion and testing < 2:
             self.pieces.extend([Rook(self, BLACK, C(0, 7), 0),
                                 Knight(self, BLACK, C(1, 7), 0),
                                 Bishop(self, BLACK, C(2, 7), 0),
@@ -291,7 +291,7 @@ class Board:
             return "0-0-0"
 
         if move.kingsideCastle:
-            return "0-0"
+            return "O-O"
 
         if pieceToMove.stringRep != 'p':
             notation += pieceToMove.stringRep

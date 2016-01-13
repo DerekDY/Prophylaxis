@@ -28,30 +28,35 @@ void setup() {
 }
 
 void moveF(int steps){
+  String outputString;
   for (int i=0; i < steps; i++){
-    Serial.println("HI DEREK");
+    outputString += "1";
   }
+  Serial.println(outputString);
 }
 
 void loop() {
   // print the string when a newline arrives:
   if (stringComplete) {
     if (inputString == "who\n"){
-      Serial.println("1");
+      Serial.println("#1");
     }
     else if (inputString.substring(0,1) == "f"){
       String number = inputString.substring(1);
-      Serial.println(number);
+      //Serial.println(number);
       int steps = number.toInt();
-      Serial.println(steps);
+      //Serial.println(steps);
       moveF(steps);
     }
     else { 
       Serial.println(inputString); 
       // clear the string:
-      inputString = "";
-      stringComplete = false;
+      
+      
     }
+    inputString = "";
+    stringComplete = false;
+    Serial.flush();
   }
 }
 
