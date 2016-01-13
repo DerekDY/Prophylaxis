@@ -1,3 +1,14 @@
+'''
+File: arrayTest.py
+Description: This file analyzes a reed switch array connected via
+    Raspberry Pi GPIO, and creates and prints a matrix containing 0s
+    for open reed switches and 1s for closed reed switches in the array
+
+Authors:  Alexis Bonnema and Paul Brouwer
+Purpose:  ENGR-325L-A Final Design Project
+Date:     12/09/15
+'''
+
 #language:Python
 # External module imports
 import RPi.GPIO as GPIO
@@ -48,13 +59,15 @@ while rowIdx < NUM_ROWS:
     rowIdx += 1
 
 # Print matrix
-print (' '),
+print ' ',
 for i in range(len(resultsM[1])):
-    print( i),
-print()
+    print i,
+print
 for i, element in enumerate(resultsM):
-    print (i),
+    print i,
     for item in element:
-        print (item),
+        print item,
     print
+	
+# Print message that code is finished
 print("Done")
