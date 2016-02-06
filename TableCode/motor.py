@@ -1,69 +1,50 @@
 #language:Python
 # External module imports
 
-import RPi.GPIO as GPIO
 import time
-
-rotation = 1998
-maxFreq = 8000
-unitRotations = 1
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
+import serial
+steps = 2000
 
 class Motor:
 
-	def __init__(self, step, dir, cnt):
-		print ("Motor was made")
-		GPIO.setup(step, GPIO.OUT)
-		GPIO.setup(dir, GPIO.OUT)
-		GPIO.setup(cnt, GPIO.IN)
-		self.frequency = 500
-		self.pcnt = cnt
-		self.dir = dir
-		self.pstep = GPIO.PWM(step, self.frequency)
-		GPIO.add_event_detect(self.pcnt, GPIO.RISING)
+	def __init__(self, usb):
+		#clk is the number of the clock pin
+		#dir is the number of the direction pin
+		#usb is the number of the USB identifier found in the '/dev/ttyUSB#' string
+		#XY is the orientation of the motor
+		print("Now I'm actually making a motor")
+		self.serialPort = serial.Serial('/dev/ttyUSB' + str(usb), 9600)
+		print("The serial connection was made")
+		time.sleep(1.5)
+		self.usb = usb
 
+	def waitfordone(self):
+		while (True):
+			serialmsg = self.serialPort.readline().decode('UTF-8')
+			#print(serialmsg)
+			if ("Done" in serialmsg):
+				return 0 # no error
+			elif ("Zero Error" in serialmsg):
+				return 1 #error
 
-	def cw(self, dist):
-		GPIO.output(self.dir, GPIO.LOW) 
-		steps = dist * unitRotations * rotation
-		count = 0
-		freq = self.frequency
-		self.pstep.start(25) 
-		while(count < steps):
-			if(GPIO.event_detected(self.pcnt)):	
-				if(count > steps - 249):
-					freq -= 10
-				elif (freq < maxFreq):
-					freq+= 10
-				self.pstep.ChangeFrequency(freq)
-				count += 1
-		print(count)
-		print(steps)
-		self.pstep.stop()
-		
+	def move(self, distance):
+		fb = "f" if (distance > 0) else "b"
+		print("I MOVED THE HELL OUT OF THAT PIECE")
+		self.serialPort.write(bytes(fb+str(abs(distance*steps))+"\n", 'UTF-8'))
+		if (self.waitfordone() == 1):
+			print("Error - Reseting Table")
+			zero()
 			
-			
-	def ccw(self, dist):
-		GPIO.output(self.dir, GPIO.HIGH)
-		steps = dist * unitRotations  * rotation
-		count = 0
-		freq = self.frequency
-		self.pstep.start(25) 
-		while(count < steps):
-			if(GPIO.event_detected(self.pcnt)):
-				if(count > steps - 249):
-					freq -= 10
-				elif (freq < maxFreq):
-					freq += 10
-				self.pstep.ChangeFrequency(freq)
-				count += 1
-		print(count)
-		print(steps)
-		self.pstep.stop()
-				
-			
-	
+	def zero(self):
+		print("Zeroing")
+		self.serialPort.write(bytes("zero\n", 'UTF-8'))
+		self.waitfordone()
+
+	def who(self):
+		print("Telling them who I am")
+		self.serialPort.write(bytes("who\n", 'UTF-8'))
+		return self.serialPort.readline().decode('UTF-8')
+
 
 
 	

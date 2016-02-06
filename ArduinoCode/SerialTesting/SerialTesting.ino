@@ -1,21 +1,13 @@
 /*
-  Serial Event example
- 
- When new serial data arrives, this sketch adds it to a String.
- When a newline is received, the loop prints the string and 
- clears it.
- 
- A good test for this is to try it with a GPS receiver 
- that sends out NMEA 0183 sentences. 
- 
- Created 9 May 2011
- by Tom Igoe
- 
- This example code is in the public domain.
- 
- http://www.arduino.cc/en/Tutorial/SerialEvent
- 
+Serial Comunication witht the motors 
  */
+
+#define clkPin 2
+#define dirPin 3
+#define initSpeed 800 // lower is faster
+#define maxSpeed 100    // lower is faster
+#define limitPin 7
+#define fiveVolt = 27
 
 String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
@@ -23,36 +15,110 @@ boolean stringComplete = false;  // whether the string is complete
 void setup() {
   // initialize serial:
   Serial.begin(9600);
+  //pinMode(fiveVolt, OUTPUT);
+  //digitalWrite(fiveVolt, HIGH);
+  pinMode(clkPin, OUTPUT); //5v pin
+  pinMode(dirPin, OUTPUT); //5v pinf299
+  pinMode(limitPin, INPUT); //limit switch 
+  digitalWrite(dirPin, LOW);
   // reserve 200 bytes for the inputString:
   inputString.reserve(200);
 }
 
 void moveF(int steps){
-  String outputString;
-  for (int i=0; i < steps; i++){
-    outputString += "1";
+  long speedup = 0;
+  boolean errorFound = false;
+  digitalWrite(dirPin, HIGH);
+  for(long i = 0; i < steps; i++){
+    if (digitalRead(limitPin) == HIGH){
+      errorFound = true;
+      Serial.println("Zero Error");
+      break;
+    }
+    digitalWrite(clkPin, HIGH);  
+    delayMicroseconds(initSpeed - speedup);        //10000 hz       
+    digitalWrite(clkPin, LOW);   
+    delayMicroseconds(initSpeed - speedup);
+    if ((i < ((initSpeed - maxSpeed))) && steps > (initSpeed - maxSpeed) * 2){
+      speedup += 1;
+    }
+    else if ((i >= (initSpeed - maxSpeed)) && (i > (steps-(initSpeed - maxSpeed))) && (steps > (initSpeed - maxSpeed)*2)){
+      speedup -= 1; 
+    }
   }
-  Serial.println(outputString);
+  if(!errorFound){
+    Serial.println("Done");
+  }
 }
+
+void moveB(int steps){
+  long speedup = 0;
+  boolean errorFound = false;
+  digitalWrite(dirPin, LOW);
+  for(long i = 0; i < steps; i++){
+    if (digitalRead(limitPin) == HIGH){
+      errorFound = true;
+      Serial.println("Zero Error");
+      break;
+    }
+    digitalWrite(clkPin, HIGH);  
+    delayMicroseconds(initSpeed - speedup);        //10000 hz       
+    digitalWrite(clkPin, LOW);   
+    delayMicroseconds(initSpeed - speedup);
+    if ((i < ((initSpeed - maxSpeed))) && steps > (initSpeed - maxSpeed) * 2){
+      speedup += 1;
+    }
+    else if ((i >= (initSpeed - maxSpeed)) && (i > (steps-(initSpeed - maxSpeed))) && (steps > (initSpeed - maxSpeed)*2)){
+      speedup -= 1; 
+    }
+  }
+  if(!errorFound){
+    Serial.println("Done");
+  }
+}
+
+void zero(){
+  digitalWrite(dirPin, LOW);
+  while (true) {
+    if (digitalRead(limitPin) == HIGH){
+      break;
+    }
+    digitalWrite(clkPin, HIGH);  
+    delayMicroseconds(initSpeed);        //10000 hz       
+    digitalWrite(clkPin, LOW);   
+    delayMicroseconds(initSpeed);
+  }
+  Serial.println("Done");
+}
+
+
 
 void loop() {
   // print the string when a newline arrives:
   if (stringComplete) {
     if (inputString == "who\n"){
-      Serial.println("#1");
+      Serial.println("X");
     }
     else if (inputString.substring(0,1) == "f"){
       String number = inputString.substring(1);
       //Serial.println(number);
-      int steps = number.toInt();
+      long steps = number.toInt();
       //Serial.println(steps);
       moveF(steps);
+    }
+    else if (inputString.substring(0,1) == "b"){
+      String number = inputString.substring(1);
+      //Serial.println(number);
+      long steps = number.toInt();
+      //Serial.println(steps);
+      moveB(steps);
+    }
+    else if (inputString == "zero\n"){
+      zero();
     }
     else { 
       Serial.println(inputString); 
       // clear the string:
-      
-      
     }
     inputString = "";
     stringComplete = false;

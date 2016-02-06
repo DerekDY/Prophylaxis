@@ -1,16 +1,19 @@
 import time
 import serial
-ser = serial.Serial('/dev/ttyUSB0', 9600) #make connection
+ser = serial.Serial('/dev/ttyUSB1', 9600) #make connection
 
 x = 0
 y = 0
 steps = 2000
 
 def waitfordone(serial):
-	done = False
-	while (not done):
-		if ("Done" in serial.readline().decode('utf-8')):
-			done = True
+	while (True):
+		serialmsg = serial.readline().decode('UTF-8')
+		print(serialmsg)
+		if ("Done" in serialmsg):
+			return 0 # no error
+		elif ("Zero Error" in serialmsg):
+			return 1 #error
 
 
 
@@ -23,17 +26,34 @@ def goto(newX, newY, carying):
 		ser.write(bytes(xfb+str(abs(dx*steps))+"\n", 'UTF-8'))
 		#ser2.write(bytes(yfb+str(abs(dy*steps))+"\n", 'UTF-8'))
 		print("Other Motor Running")
-		waitfordone(ser)
+		if (waitfordone(ser) == 1):
+			print("Error - Reseting Table")
+			zero()
+	
 	else:
 		ser.write(bytes(xfb+str(abs(dx*steps))+"\n", 'UTF-8'))
-		waitfordone(ser)
+		if (waitfordone(ser) == 1):
+			print("Error - Reseting Table")
+			zero()
 		#ser2.write(bytes(yfb+str(abs(dy*steps))+"\n", 'UTF-8'))
-		#waitfordone(ser2)
+		#if (waitfordone(ser) == 1):
+			#print("Error - Reseting Table")
+			#zero()
 		print("Other Motor Sarting")
 		time.sleep(1)
 		print("Other Motor Done")
+	x = newX
+	y = newY
 
+def zero():
+	print("Zeroing")
+	ser.write(bytes("zero\n", 'UTF-8'))
+	print(waitfordone(ser))
+	x = 0
+	y = 0
 
+time.sleep(1.5)
+zero()
 while True:
 	print("At: " + str(x)+ ","+str(y))
 	newX = int(input("New X: "))
@@ -41,6 +61,5 @@ while True:
 	cary = input("Carying? (y/n): ")
 	carying = True if (cary.lower() == "y") else False
 	goto(newX, newY, carying)
-	x = newX
-	y = newY
+	
 	

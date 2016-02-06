@@ -1,10 +1,6 @@
 from motorGraphics import *
-test = 0
-try:
-	import RPi.GPIO as GPIO
-	from motor import *  #real motor
-except ImportError:
-	test = 1
+from motor import *  #real motor
+
 from magnet import *
 from Coordinate import Coordinate as C
 import multiprocessing as mp
@@ -12,8 +8,8 @@ import multiprocessing as mp
 '''
 Class: 			XYTable
 Author: 		Derek De Young
-Revision Date: 	9-28-15
-Last revision:	
+Revision Date: 		9-28-15
+Last revision:		2-6-2016
 Description: 	This class encapsulates the 2 motors and magnets of the 
 				XY table into one class				
 Paramaters: 	self (XYTable object)
@@ -27,9 +23,18 @@ class XYTable:
 		self.testing = testingOption
 		self.motorXG = MotorG(0)
 		self.motorYG = MotorG(1)
-		if (test == 0): 
-			self.motorX = Motor(21,16,20) 
-			self.motorY = Motor(26,19,13)
+		if (testingOption == 0): 
+			motor1 = Motor(0) 
+			motor2 = Motor(1)
+			print ("I'm making a motor")
+			if (motor1.who() == "X"):
+				self.motorX = motor1
+				print ("I MADE ONE MOTOR")
+				self.motorY = motor2
+			else:
+				self.motorX = motor2
+				self.motorY = motor1
+			print("WE MADE THE MOTORS")
 		self.magnet = Magnet(0)
 		self.x = None  #need to initialize table before knowing 
 		self.y = None
@@ -63,6 +68,10 @@ class XYTable:
 		#	p.join()
 		self.motorXG.zero()
 		self.motorYG.zero()
+		if (self.testing == 0):
+			print("Zero that ish?")
+			self.motorX.zero()
+			self.motorY.zero()
 		#initialize the coordinates	
 		self.x = 0
 		self.y = 0
@@ -95,16 +104,15 @@ class XYTable:
 		dy = new_y - self.y 
 		if (dx < 0):
 			self.motorXG.cw(abs(dx))
-			if (test == 0): self.motorX.cw(abs(dx))
 		else:
 			self.motorXG.ccw(abs(dx))
-			if (test == 0): self.motorX.ccw(abs(dx))
 		if (dy < 0):
 			self.motorYG.cw(abs(dy))
-			if (test == 0): self.motorY.cw(abs(dy))
 		else:
 			self.motorYG.ccw(abs(dy))
-			if (test == 0): self.motorY.ccw(abs(dy))
+		if (self.testing == 0):
+			self.motorX.move(dx)
+			self.motorY.move(dy)
 		self.x = new_x
 		self.y = new_y
 		print ("Coordinates are: " + str(self.x) + ", " + str(self.y))

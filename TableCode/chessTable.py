@@ -32,6 +32,7 @@ BLACK = False
 
 class ChessTable(XYTable):  #testing on when 1
     def __init__(self, testingOption = 0):
+        print("I'm making a chessTable")
         super(ChessTable, self).__init__(testingOption)
         self.reedBoard = ReedBoard(0)
         self.x = None  #need to initialize table before knowing 
@@ -49,8 +50,14 @@ class ChessTable(XYTable):  #testing on when 1
         column = space[0]
         #print(column)
         row = 7-space[1]
-        print(row)
-        self.moveto(column, row)
+        #print(row)
+        dx = abs(self.x - column)
+        dy = abs(self.y - row)
+        if (dx == dy or not carrying):
+                self.moveto(column, row)
+        else:
+                self.moveto(self.x, row)
+                self.moveto(column, self.y)
         #print (str(column) + " & " + str(row))
 
     def splitBoard(self):
