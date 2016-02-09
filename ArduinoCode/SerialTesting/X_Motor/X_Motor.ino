@@ -97,7 +97,7 @@ void loop() {
   // print the string when a newline arrives:
   if (stringComplete) {
     if (inputString == "who\n"){
-      Serial.println("Y");
+      Serial.println("X");
     }
     else if (inputString.substring(0,1) == "f"){
       String number = inputString.substring(1);

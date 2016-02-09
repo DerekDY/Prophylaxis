@@ -102,14 +102,14 @@ class XYTable:
 	def moveto(self, new_x, new_y):
 		dx = new_x - self.x
 		dy = new_y - self.y 
-		if (dx < 0):
-			self.motorXG.cw(abs(dx))
-		else:
-			self.motorXG.ccw(abs(dx))
-		if (dy < 0):
-			self.motorYG.cw(abs(dy))
-		else:
-			self.motorYG.ccw(abs(dy))
+		#if (dx < 0):
+			#self.motorXG.cw(abs(dx)/2.25)
+		#else:
+			#self.motorXG.ccw(abs(dx)/2.25)
+		#if (dy < 0):
+			#self.motorYG.cw(abs(dy)/2.25)
+		#else:
+			#self.motorYG.ccw(abs(dy)/2.25)
 		if (self.testing == 0):
 			self.motorX.move(dx)
 			self.motorY.move(dy)

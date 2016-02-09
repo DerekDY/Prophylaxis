@@ -4,6 +4,7 @@
 import time
 import serial
 steps = 2000
+rotationPerInch = 1272/2000  #every 4th number can be multiplied by 2.25 and be whole
 
 class Motor:
 
@@ -29,8 +30,8 @@ class Motor:
 
 	def move(self, distance):
 		fb = "f" if (distance > 0) else "b"
-		print("I MOVED THE HELL OUT OF THAT PIECE")
-		self.serialPort.write(bytes(fb+str(abs(distance*steps))+"\n", 'UTF-8'))
+		#print("I MOVED THE HELL OUT OF THAT PIECE")
+		self.serialPort.write(bytes(fb+str(abs(distance*steps*rotationPerInch))+"\n", 'UTF-8'))
 		if (self.waitfordone() == 1):
 			print("Error - Reseting Table")
 			zero()

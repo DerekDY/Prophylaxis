@@ -27,6 +27,8 @@ N = 2
 R = 4
 Q = 6
 
+inchesPerSpace = 2.25
+
 WHITE = True
 BLACK = False
 
@@ -54,10 +56,10 @@ class ChessTable(XYTable):  #testing on when 1
         dx = abs(self.x - column)
         dy = abs(self.y - row)
         if (dx == dy or not carrying):
-                self.moveto(column, row)
+                self.moveto(column*inchesPerSpace, row*inchesPerSpace)
         else:
-                self.moveto(self.x, row)
-                self.moveto(column, self.y)
+                self.moveto(self.x, row*inchesPerSpace)
+                self.moveto(column*inchesPerSpace, self.y)
         #print (str(column) + " & " + str(row))
 
     def splitBoard(self):
@@ -131,7 +133,7 @@ class ChessTable(XYTable):  #testing on when 1
                         #check for piece capture
                         print(blackCaptured)
                         print(whiteCaptured)
-                        print(blackCaptured[0][0])
+                        #print(blackCaptured[0][0])
                         if captured.side == WHITE:
                             if captured.stringRep == "P":
                                 if whiteCaptured[7 - captured.number][0]== 1:
