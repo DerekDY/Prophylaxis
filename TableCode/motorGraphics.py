@@ -1,5 +1,6 @@
 from graphics import *
 from random import randint
+from time import sleep
 
 class MotorG:
 
@@ -22,6 +23,7 @@ class MotorG:
 				self.body.move(1, 0)
 			else:
 				self.body.move(0, 1)
+			sleep(.01)
 			
 			
 	def cw(self, dist):
@@ -30,6 +32,7 @@ class MotorG:
 				self.body.move(-1, 0)
 			else:
 				self.body.move(0, -1)
+			sleep(.01)
 			
 	def getCoord(self):
 		if (self.direction == 0):

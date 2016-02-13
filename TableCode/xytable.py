@@ -3,7 +3,8 @@ from motor import *  #real motor
 
 from magnet import *
 from Coordinate import Coordinate as C
-import multiprocessing as mp
+from subprocess import call
+from multiprocessing import Process
 
 '''
 Class: 			XYTable
@@ -58,20 +59,19 @@ class XYTable:
 	
 	'''
 	def initialize_Coord(self):
-		#leaving a 5 pixel boarder 
-		#processes = [mp.Process(target=self.motorXG.zero, args=()),mp.Process(target=self.motorY.zero, args=())]
-		#start multiprocessing
-		#for p in processes:
-		#	p.start()
-		#end mulitprocessing
-		#for p in processes:
-		#	p.join()
 		self.motorXG.zero()
 		self.motorYG.zero()
 		if (self.testing == 0):
+
 			print("Zero that ish?")
-			self.motorX.zero()
-			self.motorY.zero()
+			xProcess = Process(target=self.motorX.zero, args=())
+			yProcess = Process(target=self.motorY.zero, args=())
+			xProcess.start()
+			yProcess.start()
+			xProcess.join()
+			yProcess.join()
+			#self.motorX.zero()
+			#self.motorY.zero()
 		#initialize the coordinates	
 		self.x = 0
 		self.y = 0
@@ -102,17 +102,25 @@ class XYTable:
 	def moveto(self, new_x, new_y):
 		dx = new_x - self.x
 		dy = new_y - self.y 
-		#if (dx < 0):
-			#self.motorXG.cw(abs(dx)/2.25)
-		#else:
-			#self.motorXG.ccw(abs(dx)/2.25)
-		#if (dy < 0):
-			#self.motorYG.cw(abs(dy)/2.25)
-		#else:
-			#self.motorYG.ccw(abs(dy)/2.25)
+		dxg = int(new_x/2.25 - self.x/2.25)
+		dyg = int(new_y/2.25 - self.y/2.25)
+		if (dx < 0):
+			self.motorXG.cw(abs(dxg))
+		else:
+			self.motorXG.ccw(abs(dxg))
+		if (dy < 0):
+			self.motorYG.cw(abs(dyg))
+		else:
+			self.motorYG.ccw(abs(dyg))
 		if (self.testing == 0):
-			self.motorX.move(dx)
-			self.motorY.move(dy)
+			xProcess = Process(target=self.motorX.move, args=(dx,))
+			yProcess = Process(target=self.motorY.move, args=(dy,))
+			xProcess.start()
+			yProcess.start()
+			xProcess.join()
+			yProcess.join()
+			#self.motorX.move(dx)
+			#self.motorY.move(dy)
 		self.x = new_x
 		self.y = new_y
 		print ("Coordinates are: " + str(self.x) + ", " + str(self.y))

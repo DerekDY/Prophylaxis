@@ -37,8 +37,8 @@ class ChessTable(XYTable):  #testing on when 1
         print("I'm making a chessTable")
         super(ChessTable, self).__init__(testingOption)
         self.reedBoard = ReedBoard(0)
-        self.x = None  #need to initialize table before knowing 
-        self.y = None
+        self.row = 0
+        self.column = 0
         self.win = GraphWin('XY Table Testing', 310, 210)
         self.lightsW = "lights"
         self.lightsB = "lights"
@@ -47,20 +47,31 @@ class ChessTable(XYTable):  #testing on when 1
         self.playableBoard = [[0 for x in range(8)] for y in range(8)]
 		#self.boardRep = [[]]
 
-    def goto(self, space, carrying):
-        #print("MADE IT TO GOTO IN TABLE")
-        column = space[0]
-        #print(column)
-        row = 7-space[1]
-        #print(row)
-        dx = abs(self.x - column)
-        dy = abs(self.y - row)
-        if (dx == dy or not carrying):
-                self.moveto(column*inchesPerSpace, row*inchesPerSpace)
+    def goto(self, space, carrying, offset):
+        newColumn = space[0]
+        newRow = 7-space[1]
+        dx = abs(self.column - newColumn)
+        dy = abs(self.row - newRow)
+        offsetX = .5 if dx > 1 else -.5
+        offsetY = -.5 if dy > 1 else .5
+        
+        
+        #Moving on a diagonal
+        if (dx == dy or not carrying or not offset):
+                self.moveto(newColumn*inchesPerSpace, newRow*inchesPerSpace)
+        #Moving on lines
+        elif (offset):
+		        self.moveto(self.x + (offsetX*inchesPerSpace) , self.y)	#move over .5 space in X
+		        self.moveto(self.x, (newRow*inchesPerSpace)+(offsetY*inchesPerSpace))	#move to .5 off space in Y
+		        self.moveto(newColumn*inchesPerSpace, self.y) #move to correct X
+		        self.moveto(self.x, newRow*inchesPerSpace) #move to correct Y 
+		#Moving in Y then in X	
         else:
-                self.moveto(self.x, row*inchesPerSpace)
-                self.moveto(column*inchesPerSpace, self.y)
+                self.moveto(self.x, newRow*inchesPerSpace)
+                self.moveto(newColumn*inchesPerSpace, self.y)
         #print (str(column) + " & " + str(row))
+        self.row = newRow
+        self.column = newColumn
 
     def splitBoard(self):
         fullBoard = self.reedBoard.getBoard() #board from reed switches
@@ -223,12 +234,17 @@ class ChessTable(XYTable):  #testing on when 1
                     capturedspace = C(10, 7-(Q + number))
                 elif letter == "B":
                     capturedspace = C(10, 7-(B + number))
-            self.goto(secondSpace, False)
+            self.goto(secondSpace, False, False)
             self.grab()
-            self.goto(capturedspace, True)
+            self.goto(capturedspace, True, True)
             self.release()
-
-        self.goto(firstSpace, False)
-        self.grab()
-        self.goto(secondSpace, True)
-        self.release()
+        if(move.piece.stringRep == 'N'):
+            self.goto(firstSpace, False, False)
+            self.grab()
+            self.goto(secondSpace, True, True)
+            self.release()
+        else:
+            self.goto(firstSpace, False, False)
+            self.grab()
+            self.goto(secondSpace, True, False)
+            self.release()
