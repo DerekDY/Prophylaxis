@@ -47,3 +47,14 @@ class ReedBoard:
 			
 	def getBoard(self):
 		return self.currentBoard
+		
+	def printBoard(self):
+		print ' ',
+		for i in range(len(self.currentBoard[0])):
+			print i,
+		print
+		for i, element in enumerate(self.currentBoard):
+			print i,
+			for item in element:
+				print item,
+			print
