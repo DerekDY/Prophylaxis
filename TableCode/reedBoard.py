@@ -22,7 +22,10 @@ class ReedBoard:
 	def testingInput(self, testArray):
 		self.currentBoard = testArray
 
-	def updateBoard(self):
+	#def updateBoard(self):
+
+			
+	def getBoard(self):
 		# start testing at column 0
 		cIdx = 0
 		# loop until every column is tested
@@ -44,10 +47,13 @@ class ReedBoard:
 					self.currentBoard[rIdx][cIdx] = 0
 			# increment to test next column
 			cIdx += 1
-			
-	def getBoard(self):
+			###
+			# for testing
+			#print(self.currentBoard)
+			###
 		return self.currentBoard
 		
+'''
 	def printBoard(self):
 		print ' ',
 		for i in range(len(self.currentBoard[0])):
@@ -58,3 +64,4 @@ class ReedBoard:
 			for item in element:
 				print item,
 			print
+'''
