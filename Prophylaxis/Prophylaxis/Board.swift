@@ -97,6 +97,9 @@ class Board: NSObject, NSCopying {
                 break
             }
         }
+        if(!kingFound){
+            print("KING NOT FOUNDDDDDD!!!!")
+        }
         for y in 0...7{
             for x in 0...7{
                 let currentSpace = boardSpaces[x][y]
@@ -294,8 +297,9 @@ class Board: NSObject, NSCopying {
         }
         
         let copy = Board(boardspaces: newSpaces)
+        copy.whiteInCheck = self.whiteInCheck
+        copy.blackInCheck = self.blackInCheck
         return copy
-        
     }
     
 }

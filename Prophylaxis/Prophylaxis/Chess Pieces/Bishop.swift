@@ -43,6 +43,21 @@ class Bishop: ChessPiece {
             let tempTarget = tempBoard.boardSpaces[target.y][target.x]
             let tempPiece = tempBoard.boardSpaces[currentSpace.y][currentSpace.x].getPiece()
             tempBoard.move(tempPiece, space: tempTarget, piecetotake: tempTarget.getPiece())
+            var opColor = PieceColor.White
+            if startingPiece.pieceColor == PieceColor.White{
+                opColor = PieceColor.Black
+            }
+            if(boardInCheck){
+                if startingPiece.pieceColor == PieceColor.White{
+                    tempBoard.whiteInCheck = false
+                }else{
+                    tempBoard.blackInCheck = false
+                }
+                
+            }
+            //            if tempBoard.boardInCheck(opColor){
+            //                print("This is working")
+            //            }
             if tempBoard.boardInCheck(startingPiece.pieceColor){
                 return !validMove
             }else{
@@ -55,15 +70,24 @@ class Bishop: ChessPiece {
             let tempTarget = tempBoard.boardSpaces[target.y][target.x]
             let tempPiece = tempBoard.boardSpaces[currentSpace.y][currentSpace.x].getPiece()
             tempBoard.move(tempPiece, space: tempTarget, piecetotake: tempTarget.getPiece())
-            if tempBoard.boardInCheck(startingPiece.pieceColor){
-                return !validMove
+            if let capturedPiece = target.getPiece(){
+                if capturedPiece.stringRep == "K"{
+                    return validMove
+                }else if tempBoard.boardInCheck(startingPiece.pieceColor){
+                    return !validMove
+                }else{
+                    return validMove
+                }
             }else{
-                return validMove
+                if tempBoard.boardInCheck(startingPiece.pieceColor){
+                    return !validMove
+                }else{
+                    return validMove
+                }
             }
             
-        }else{
-            return validMove
         }
+        return validMove
 
     }
     
