@@ -1,6 +1,6 @@
 from xytable import *
 from Move import *
-from reedBoard import *
+#from reedBoard import *
 
 '''
 Class: 			chessTable
@@ -36,7 +36,7 @@ class ChessTable(XYTable):  #testing on when 1
     def __init__(self, testingOption = 0):
         print("I'm making a chessTable")
         super(ChessTable, self).__init__(testingOption)
-        self.reedBoard = ReedBoard(0)
+        #self.reedBoard = ReedBoard(0)
         self.row = 0
         self.column = 0
         self.win = GraphWin('XY Table Testing', 310, 210)
@@ -54,8 +54,6 @@ class ChessTable(XYTable):  #testing on when 1
         dy = abs(self.row - newRow)
         offsetX = .5 if dx > 1 else -.5
         offsetY = -.5 if dy > 1 else .5
-        
-        
         #Moving on a diagonal
         if (dx == dy or not carrying or not offset):
                 self.moveto(newColumn*inchesPerSpace, newRow*inchesPerSpace)

@@ -1,3 +1,5 @@
+import RPi.GPIO as GPIO
+
 class ReedBoard:
 
 	# assumes decoder for columns

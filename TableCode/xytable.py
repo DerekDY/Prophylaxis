@@ -1,6 +1,5 @@
 from motorGraphics import *
 from motor import *  #real motor
-
 from magnet import *
 from Coordinate import Coordinate as C
 from subprocess import call
@@ -27,15 +26,22 @@ class XYTable:
 		if (testingOption == 0): 
 			motor1 = Motor(0) 
 			motor2 = Motor(1)
-			print ("I'm making a motor")
-			if (motor1.who() == "X"):
+			#print ("I'm making a motor")
+			#print("Who is USB0")
+			print(motor1.who())
+			#print("Who is USB1")
+			print(motor2.who())
+			if (motor1.who().strip() == "X"):
 				self.motorX = motor1
-				print ("I MADE ONE MOTOR")
+				#print ("I MADE USB0 MOTOR X")
 				self.motorY = motor2
+				#print ("I MADE USB1 MOTOR Y")
 			else:
 				self.motorX = motor2
+				#print ("I MADE USB1 MOTOR X")
 				self.motorY = motor1
-			print("WE MADE THE MOTORS")
+				#print ("I MADE USB0 MOTOR Y")
+			#print("WE MADE THE MOTORS")
 		self.magnet = Magnet(0)
 		self.x = None  #need to initialize table before knowing 
 		self.y = None
@@ -62,8 +68,7 @@ class XYTable:
 		self.motorXG.zero()
 		self.motorYG.zero()
 		if (self.testing == 0):
-
-			print("Zero that ish?")
+			#print("Zero that ish?")
 			xProcess = Process(target=self.motorX.zero, args=())
 			yProcess = Process(target=self.motorY.zero, args=())
 			xProcess.start()

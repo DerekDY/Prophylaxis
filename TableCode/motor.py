@@ -13,9 +13,9 @@ class Motor:
 		#dir is the number of the direction pin
 		#usb is the number of the USB identifier found in the '/dev/ttyUSB#' string
 		#XY is the orientation of the motor
-		print("Now I'm actually making a motor")
+		#print("Now I'm actually making a motor")
 		self.serialPort = serial.Serial('/dev/ttyUSB' + str(usb), 9600)
-		print("The serial connection was made")
+		#print("The serial connection was made")
 		time.sleep(1.5)
 		self.usb = usb
 
@@ -30,19 +30,19 @@ class Motor:
 
 	def move(self, distance):
 		fb = "f" if (distance > 0) else "b"
-		#print("I MOVED THE HELL OUT OF THAT PIECE")
+		#print("I MOVED THE CRAP OUT OF THAT PIECE")
 		self.serialPort.write(bytes(fb+str(abs(distance*steps*rotationPerInch))+"\n", 'UTF-8'))
 		if (self.waitfordone() == 1):
 			print("Error - Reseting Table")
 			zero()
 			
 	def zero(self):
-		print("Zeroing")
+		#print("Zeroing")
 		self.serialPort.write(bytes("zero\n", 'UTF-8'))
 		self.waitfordone()
 
 	def who(self):
-		print("Telling them who I am")
+		#print("Telling them who I am")
 		self.serialPort.write(bytes("who\n", 'UTF-8'))
 		return self.serialPort.readline().decode('UTF-8')
 

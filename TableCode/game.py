@@ -6,9 +6,11 @@ import time
 from chessTable import *
 import sys
 import random
+from Buttons import *
 
 WHITE = True
 BLACK = False
+
 
 class Game:
     def __init__(self, testingOptions = 0): #1 for use without motors
@@ -21,11 +23,12 @@ class Game:
         self.engine = chess.uci.popen_engine("stockfish")
         self.engine.uci()
         self.engine.setoption({"Threads":4})
+        self.engine.setoption({"Skill Level":3})
         #deleted
         self.table.drawMotors()  
         self.table.initialize_Coord()  
-
-
+        self.button = Button(16)
+        self.button2 = Button(5)
 
     def askForPlayerSide(self):
         playerChoiceInput = input(
@@ -35,16 +38,62 @@ class Game:
             self.playerSide = WHITE
         else:
             print("You will play as black")
+            self.playerSide = BLACK 		
+        
+        #print("Starting Button Tests")
+        #self.button.testButton()
+        #print("End of Button Tests")
+        '''
+        self.button.getButton()
+        print(self.button.value)
+        if(self.button.value == 1):
+            print("You will play as white")
+            self.playerSide = WHITE
+        else:
+            print("You will play as black")
             self.playerSide = BLACK
-
+        '''
 
     def askForDepthOfAI(self):
-        depthInput = 2
+        #depthInput = 5
         try:
-            depthInput = int(input("How long in seconds should the AI look for moves?\n"))
+            Input = int(input("Choose Your AI Difficulty\n   1 - Dumb As a Box of Rocks\n   2 - Beginner\n   3 - Intermediate\n   4 - Master\n   5 - GrandMaster\n   6 - Super GrandMaster\n"))
         except:
-            print("Invalid input, defaulting to 2 sec")
+            print("Invalid Input, Defaulting to an Intermediate Player")
+        
+        #only take input if button is pressed
+        self.button2.getButton()
+        tmpValue = self.button2.value
+        while(True):
+            self.button2.getButton()
+            if(self.button2.value != tmpValue):
+                break
+        
+        if(Input == 1):
+            self.engine.setoption({"Skill Level":0})
+            depthInput = 1
+        elif(Input == 2):
+            self.engine.setoption({"Skill Level":3})
+            depthInput = 1           
+        elif(Input == 3):
+            self.engine.setoption({"Skill Level":6})
+            depthInput = 2           
+        elif(Input == 4):
+            self.engine.setoption({"Skill Level":11})
+            depthInput = 5        
+        elif(Input == 5):
+            self.engine.setoption({"Skill Level":17})
+            depthInput = 10      
+        elif(Input == 6):
+            self.engine.setoption({"Skill Level":20})
+            depthInput = 15   
+        else:
+            self.engine.setoption({"Skill Level":6})               
+            depthInput = 2
+            
         self.aiDepth = depthInput
+        print("AI Info: ")
+        print(self.aiDepth)
 
 
     def printCommandOptions(self):
@@ -100,7 +149,7 @@ class Game:
 
     def getUCIEngineMove(self, time):
         self.engine.position(self.uciBoard)
-        uciMove = self.engine.go(depth=15, ponder = False) # Gets tuple of bestmove and ponder move. movetime=time,
+        uciMove = self.engine.go(depth=self.aiDepth, ponder = False) # Gets tuple of bestmove and ponder move. movetime=time,
         uciMove = uciMove[0].uci()
         print(uciMove)
         if (uciMove == 'e8g8' or uciMove == 'e8c8' or uciMove == 'e1g1' or uciMove == 'e1c1'):
@@ -138,10 +187,22 @@ class Game:
                 return
 
             if self.board.currentSide == self.playerSide:
-                # printPointAdvantage(self.board)
+                self.button.getButton()
+                tmpValue2 = self.button2.value 
+                if(tmpValue2 != self.button.value):
+                    print("Button Test")
                 move = None
                 command = input("It's your move."
                                 " Type '?' for options. ? ").lower()
+               
+                #only take input if button is pressed
+                self.button2.getButton()
+                tmpValue = self.button2.value
+                while(True):
+                    self.button2.getButton()
+                    if(self.button2.value != tmpValue):
+                        break
+                    
                 if command == 'u':
                     self.undoLastTwoMoves()
                     continue
@@ -157,6 +218,7 @@ class Game:
                     return
                 else:
                     move = parser.moveForShortNotation(command)
+
                 if move:
                     #move = self.table.getmove(self.board)
                     self.makeMove(move)
