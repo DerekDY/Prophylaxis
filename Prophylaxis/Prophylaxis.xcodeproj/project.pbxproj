@@ -1,0 +1,441 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		195ABC5F1C505A11007D119A /* SocketAckEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC491C505A11007D119A /* SocketAckEmitter.swift */; };
+		195ABC601C505A11007D119A /* SocketAckManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC4A1C505A11007D119A /* SocketAckManager.swift */; };
+		195ABC611C505A11007D119A /* SocketAnyEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC4B1C505A11007D119A /* SocketAnyEvent.swift */; };
+		195ABC621C505A11007D119A /* SocketClientSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC4C1C505A11007D119A /* SocketClientSpec.swift */; };
+		195ABC631C505A11007D119A /* SocketEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC4D1C505A11007D119A /* SocketEngine.swift */; };
+		195ABC641C505A11007D119A /* SocketEngineClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC4E1C505A11007D119A /* SocketEngineClient.swift */; };
+		195ABC651C505A11007D119A /* SocketEnginePacketType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC4F1C505A11007D119A /* SocketEnginePacketType.swift */; };
+		195ABC661C505A11007D119A /* SocketEnginePollable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC501C505A11007D119A /* SocketEnginePollable.swift */; };
+		195ABC671C505A11007D119A /* SocketEngineSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC511C505A11007D119A /* SocketEngineSpec.swift */; };
+		195ABC681C505A11007D119A /* SocketEngineWebsocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC521C505A11007D119A /* SocketEngineWebsocket.swift */; };
+		195ABC691C505A11007D119A /* SocketEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC531C505A11007D119A /* SocketEventHandler.swift */; };
+		195ABC6A1C505A11007D119A /* SocketFixUTF8.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC541C505A11007D119A /* SocketFixUTF8.swift */; };
+		195ABC6B1C505A11007D119A /* SocketIOClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC551C505A11007D119A /* SocketIOClient.swift */; };
+		195ABC6C1C505A11007D119A /* SocketIOClientOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC561C505A11007D119A /* SocketIOClientOption.swift */; };
+		195ABC6D1C505A11007D119A /* SocketIOClientStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC571C505A11007D119A /* SocketIOClientStatus.swift */; };
+		195ABC6E1C505A11007D119A /* SocketLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC581C505A11007D119A /* SocketLogger.swift */; };
+		195ABC6F1C505A11007D119A /* SocketPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC591C505A11007D119A /* SocketPacket.swift */; };
+		195ABC701C505A11007D119A /* SocketParsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC5A1C505A11007D119A /* SocketParsable.swift */; };
+		195ABC711C505A11007D119A /* SocketStringReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC5B1C505A11007D119A /* SocketStringReader.swift */; };
+		195ABC721C505A11007D119A /* SocketTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC5C1C505A11007D119A /* SocketTypes.swift */; };
+		195ABC731C505A11007D119A /* SwiftRegex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC5D1C505A11007D119A /* SwiftRegex.swift */; };
+		195ABC741C505A11007D119A /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195ABC5E1C505A11007D119A /* WebSocket.swift */; };
+		197AA1701C4AFB87001D7BBE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197AA16F1C4AFB87001D7BBE /* AppDelegate.swift */; };
+		197AA1721C4AFB87001D7BBE /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 197AA1711C4AFB87001D7BBE /* GameScene.sks */; };
+		197AA1741C4AFB87001D7BBE /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197AA1731C4AFB87001D7BBE /* GameScene.swift */; };
+		197AA1761C4AFB87001D7BBE /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197AA1751C4AFB87001D7BBE /* GameViewController.swift */; };
+		197AA1791C4AFB87001D7BBE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 197AA1771C4AFB87001D7BBE /* Main.storyboard */; };
+		197AA17B1C4AFB87001D7BBE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 197AA17A1C4AFB87001D7BBE /* Assets.xcassets */; };
+		197AA17E1C4AFB87001D7BBE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 197AA17C1C4AFB87001D7BBE /* LaunchScreen.storyboard */; };
+		197AA1B01C4B2EA6001D7BBE /* ChessPiece.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197AA1AC1C4B2EA6001D7BBE /* ChessPiece.swift */; };
+		197AA1B41C4B3AD8001D7BBE /* BoardSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197AA1B31C4B3AD8001D7BBE /* BoardSpace.swift */; };
+		1982C4851C4C01F6000183E4 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1982C4841C4C01F6000183E4 /* Board.swift */; };
+		1982C4871C4C0596000183E4 /* Chess Pieces in Resources */ = {isa = PBXBuildFile; fileRef = 1982C4861C4C0596000183E4 /* Chess Pieces */; };
+		1982C4891C4C0A07000183E4 /* Pawn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1982C4881C4C0A07000183E4 /* Pawn.swift */; };
+		1982C48B1C4C1724000183E4 /* Rook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1982C48A1C4C1724000183E4 /* Rook.swift */; };
+		1982C48D1C4C1B0A000183E4 /* Queen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1982C48C1C4C1B0A000183E4 /* Queen.swift */; };
+		1982C48F1C4C1BCF000183E4 /* Knight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1982C48E1C4C1BCF000183E4 /* Knight.swift */; };
+		1982C4911C4C1BD6000183E4 /* King.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1982C4901C4C1BD6000183E4 /* King.swift */; };
+		1982C4931C4C1BDC000183E4 /* Bishop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1982C4921C4C1BDC000183E4 /* Bishop.swift */; };
+		1982C4951C4DAFBB000183E4 /* ChessGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1982C4941C4DAFBB000183E4 /* ChessGame.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		195ABC491C505A11007D119A /* SocketAckEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketAckEmitter.swift; sourceTree = "<group>"; };
+		195ABC4A1C505A11007D119A /* SocketAckManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketAckManager.swift; sourceTree = "<group>"; };
+		195ABC4B1C505A11007D119A /* SocketAnyEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketAnyEvent.swift; sourceTree = "<group>"; };
+		195ABC4C1C505A11007D119A /* SocketClientSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketClientSpec.swift; sourceTree = "<group>"; };
+		195ABC4D1C505A11007D119A /* SocketEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketEngine.swift; sourceTree = "<group>"; };
+		195ABC4E1C505A11007D119A /* SocketEngineClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketEngineClient.swift; sourceTree = "<group>"; };
+		195ABC4F1C505A11007D119A /* SocketEnginePacketType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketEnginePacketType.swift; sourceTree = "<group>"; };
+		195ABC501C505A11007D119A /* SocketEnginePollable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketEnginePollable.swift; sourceTree = "<group>"; };
+		195ABC511C505A11007D119A /* SocketEngineSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketEngineSpec.swift; sourceTree = "<group>"; };
+		195ABC521C505A11007D119A /* SocketEngineWebsocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketEngineWebsocket.swift; sourceTree = "<group>"; };
+		195ABC531C505A11007D119A /* SocketEventHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketEventHandler.swift; sourceTree = "<group>"; };
+		195ABC541C505A11007D119A /* SocketFixUTF8.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketFixUTF8.swift; sourceTree = "<group>"; };
+		195ABC551C505A11007D119A /* SocketIOClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketIOClient.swift; sourceTree = "<group>"; };
+		195ABC561C505A11007D119A /* SocketIOClientOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketIOClientOption.swift; sourceTree = "<group>"; };
+		195ABC571C505A11007D119A /* SocketIOClientStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketIOClientStatus.swift; sourceTree = "<group>"; };
+		195ABC581C505A11007D119A /* SocketLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketLogger.swift; sourceTree = "<group>"; };
+		195ABC591C505A11007D119A /* SocketPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketPacket.swift; sourceTree = "<group>"; };
+		195ABC5A1C505A11007D119A /* SocketParsable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketParsable.swift; sourceTree = "<group>"; };
+		195ABC5B1C505A11007D119A /* SocketStringReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketStringReader.swift; sourceTree = "<group>"; };
+		195ABC5C1C505A11007D119A /* SocketTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketTypes.swift; sourceTree = "<group>"; };
+		195ABC5D1C505A11007D119A /* SwiftRegex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftRegex.swift; sourceTree = "<group>"; };
+		195ABC5E1C505A11007D119A /* WebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
+		197AA16C1C4AFB87001D7BBE /* Prophylaxis.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Prophylaxis.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		197AA16F1C4AFB87001D7BBE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		197AA1711C4AFB87001D7BBE /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
+		197AA1731C4AFB87001D7BBE /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
+		197AA1751C4AFB87001D7BBE /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		197AA1781C4AFB87001D7BBE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		197AA17A1C4AFB87001D7BBE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		197AA17D1C4AFB87001D7BBE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		197AA17F1C4AFB87001D7BBE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		197AA1AC1C4B2EA6001D7BBE /* ChessPiece.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChessPiece.swift; sourceTree = "<group>"; };
+		197AA1B31C4B3AD8001D7BBE /* BoardSpace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardSpace.swift; sourceTree = "<group>"; };
+		1982C4841C4C01F6000183E4 /* Board.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		1982C4861C4C0596000183E4 /* Chess Pieces */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Chess Pieces"; path = "Prophylaxis/Chess Pieces"; sourceTree = SOURCE_ROOT; };
+		1982C4881C4C0A07000183E4 /* Pawn.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pawn.swift; sourceTree = "<group>"; };
+		1982C48A1C4C1724000183E4 /* Rook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Rook.swift; path = "Chess Pieces/Rook.swift"; sourceTree = "<group>"; };
+		1982C48C1C4C1B0A000183E4 /* Queen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Queen.swift; path = "Chess Pieces/Queen.swift"; sourceTree = "<group>"; };
+		1982C48E1C4C1BCF000183E4 /* Knight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Knight.swift; path = "Chess Pieces/Knight.swift"; sourceTree = "<group>"; };
+		1982C4901C4C1BD6000183E4 /* King.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = King.swift; path = "Chess Pieces/King.swift"; sourceTree = "<group>"; };
+		1982C4921C4C1BDC000183E4 /* Bishop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Bishop.swift; path = "Chess Pieces/Bishop.swift"; sourceTree = "<group>"; };
+		1982C4941C4DAFBB000183E4 /* ChessGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChessGame.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		197AA1691C4AFB87001D7BBE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		195ABC481C5059DF007D119A /* Socket.IO */ = {
+			isa = PBXGroup;
+			children = (
+				195ABC491C505A11007D119A /* SocketAckEmitter.swift */,
+				195ABC4A1C505A11007D119A /* SocketAckManager.swift */,
+				195ABC4B1C505A11007D119A /* SocketAnyEvent.swift */,
+				195ABC4C1C505A11007D119A /* SocketClientSpec.swift */,
+				195ABC4D1C505A11007D119A /* SocketEngine.swift */,
+				195ABC4E1C505A11007D119A /* SocketEngineClient.swift */,
+				195ABC4F1C505A11007D119A /* SocketEnginePacketType.swift */,
+				195ABC501C505A11007D119A /* SocketEnginePollable.swift */,
+				195ABC511C505A11007D119A /* SocketEngineSpec.swift */,
+				195ABC521C505A11007D119A /* SocketEngineWebsocket.swift */,
+				195ABC531C505A11007D119A /* SocketEventHandler.swift */,
+				195ABC541C505A11007D119A /* SocketFixUTF8.swift */,
+				195ABC551C505A11007D119A /* SocketIOClient.swift */,
+				195ABC561C505A11007D119A /* SocketIOClientOption.swift */,
+				195ABC571C505A11007D119A /* SocketIOClientStatus.swift */,
+				195ABC581C505A11007D119A /* SocketLogger.swift */,
+				195ABC591C505A11007D119A /* SocketPacket.swift */,
+				195ABC5A1C505A11007D119A /* SocketParsable.swift */,
+				195ABC5B1C505A11007D119A /* SocketStringReader.swift */,
+				195ABC5C1C505A11007D119A /* SocketTypes.swift */,
+				195ABC5D1C505A11007D119A /* SwiftRegex.swift */,
+				195ABC5E1C505A11007D119A /* WebSocket.swift */,
+			);
+			name = Socket.IO;
+			sourceTree = "<group>";
+		};
+		197AA1631C4AFB87001D7BBE = {
+			isa = PBXGroup;
+			children = (
+				195ABC481C5059DF007D119A /* Socket.IO */,
+				197AA16E1C4AFB87001D7BBE /* Prophylaxis */,
+				197AA16D1C4AFB87001D7BBE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		197AA16D1C4AFB87001D7BBE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				197AA16C1C4AFB87001D7BBE /* Prophylaxis.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		197AA16E1C4AFB87001D7BBE /* Prophylaxis */ = {
+			isa = PBXGroup;
+			children = (
+				1982C4861C4C0596000183E4 /* Chess Pieces */,
+				197AA1731C4AFB87001D7BBE /* GameScene.swift */,
+				1982C4941C4DAFBB000183E4 /* ChessGame.swift */,
+				197AA1B31C4B3AD8001D7BBE /* BoardSpace.swift */,
+				197AA1AC1C4B2EA6001D7BBE /* ChessPiece.swift */,
+				1982C4841C4C01F6000183E4 /* Board.swift */,
+				197AA16F1C4AFB87001D7BBE /* AppDelegate.swift */,
+				1982C4921C4C1BDC000183E4 /* Bishop.swift */,
+				1982C4901C4C1BD6000183E4 /* King.swift */,
+				1982C48E1C4C1BCF000183E4 /* Knight.swift */,
+				1982C48C1C4C1B0A000183E4 /* Queen.swift */,
+				1982C4881C4C0A07000183E4 /* Pawn.swift */,
+				1982C48A1C4C1724000183E4 /* Rook.swift */,
+				197AA1711C4AFB87001D7BBE /* GameScene.sks */,
+				197AA1751C4AFB87001D7BBE /* GameViewController.swift */,
+				197AA1771C4AFB87001D7BBE /* Main.storyboard */,
+				197AA17A1C4AFB87001D7BBE /* Assets.xcassets */,
+				197AA17C1C4AFB87001D7BBE /* LaunchScreen.storyboard */,
+				197AA17F1C4AFB87001D7BBE /* Info.plist */,
+			);
+			path = Prophylaxis;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		197AA16B1C4AFB87001D7BBE /* Prophylaxis */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 197AA1821C4AFB87001D7BBE /* Build configuration list for PBXNativeTarget "Prophylaxis" */;
+			buildPhases = (
+				197AA1681C4AFB87001D7BBE /* Sources */,
+				197AA1691C4AFB87001D7BBE /* Frameworks */,
+				197AA16A1C4AFB87001D7BBE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Prophylaxis;
+			productName = Prophylaxis;
+			productReference = 197AA16C1C4AFB87001D7BBE /* Prophylaxis.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		197AA1641C4AFB87001D7BBE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0720;
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = Prophylaxis;
+				TargetAttributes = {
+					197AA16B1C4AFB87001D7BBE = {
+						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = 5663QLD8MK;
+					};
+				};
+			};
+			buildConfigurationList = 197AA1671C4AFB87001D7BBE /* Build configuration list for PBXProject "Prophylaxis" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 197AA1631C4AFB87001D7BBE;
+			productRefGroup = 197AA16D1C4AFB87001D7BBE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				197AA16B1C4AFB87001D7BBE /* Prophylaxis */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		197AA16A1C4AFB87001D7BBE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1982C4871C4C0596000183E4 /* Chess Pieces in Resources */,
+				197AA1721C4AFB87001D7BBE /* GameScene.sks in Resources */,
+				197AA17E1C4AFB87001D7BBE /* LaunchScreen.storyboard in Resources */,
+				197AA17B1C4AFB87001D7BBE /* Assets.xcassets in Resources */,
+				197AA1791C4AFB87001D7BBE /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		197AA1681C4AFB87001D7BBE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1982C48B1C4C1724000183E4 /* Rook.swift in Sources */,
+				195ABC6A1C505A11007D119A /* SocketFixUTF8.swift in Sources */,
+				197AA1B01C4B2EA6001D7BBE /* ChessPiece.swift in Sources */,
+				195ABC611C505A11007D119A /* SocketAnyEvent.swift in Sources */,
+				195ABC671C505A11007D119A /* SocketEngineSpec.swift in Sources */,
+				1982C4891C4C0A07000183E4 /* Pawn.swift in Sources */,
+				195ABC711C505A11007D119A /* SocketStringReader.swift in Sources */,
+				195ABC701C505A11007D119A /* SocketParsable.swift in Sources */,
+				195ABC661C505A11007D119A /* SocketEnginePollable.swift in Sources */,
+				195ABC641C505A11007D119A /* SocketEngineClient.swift in Sources */,
+				1982C48D1C4C1B0A000183E4 /* Queen.swift in Sources */,
+				195ABC6D1C505A11007D119A /* SocketIOClientStatus.swift in Sources */,
+				195ABC6F1C505A11007D119A /* SocketPacket.swift in Sources */,
+				195ABC721C505A11007D119A /* SocketTypes.swift in Sources */,
+				1982C48F1C4C1BCF000183E4 /* Knight.swift in Sources */,
+				195ABC631C505A11007D119A /* SocketEngine.swift in Sources */,
+				195ABC651C505A11007D119A /* SocketEnginePacketType.swift in Sources */,
+				195ABC681C505A11007D119A /* SocketEngineWebsocket.swift in Sources */,
+				195ABC691C505A11007D119A /* SocketEventHandler.swift in Sources */,
+				197AA1B41C4B3AD8001D7BBE /* BoardSpace.swift in Sources */,
+				195ABC601C505A11007D119A /* SocketAckManager.swift in Sources */,
+				195ABC6E1C505A11007D119A /* SocketLogger.swift in Sources */,
+				1982C4911C4C1BD6000183E4 /* King.swift in Sources */,
+				1982C4851C4C01F6000183E4 /* Board.swift in Sources */,
+				195ABC621C505A11007D119A /* SocketClientSpec.swift in Sources */,
+				1982C4931C4C1BDC000183E4 /* Bishop.swift in Sources */,
+				197AA1741C4AFB87001D7BBE /* GameScene.swift in Sources */,
+				197AA1761C4AFB87001D7BBE /* GameViewController.swift in Sources */,
+				195ABC5F1C505A11007D119A /* SocketAckEmitter.swift in Sources */,
+				195ABC6B1C505A11007D119A /* SocketIOClient.swift in Sources */,
+				195ABC6C1C505A11007D119A /* SocketIOClientOption.swift in Sources */,
+				195ABC731C505A11007D119A /* SwiftRegex.swift in Sources */,
+				1982C4951C4DAFBB000183E4 /* ChessGame.swift in Sources */,
+				197AA1701C4AFB87001D7BBE /* AppDelegate.swift in Sources */,
+				195ABC741C505A11007D119A /* WebSocket.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		197AA1771C4AFB87001D7BBE /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				197AA1781C4AFB87001D7BBE /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		197AA17C1C4AFB87001D7BBE /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				197AA17D1C4AFB87001D7BBE /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		197AA1801C4AFB87001D7BBE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		197AA1811C4AFB87001D7BBE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		197AA1831C4AFB87001D7BBE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = Prophylaxis/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Prophylaxis.Prophylaxis;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		197AA1841C4AFB87001D7BBE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = Prophylaxis/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Prophylaxis.Prophylaxis;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		197AA1671C4AFB87001D7BBE /* Build configuration list for PBXProject "Prophylaxis" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				197AA1801C4AFB87001D7BBE /* Debug */,
+				197AA1811C4AFB87001D7BBE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		197AA1821C4AFB87001D7BBE /* Build configuration list for PBXNativeTarget "Prophylaxis" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				197AA1831C4AFB87001D7BBE /* Debug */,
+				197AA1841C4AFB87001D7BBE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 197AA1641C4AFB87001D7BBE /* Project object */;
+}
