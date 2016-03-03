@@ -7,6 +7,7 @@ from chessTable import *
 import sys
 import random
 from Buttons import *
+from BlueTooth import *
 
 WHITE = True
 BLACK = False
@@ -29,6 +30,9 @@ class Game:
         self.table.initialize_Coord()  
         self.button = Button(16)
         self.button2 = Button(5)
+        
+        
+        self.bluetooth = Bluetooth(self.table.motorY.serialPort)
 
     def askForPlayerSide(self):
         playerChoiceInput = input(
@@ -73,23 +77,25 @@ class Game:
             self.engine.setoption({"Skill Level":0})
             depthInput = 1
         elif(Input == 2):
-            self.engine.setoption({"Skill Level":3})
-            depthInput = 1           
+            self.engine.setoption({"Skill Level":1})
+            depthInput = 2           
         elif(Input == 3):
             self.engine.setoption({"Skill Level":6})
-            depthInput = 2           
+            depthInput = 5           
         elif(Input == 4):
             self.engine.setoption({"Skill Level":11})
-            depthInput = 5        
+            depthInput = 10        
         elif(Input == 5):
             self.engine.setoption({"Skill Level":17})
-            depthInput = 10      
+            depthInput = 13      
         elif(Input == 6):
             self.engine.setoption({"Skill Level":20})
             depthInput = 15   
         else:
             self.engine.setoption({"Skill Level":6})               
             depthInput = 2
+        print("engine: \n")
+        print(self.engine)
             
         self.aiDepth = depthInput
         print("AI Info: ")
@@ -222,6 +228,11 @@ class Game:
                 if move:
                     #move = self.table.getmove(self.board)
                     self.makeMove(move)
+                    
+                    print("moveStr being set")
+                    moveStr = str(move.oldPos[0]) + str(move.oldPos[1]) + str(move.newPos[0]) + str(move.newPos[1])
+                    print(moveStr)
+                    self.bluetooth.sendmove(moveStr) 
 
                 else:
                     print("Couldn't parse input, enter a valid command or move.")
@@ -342,10 +353,5 @@ class Game:
                 
                 #print("move: \n")      #for testing purposes
                 #print(move)            #for testing purposes   
-                self.table.move(move)
+                self.table.move(move)          
                 self.makeMove(move)
-
-
-
-
-
