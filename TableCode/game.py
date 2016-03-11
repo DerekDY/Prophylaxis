@@ -14,11 +14,12 @@ BLACK = False
 
 
 class Game:
-    def __init__(self, testingOptions = 0): #1 for use without motors
+    def __init__(self, testingOptions = 0, btOption = 0, gameMode = 1): #1 for use without motors
         self.board = Board()
         self.uciBoard = chess.Board()
         self.table = ChessTable(testingOptions)
         self.playerSide = WHITE
+        self.btSide = BLACK
         self.aiDepth = 2
         self.ai = AI(self.board, not self.playerSide, self.aiDepth)
         self.engine = chess.uci.popen_engine("stockfish")
@@ -31,8 +32,9 @@ class Game:
         self.button = Button(16)
         self.button2 = Button(5)
         
-        
+        self.bt = btOption
         self.bluetooth = Bluetooth(self.table.motorY.serialPort)
+        self.gameMode = gameMode
 
     def askForPlayerSide(self):
         playerChoiceInput = input(
@@ -40,9 +42,11 @@ class Game:
         if 'w' in playerChoiceInput:
             print("You will play as white")
             self.playerSide = WHITE
+            self.btSide = BLACK
         else:
             print("You will play as black")
-            self.playerSide = BLACK 		
+            self.playerSide = BLACK
+            self.btSide = WHITE 		
         
         #print("Starting Button Tests")
         #self.button.testButton()
@@ -68,11 +72,12 @@ class Game:
         #only take input if button is pressed
         self.button2.getButton()
         tmpValue = self.button2.value
+        '''
         while(True):
             self.button2.getButton()
             if(self.button2.value != tmpValue):
                 break
-        
+        '''
         if(Input == 1):
             self.engine.setoption({"Skill Level":0})
             depthInput = 1
@@ -96,7 +101,8 @@ class Game:
             depthInput = 2
         print("engine: \n")
         print(self.engine)
-            
+        print(self.engine.uci)
+        print()      
         self.aiDepth = depthInput
         print("AI Info: ")
         print(self.aiDepth)
@@ -127,6 +133,9 @@ class Game:
 
     def makeMove(self, move):
         print()
+        print("testing this dang thing")
+        print(move)
+        print(move.notation)
         print("Making move : " + move.notation)
         self.board.makeChosenMove(move)
         self.uciBoard.push_san(move.notation)
@@ -161,10 +170,39 @@ class Game:
         if (uciMove == 'e8g8' or uciMove == 'e8c8' or uciMove == 'e1g1' or uciMove == 'e1c1'):
             print( "Move is a castle")
         moveFrom = uciMove[:2]
-        #print(moveFrom)
+        print("testing find move functionality...")
+        print(moveFrom)
         moveTo = uciMove[2:]
-        #print(moveTo)
+        print(moveTo)
         move = self.findMove(moveFrom, moveTo)
+        return move
+
+    def btMove(self, parser):
+        print("Taking move from phone")
+        #switch parser side and find move from given coords
+        parser.side = self.btSide
+        pos = self.bluetooth.waitformove()               
+        startPos = self.board.humanCoordToPosition(pos[0:2])
+        endPos = self.board.humanCoordToPosition(pos[2:4])
+        piece = self.board.pieceAtPosition(startPos)
+        for move in piece.getPossibleMoves():
+            if move.newPos == endPos:
+                move.notation = parser.notationForMove(move)
+                return move
+        print("move is invalid")   
+        self.btMove(parser)     
+
+        
+        '''          
+                    #check if move is valid                     
+                    if move:
+                        print(move)
+                    else:
+                        print("Couldn't parse input, enter a valid command or move.")
+                        message = self.bluetooth.waitformove()
+                        print(message)
+                        move = parser.moveForShortNotation(message)
+        '''
         return move
 
 
@@ -197,50 +235,81 @@ class Game:
                 tmpValue2 = self.button2.value 
                 if(tmpValue2 != self.button.value):
                     print("Button Test")
-                move = None
-                command = input("It's your move."
-                                " Type '?' for options. ? ").lower()
-               
-                #only take input if button is pressed
-                self.button2.getButton()
-                tmpValue = self.button2.value
-                while(True):
-                    self.button2.getButton()
-                    if(self.button2.value != tmpValue):
-                        break
-                    
-                if command == 'u':
-                    self.undoLastTwoMoves()
-                    continue
-                elif command == '?':
-                    self.printCommandOptions()
-                    continue
-                elif command == 'l':
-                    self.printAllLegalMoves(parser)
-                    continue
-                elif command == 'r':
-                    move = self.getRandomMove(parser)
-                elif command == 'quit':
-                    return
+                
+                #if Bluetooth vs AI
+                if (self.gameMode == 3):
+                    move = self.btMove(parser)
+                    move.notation = parser.notationForMove(move)
+                    '''
+                    print("Taking move from phone")
+                    message = self.bluetooth.waitformove()
+                    print(message)
+                    move = parser.moveForShortNotation(message)
+                    if move:
+                        print(move)
+                    else:
+                        print("Couldn't parse input, enter a valid command or move.")
+                        message = self.bluetooth.waitformove()
+                        print(message)
+                        move = parser.moveForShortNotation(message)
+                     '''
                 else:
-                    move = parser.moveForShortNotation(command)
+                    command = input("It's your move."
+                                    " Type '?' for options. ? ").lower()
+               
+                    '''
+                    #only take input  if button is pressed
+                    self.button2.getButton()
+                    tmpValue = self.button2.value
+                    while(True):
+                        self.button2.getButton()
+                        if(self.button2.value != tmpValue):
+                            break
+                    '''    
+                    if command == 'u':
+                        self.undoLastTwoMoves()
+                        continue
+                    elif command == '?':
+                        self.printCommandOptions()
+                        continue
+                    elif command == 'l':
+                        self.printAllLegalMoves(parser)
+                        continue
+                    elif command == 'r':
+                        move = self.getRandomMove(parser)
+                    elif command == 'quit':
+                        return
+                    else:
+                        parser.side = self.playerSide
+                        move = parser.moveForShortNotation(command)
 
                 if move:
                     #move = self.table.getmove(self.board)
                     self.makeMove(move)
                     
-                    print("moveStr being set")
-                    moveStr = str(move.oldPos[0]) + str(move.oldPos[1]) + str(move.newPos[0]) + str(move.newPos[1])
-                    print(moveStr)
-                    self.bluetooth.sendmove(moveStr) 
+                    if self.bt == 0:
+                        print("bluetooth is on")
+                        moveStr = str(move.oldPos[0]) + str(move.oldPos[1]) + str(move.newPos[0]) + str(move.newPos[1])
+                        print(moveStr)
+                        self.bluetooth.sendmove(moveStr)
+                    else:
+                        print("bt is off ")
+                        print(self.bt) 
 
                 else:
                     print("Couldn't parse input, enter a valid command or move.")
 
             else:
-                print("AI thinking...")
+				#if Human vs Bluetooth
+                if (self.gameMode == 2):
+                    print("Bluetooth Player's Turn...")
+                else:
+                    print("AI thinking...")
+                    
+                '''
+                - - - - - Old AI OpenBook - - - - -
                 movecount = movecount + 1
-                print(movecount)
+                #print(movecount)
                 #starting moves
                 #have multiple options for some of the starting moves -- need to implement a method
                 #to choose between the options at random. Should also go deeper with the starting moves
@@ -258,14 +327,14 @@ class Game:
                             if playersMove.oldPos == (4,1) and playersMove.newPos == (4,3):
                                 moves = ['e5','c5','e6','d5','c6']
                                 alpha = random.choice(moves)
-                                '''
-                                alpha values:
-                                    e5 = Mirror
-                                    c5 = Sicilian Defense
-                                    e6 = French Defense
-                                    d5 = Scandinavian Defense
-                                    c6 = Caro-Kann
-                                '''
+                                
+                                #alpha values:
+                                #    e5 = Mirror
+                                #    c5 = Sicilian Defense
+                                #    e6 = French Defense
+                                #    d5 = Scandinavian Defense
+                                #    c6 = Caro-Kann
+                                
                                 move = parser.moveForShortNotation(alpha)          
                             else:
                                 move = parser.moveForShortNotation('d5')
@@ -279,11 +348,11 @@ class Game:
                             if playersMove.oldPos == (4,6) and playersMove.newPos == (4,4): 
                                 moves = ['f4','Nf3']
                                 alpha = random.choice(moves)
-                                '''
-                                alpha values:
-                                    f4 = King's Gambit
-                                    Nf3 = Ruy Lopex
-                                '''
+                                
+                                #alpha values:
+                                #    f4 = King's Gambit
+                                #    Nf3 = Ruy Lopex
+                                
                                 move = parser.moveForShortNotation(alpha)          
                             elif playersMove.oldPos == (4,6) and playersMove.newPos == (4,5):
                                 move = parser.moveForShortNotation('d4')    #French Defense Response
@@ -342,7 +411,37 @@ class Game:
                 
                 #following starting moves use the node tree to look for the best move  
                 else:
-                    
+                ''' 
+                #if Human vs Bluetooth
+                if (self.gameMode == 2):
+                    move = self.btMove(parser)
+                    move.notation = parser.notationForMove(move)
+                    '''
+                    print("Taking move from phone")
+                    #switch parser side and find move from given coords
+                    parser.side = self.btSide
+                    pos = self.bluetooth.waitformove()               
+                    startPos = self.board.humanCoordToPosition(pos[0:2])
+                    endPos = self.board.humanCoordToPosition(pos[2:4])
+                    piece = self.board.pieceAtPosition(startPos)
+                    for move in piece.getPossibleMoves():
+                        if move.newPos == endPos:
+                            chosenMove = move
+                        else:
+							print("move is invalid")   
+                            self.btMove()      
+                    move = chosenMove 
+                    move.notation = parser.notationForMove(move) 
+                    #check if move is valid                     
+                    if move:
+                        print(move)
+                    else:
+                        print("Couldn't parse input, enter a valid command or move.")
+                        message = self.bluetooth.waitformove()
+                        print(message)
+                        move = parser.moveForShortNotation(message)
+                    '''
+                else:
                     move = self.getUCIEngineMove(self.aiDepth*1000)
                     move.notation = parser.notationForMove(move)
                     #print(move.oldPos)
@@ -352,6 +451,7 @@ class Game:
                     #move.notation = parser.notationForMove(move)
                 
                 #print("move: \n")      #for testing purposes
-                #print(move)            #for testing purposes   
+                #print(move)            #for testing purposes      
+                
                 self.table.move(move)          
                 self.makeMove(move)

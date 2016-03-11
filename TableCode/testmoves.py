@@ -95,6 +95,8 @@ board4.makeChosenMove(move)
 print(board4)
 print()
 
+'''
+
 print("###############################################")
 print("Test 5: Black Queen able to capture 1 piece")
 board5 = Board(testing = 5)
@@ -108,7 +110,7 @@ newReed =  [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
-table5 = ChessTable()
+table5 = ChessTable(1)
 table5.reedBoard.testingInput(newReed) 
 move = table5.getMove(board5)
 print(move)
@@ -116,8 +118,9 @@ print()
 board5.makeChosenMove(move)
 print(board5)
 
-'''
 
+
+'''
 print("###############################################")
 print("Test 6: black castle queen side with scattered pieces")
 board6 = Board(testing = 6)
@@ -144,6 +147,6 @@ print("###############################################")
 
 #Test 6 currently not working...need to add special moves to getMove()
 
-
+'''
 
 

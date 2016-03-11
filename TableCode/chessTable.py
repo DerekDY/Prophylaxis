@@ -1,7 +1,8 @@
 from xytable import *
 from Move import *
+####### for testmoves #########
 #from reedBoard import *
-
+###############################
 '''
 Class: 			chessTable
 Author: 		Derek De Young
@@ -36,7 +37,9 @@ class ChessTable(XYTable):  #testing on when 1
     def __init__(self, testingOption = 0):
         print("I'm making a chessTable")
         super(ChessTable, self).__init__(testingOption)
+        ####### for testmoves #########
         #self.reedBoard = ReedBoard(0)
+        ###############################
         self.row = 0
         self.column = 0
         self.win = GraphWin('XY Table Testing', 310, 210)
