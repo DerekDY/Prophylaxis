@@ -58,10 +58,10 @@ class King: ChessPiece {
             let tempTarget = tempBoard.boardSpaces[target.y][target.x]
             let tempPiece = tempBoard.boardSpaces[currentSpace.y][currentSpace.x].getPiece()
             tempBoard.move(tempPiece, space: tempTarget, piecetotake: tempTarget.getPiece())
-            var opColor = PieceColor.White
-            if startingPiece.pieceColor == PieceColor.White{
-                opColor = PieceColor.Black
-            }
+//            var opColor = PieceColor.White
+//            if startingPiece.pieceColor == PieceColor.White{
+//                opColor = PieceColor.Black
+//            }
             if(boardInCheck){
                 if startingPiece.pieceColor == PieceColor.White{
                     tempBoard.whiteInCheck = false

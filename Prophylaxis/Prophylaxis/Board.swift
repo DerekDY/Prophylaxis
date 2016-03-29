@@ -77,6 +77,7 @@ class Board: NSObject, NSCopying {
     }
     
     func boardInCheck(side: PieceColor) -> Bool{
+        print("Calling Board in Check for \(side)")
         var kingSpace = boardSpaces[0][0]
         var kingFound = false
         for y in 0...7{
@@ -105,6 +106,7 @@ class Board: NSObject, NSCopying {
                 let currentSpace = boardSpaces[x][y]
                 if let currentPiece = currentSpace.getPiece(){
                     if currentPiece.pieceColor != side{
+                        print("Calling is Valid Move for: \(currentPiece.stringRep)")
                         if currentPiece.isValidMove(boardSpaces[x][y], target: kingSpace, board: self) {
                             if currentPiece.pieceColor == PieceColor.White{
                                 self.blackInCheck = true
@@ -163,6 +165,8 @@ class Board: NSObject, NSCopying {
         }
         
     }
+    
+    
     
     
     
@@ -251,6 +255,17 @@ class Board: NSObject, NSCopying {
     }
     
     
+    func emptyBoard(){
+        for y in 0...7{
+            for x in 0...7{
+                let currentSpace = boardSpaces[x][y]
+                if let _ = currentSpace.getPiece(){
+                    currentSpace.removePiece()
+                }
+            }
+        }
+    }
+    
     
     /**
      Places all pieces on the `Board`.
@@ -258,7 +273,9 @@ class Board: NSObject, NSCopying {
      - Parameter iconSet: The `IconSet` to populate with.
      */
     func populateBoard(){
-        let spriteSize = boardSpaces[0][0].size
+        var spriteSize = boardSpaces[0][0].size
+        spriteSize.height = round(spriteSize.height*(9/10))
+        
         for i in 0...7{
             boardSpaces[1][i].setPiece(Pawn(image: UIImage(named: "white_pawn")!, color: PieceColor.White, size: spriteSize))
         }

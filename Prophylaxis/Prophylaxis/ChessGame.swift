@@ -1,59 +1,22 @@
 //
 //  ChessGame.swift
 //  Chess
-//
-//  Created by Jack Cousineau on 10/14/15.
-//
-
-
-
-
-/**
- Holds a captured `ChessPiece` and the `NSImageView` that it's being displayed in.
-*/
-//struct CapturedPieceImageView{
-//    var piece: ChessPiece!
-//    var imageView: NSImageView!
-//}
+import SpriteKit
 
 /**
  Completely encapsulates an instance of a chess game.
 */
 class ChessGame{
     
+    let socket = SocketIOClient(socketURL: "192.168.1.253:8900")
     let board : Board!
+    var onlineSide: PieceColor! = PieceColor.White
     let whitePlayerName: String!, blackPlayerName: String!
+    var gameStarted = false
+    var onlineGame = false
+    var myLabel: SKLabelNode!
     
     var playerTurn = PieceColor.White
-    
-    //var whiteCapturedPieces = [CapturedPieceImageView](), blackCapturedPieces = [CapturedPieceImageView]()
-    
-    /**
-     Displays the captured piece in the game's interface.
-     
-     - Parameter piece: The ChessPiece to display.
-     */
-//    func displayCapturedPiece(piece: ChessPiece){
-//        
-//        var pieceArray : [CapturedPieceImageView]!
-//        
-//        // We decide which array to insert the piece into, based on the piece's color.
-//        if(piece.pieceColor == PieceColor.Black){
-//            pieceArray = whiteCapturedPieces
-//        }
-//        else{
-//            pieceArray = blackCapturedPieces
-//        }
-//        
-//        for i in 0...15{
-//            if(pieceArray[i].piece == nil){
-//                // Once we find the first available slot in pieceArray, we store the piece in that slot, and display the piece's icon.
-//                pieceArray[i].piece = piece
-//                pieceArray[i].imageView.image = piece.pieceImage
-//                return
-//            }
-//        }
-//    }
 
     /**
      The ChessGame class constructor.
@@ -64,15 +27,154 @@ class ChessGame{
      */
     
     
-    init(whitePlayerName: String, blackPlayerName: String, board: [[BoardSpace]]){
+    init(whitePlayerName: String, blackPlayerName: String, board: [[BoardSpace]], label: SKLabelNode){
         self.blackPlayerName = blackPlayerName
         self.whitePlayerName = whitePlayerName
-        
         //gameWindow.title = whitePlayerName + " vs " + blackPlayerName + ", ft. John Cena"
         self.board = Board(boardspaces: board)
         self.board.populateBoard()
+        self.myLabel = label
     }
     
+    func playOnline(){
+        print("Reached Playing Online")
+        self.addHandlers()
+        print("connecting to socket")
+        self.socket.connect()
+        self.onlineGame = true
+        self.myLabel.text = "Waiting for other Player"
+    }
+    
+    func addHandlers() {
+        print("Adding Handlers")
+        self.socket.on("startGame") {[weak self] data, ack in
+            self?.handleStart()
+            return
+        }
+        
+        self.socket.on("playerMove") {
+            [weak self] data, ack in
+            print("Recieved a move")
+            if let fromSpace = data[0] as? [Int], toSpace = data[1] as? [Int], capturedSpace = data[2] as? [Int]{
+                self?.handlePlayerMove(fromSpace, toSpace: toSpace, capturedSpace: capturedSpace)
+            }
+        }
+        
+        self.socket.on("win") {
+            [weak self] data, ack in
+            if let name = data[0] as? String{
+                print(name)
+            }
+        }
+        
+        self.socket.on("gameOver") {
+            [weak self] data, ack in
+            self!.myLabel.text = "Game Ended"
+            self!.handleEndGame()
+        }
+        
+        self.socket.on("name") {
+            [weak self] data, ack in
+            if let name = data[0] as? String{
+                print("Playing as \(name)")
+                if name == "Black"{
+                    self?.onlineSide = PieceColor.Black
+                }
+            }
+        }
+        
+        self.socket.on("currentTurn") {
+            [weak self] data, ack in
+            self!.newPlayerMove()
+        }
+        
+        self.socket.on("gameReset") {
+            [weak self] data, ack in
+            print(data)
+            
+        }
+        
+        self.socket.on("gameOver") {
+            [weak self] data, ack in
+            self!.handleEndGame()
+            
+            
+        }
+        
+        self.socket.onAny {print("Got event: \($0.event), with items: \($0.items)")}
+    }
+    
+    
+    func handleCurrentTurn(name:String) {
+    }
+    
+    func handleDraw() {
+    }
+    
+    func handleGameReset() {
+    }
+    
+    func handleEndGame() {
+        if onlineGame{
+            self.socket.disconnect()
+            self.onlineGame = false
+        }
+        self.board.unhighlightSpaces()
+        self.board.emptyBoard()
+        self.board.populateBoard()
+        self.gameStarted = false
+        self.playerTurn = PieceColor.White
+        self.onlineSide = PieceColor.White
+        self.myLabel.text = "Game Ended..."
+    }
+    
+    func handlePlayerMove(fromSpace:[Int], toSpace:[Int], capturedSpace: [Int]) {
+        let thisBoard = self.board
+        var capturedPiece: ChessPiece! = nil
+        let thisBoardSpaces = thisBoard.boardSpaces
+        let thisBoardFrom = thisBoardSpaces[fromSpace[1]][fromSpace[0]]
+        var thisBoardTo: BoardSpace! = nil
+        let thisBoardPiece = thisBoardFrom.childNodeWithName("Piece") as! ChessPiece
+        if capturedSpace[0] != 10{
+            capturedPiece = thisBoardSpaces[capturedSpace[1]][capturedSpace[0]].childNodeWithName("Piece") as! ChessPiece
+        }
+        if toSpace[0] != 10{
+            thisBoardTo = thisBoardSpaces[toSpace[1]][toSpace[0]]
+        }
+        thisBoard.move(thisBoardPiece, space: thisBoardTo, piecetotake: capturedPiece)
+    }
+    
+    func handleStart() {
+        self.gameStarted = true
+        self.myLabel.text = "Game Started!"
+        
+    }
+    
+    
+    func sendMove(fromSpace: BoardSpace, var toSpace: BoardSpace!, var capturedSpace: BoardSpace!){
+        if capturedSpace == nil{
+            capturedSpace = BoardSpace(squareSize: nil, spaceColor: nil, x: 10, y: 10) //fake space
+        }
+        if toSpace == nil{
+            toSpace = BoardSpace(squareSize: nil, spaceColor: nil, x: 10, y: 10) //fake space
+        }
+        print("SENDING MOVE!!!!!")
+        self.socket.emit("playerMove", [fromSpace.x, fromSpace.y], [toSpace.x, toSpace.y], [capturedSpace.x, capturedSpace.y])
+    }
+    
+    
+    
+    func resetGame(){
+        if self.onlineGame{
+            self.socket.emit("endGame")
+        }else{
+            handleEndGame()
+        }
+    }
+    
+    func switchOnlineSide(){
+        self.socket.emit("switchTurn")
+    }
     /**
      Changes which player's turn it is.
      */
@@ -99,8 +201,12 @@ class ChessGame{
             }
             //chessBoard.currentPlayerTurnLabel.stringValue = whitePlayerName + "'s"
         }
+        self.myLabel.text = "\(self.playerTurn)'s Move"
         print("Black in check: \(board.blackInCheck)")
         print("White in check: \(board.whiteInCheck)")
+        if self.onlineGame && self.playerTurn == self.onlineSide{
+            self.myLabel.text = "Your Move!"
+        }
         
     }
 

@@ -16,10 +16,18 @@ class BoardSpace: SKSpriteNode {
     var y: Int
     var originalColor: UIColor
     
-    init(squareSize: CGSize, spaceColor: UIColor, x: Int, y: Int){
+    init(var squareSize: CGSize!, var spaceColor: UIColor!, x: Int, y: Int){
         self.x = x
         self.y = y
-        self.originalColor = spaceColor
+        if spaceColor == nil{
+            self.originalColor = UIColor.blackColor()
+            spaceColor = UIColor.blackColor()
+        }else{
+            self.originalColor = spaceColor
+        }
+        if squareSize == nil{
+            squareSize = CGSizeMake(0, 0)
+        }
         super.init(texture: nil, color: spaceColor, size: squareSize)
     }
     
