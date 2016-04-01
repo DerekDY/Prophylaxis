@@ -1,5 +1,5 @@
 /*
-Serial Comunication witht the motors 
+Serial Comunication with the motors 
  */
 
 #define clkPin 2

@@ -28,20 +28,25 @@ class Pawn(Piece):
         movement = C(0, 1) if self.side == WHITE else C(0, -1)
         advanceOnePosition = currentPosition + movement
         if self.board.isValidPos(advanceOnePosition):
-            # Promotion moves
+            #Check if piece at position to move to
             if self.board.pieceAtPosition(advanceOnePosition) is None:
                 col = advanceOnePosition[1]
                 if col == 7 or col == 0:
+                    #print("promotion is happening without a capture")
+                    '''
                     piecesForPromotion = \
-                        [Rook(self.board, self.side, advanceOnePosition),
-                         Knight(self.board, self.side, advanceOnePosition),
-                         Bishop(self.board, self.side, advanceOnePosition),
-                         Queen(self.board, self.side, advanceOnePosition)]
+                        [Rook(self.board, self.side, advanceOnePosition, self.number),      #added self.number to these
+                         Knight(self.board, self.side, advanceOnePosition, self.number),
+                         Bishop(self.board, self.side, advanceOnePosition, self.number),
+                         Queen(self.board, self.side, advanceOnePosition, self.number)]
                     for piece in piecesForPromotion:
-                        move = Move(self, advanceOnePosition)
-                        move.promotion = True
-                        move.specialMovePiece = piece
-                        yield (move)
+                    '''
+                    move = Move(self, advanceOnePosition)
+                    move.promotion = True
+                    move.specialMovePiece = Queen(self.board, self.side, advanceOnePosition, self.number)
+                    #print(move.specialMovePiece)
+                    #print(move)
+                    yield (move)
                 else:
                     yield (Move(self, advanceOnePosition))
 
@@ -57,25 +62,36 @@ class Pawn(Piece):
         # Pawn takes
         movements = [C(1, 1), C(-1, 1)] \
             if self.side == WHITE else [C(1, -1), C(-1, -1)]
-
-        for movement in movements:
-            newPosition = self.position + movement
+        
+        # Pawn captures another piece
+        for m in movements:
+            newPosition = self.position + m
             if self.board.isValidPos(newPosition):
                 pieceToTake = self.board.pieceAtPosition(newPosition)
                 if pieceToTake and pieceToTake.side != self.side:
                     col = newPosition[1]
-                    # Promotions
+                    #print("Piece for pawn to take: ")
+                    #print(pieceToTake)
+                    #print(pieceToTake.board)
+                    
+                    # Promotion with a capture
                     if col == 7 or col == 0:
+                        #print("promotion is happening with capture")
+                        '''
                         piecesForPromotion = \
-                            [Rook(self.board, self.side, newPosition),
-                             Knight(self.board, self.side, newPosition),
-                             Bishop(self.board, self.side, newPosition),
-                             Queen(self.board, self.side, newPosition)]
+                            [Knight(self.board, self.side, newPosition, self.number),
+                             Rook(self.board, self.side, newPosition, self.number),
+                             Bishop(self.board, self.side, newPosition, self.number),
+                             Queen(self.board, self.side, newPosition, self.number)]
                         for piece in piecesForPromotion:
-                            move = Move(self, advanceOnePosition)
-                            move.promotion = True
-                            move.specialMovePiece = piece
-                            yield (move)
+                        '''
+                        move = Move(self, newPosition, pieceToCapture=pieceToTake)
+                        move.promotion = True
+                        move.specialMovePiece = Queen(self.board, self.side, newPosition, self.number)
+                        #print("reset special move piece")
+                        #print(move.specialMovePiece)
+                        #print(move)
+                        yield (move)
                     else:
                         yield (Move(self, newPosition,
                                    pieceToCapture=pieceToTake))

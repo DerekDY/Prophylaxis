@@ -6,35 +6,46 @@ import time
 from chessTable import *
 import sys
 import random
-from Buttons import *
-from BlueTooth import *
+#from Buttons import *
+#from BlueTooth import *
 
 WHITE = True
 BLACK = False
 
 
 class Game:
-    def __init__(self, testingOptions = 0, btOption = 0, gameMode = 1): #1 for use without motors
+    def __init__(self, testingOptions = 0, btOption = 0, gameMode = 1, voiceControl = 0): #1 for use without motors
         self.board = Board()
         self.uciBoard = chess.Board()
+        #self.uciBoard = chess.Board(chess960 = True)
         self.table = ChessTable(testingOptions)
         self.playerSide = WHITE
         self.btSide = BLACK
         self.aiDepth = 2
         self.ai = AI(self.board, not self.playerSide, self.aiDepth)
-        self.engine = chess.uci.popen_engine("stockfish")
+        self.engine = chess.uci.popen_engine(r"C:\Users\Owner\Desktop\stockfish-7-win\Windows\stockfish 7 x64.exe")
         self.engine.uci()
+        #self.engine.setoption({"UCI_Chess960": True})
         self.engine.setoption({"Threads":4})
         self.engine.setoption({"Skill Level":3})
         #deleted
         self.table.drawMotors()  
         self.table.initialize_Coord()  
-        self.button = Button(16)
-        self.button2 = Button(5)
         
+<<<<<<< HEAD
         self.bt = btOption
         self.bluetooth = self.table.bt
         #self.bluetooth = Bluetooth(self.table.motorY.serialPort)
+=======
+        #self.button = Button(16)
+        #self.button2 = Button(5)
+        
+        self.voiceControl = voiceControl
+        
+        #self.bt = btOption
+        #self.bluetooth = Bluetooth(self.table.motorY.serialPort)
+        #self.bluetooth = Bluetooth(3)      #new code for bluetooth separate from motorY
+>>>>>>> bb847f689d18231a02e61d36829320d026207be4
         self.gameMode = gameMode
 
     def askForPlayerSide(self):
@@ -71,8 +82,8 @@ class Game:
             print("Invalid Input, Defaulting to an Intermediate Player")
         
         #only take input if button is pressed
-        self.button2.getButton()
-        tmpValue = self.button2.value
+        #self.button2.getButton()
+        #tmpValue = self.button2.value
         '''
         while(True):
             self.button2.getButton()
@@ -100,12 +111,12 @@ class Game:
         else:
             self.engine.setoption({"Skill Level":6})               
             depthInput = 2
-        print("engine: \n")
-        print(self.engine)
-        print(self.engine.uci)
+        #print("engine: \n")
+        #print(self.engine)
+        #print(self.engine.uci)
         print()      
         self.aiDepth = depthInput
-        print("AI Info: ")
+        print("AI Depth: ")
         print(self.aiDepth)
 
 
@@ -122,6 +133,12 @@ class Game:
 
     def printAllLegalMoves(self, parser):
         for move in parser.getLegalMovesWithShortNotation(self.board.currentSide):
+            #print(move)
+            print(move.notation)
+            
+    def printAllUnfilteredMoves(self, board):
+        for move in board.getAllMovesUnfiltered(board.currentSide):
+            #print(move)
             print(move.notation)
 
 
@@ -134,14 +151,24 @@ class Game:
 
     def makeMove(self, move):
         print()
-        print("testing this dang thing")
+        #print("testing this dang thing")
         print(move)
         print(move.notation)
         print("Making move : " + move.notation)
         self.board.makeChosenMove(move)
-        self.uciBoard.push_san(move.notation)
 
-
+        '''
+        print("New Code: ")
+        if move.queensideCastle:
+            print("queen side castle")
+            self.uciBoard.push_san('e1b1') 
+        elif move.kingsideCastle:
+            print("king side castle")
+            self.uciBoard.push_san('e1g1')
+        else:
+        '''
+        self.uciBoard.push_san(move.notation) 
+        
     def printPointAdvantage(self):
         print("Currently, the point difference is : " +
               str(self.board.getPointAdvantageOfSide(self.board.currentSide)))
@@ -217,25 +244,26 @@ class Game:
             print(self.board)
             #print(self.uciBoard)
             print()
+            '''
             if self.board.isCheckmate():
                 if self.board.currentSide == self.playerSide:
                     print("Checkmate, you lost")
                 else:
                     print("Checkmate! You won!")
                 return
-
+            
             if self.board.isStalemate():
                 if self.board.currentSide == self.playerSide:
                     print("Stalemate")
                 else:
                     print("Stalemate")
                 return
-
+            '''
             if self.board.currentSide == self.playerSide:
-                self.button.getButton()
-                tmpValue2 = self.button2.value 
-                if(tmpValue2 != self.button.value):
-                    print("Button Test")
+                #self.button.getButton()
+                #tmpValue2 = self.button2.value 
+                #if(tmpValue2 != self.button.value):
+                #    print("Button Test")
                 
                 #if Bluetooth vs AI
                 if (self.gameMode == 3):
@@ -276,6 +304,9 @@ class Game:
                     elif command == 'l':
                         self.printAllLegalMoves(parser)
                         continue
+                    elif command == 'x':
+                        self.printAllUnfilteredMoves(self.board)
+                        continue
                     elif command == 'r':
                         move = self.getRandomMove(parser)
                     elif command == 'quit':
@@ -287,7 +318,7 @@ class Game:
                 if move:
                     #move = self.table.getmove(self.board)
                     self.makeMove(move)
-                    
+                    '''
                     if self.bt == 0:
                         print("bluetooth is on")
                         moveStr = str(move.oldPos[0]) + str(move.oldPos[1]) + str(move.newPos[0]) + str(move.newPos[1])
@@ -296,7 +327,7 @@ class Game:
                     else:
                         print("bt is off ")
                         print(self.bt) 
-
+                    '''
                 else:
                     print("Couldn't parse input, enter a valid command or move.")
 
@@ -304,6 +335,8 @@ class Game:
 				#if Human vs Bluetooth
                 if (self.gameMode == 2):
                     print("Bluetooth Player's Turn...")
+                elif (self.gameMode == 4):
+                    print("Player 2's Turn")
                 else:
                     print("AI thinking...")
                     
@@ -442,6 +475,39 @@ class Game:
                         print(message)
                         move = parser.moveForShortNotation(message)
                     '''
+                elif (self.gameMode == 4):
+                    print("gameMode is 4")
+                    parser2 = InputParser(self.board, self.btSide)
+                    command = input("It's your move."
+                                    " Type '?' for options. ? ").lower()
+               
+                    '''
+                    #only take input  if button is pressed
+                    self.button2.getButton()
+                    tmpValue = self.button2.value
+                    while(True):
+                        self.button2.getButton()
+                        if(self.button2.value != tmpValue):
+                            break
+                    '''    
+                    if command == 'u':
+                        self.undoLastTwoMoves()
+                        continue
+                    elif command == '?':
+                        self.printCommandOptions()
+                        continue
+                    elif command == 'l':
+                        self.printAllLegalMoves(parser2)
+                        continue
+                    elif command == 'r':
+                        move = self.getRandomMove(parser2)
+                    elif command == 'quit':
+                        return
+                    else:
+                        parser2.side = self.btSide
+                        move = parser2.moveForShortNotation(command)
+
+                    
                 else:
                     move = self.getUCIEngineMove(self.aiDepth*1000)
                     move.notation = parser.notationForMove(move)
@@ -454,5 +520,8 @@ class Game:
                 #print("move: \n")      #for testing purposes
                 #print(move)            #for testing purposes      
                 
-                self.table.move(move)          
+                if self.gameMode != 4:
+                    self.table.move(move)          
                 self.makeMove(move)
+                 
+                
