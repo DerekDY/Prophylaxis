@@ -33,7 +33,8 @@ class Game:
         self.button2 = Button(5)
         
         self.bt = btOption
-        self.bluetooth = Bluetooth(self.table.motorY.serialPort)
+        self.bluetooth = self.table.bt
+        #self.bluetooth = Bluetooth(self.table.motorY.serialPort)
         self.gameMode = gameMode
 
     def askForPlayerSide(self):

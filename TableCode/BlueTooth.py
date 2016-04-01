@@ -6,7 +6,8 @@ class Bluetooth:
 	
 	def __init__(self, sPort):
 		print("Making Connection...")
-		self.serialPort = sPort
+		self.sPort = sPort
+		self.serialPort = serial.Serial('/dev/ttyUSB' + str(sPort), 9600)
 	
 	
 	def deciferMove(self,msg):
@@ -37,10 +38,13 @@ class Bluetooth:
 		return pos
 	
 	def waitformove(self):
-		while (True):
+		print("in waitformove")
+		while(True):
+			print("test")
+			print(self.serialPort)
 			serialmsg = self.serialPort.readline().decode('UTF-8')
-			#print("serial message: \n")
-			#print(serialmsg)
+			print("serial message: \n")
+			print(serialmsg)
 			if ("#" in serialmsg):
 				msgtemp = serialmsg.split('#')
 				msg = msgtemp[0]
@@ -50,9 +54,17 @@ class Bluetooth:
 		startPos = self.deciferMove(msg[0:2])
 		endPos = self.deciferMove(msg[2:4])
 		msg = startPos + endPos
+		print(msg)
 		return msg
 				
 	def sendmove(self, move):
+		print("Serial Port")
+		print(self.serialPort)		
 		self.serialPort.write(bytes("t" + move + "\n", 'UTF-8'))
+		
+	def who(self):
+		#print("Telling them who I am")
+		self.serialPort.write(bytes("who\n", 'UTF-8'))
+		return self.serialPort.readline().decode('UTF-8')
 
 

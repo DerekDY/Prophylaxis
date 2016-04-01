@@ -4,6 +4,7 @@ from magnet import *
 from Coordinate import Coordinate as C
 from subprocess import call
 from multiprocessing import Process
+from BlueTooth import *
 
 '''
 Class: 			XYTable
@@ -26,22 +27,42 @@ class XYTable:
 		if (testingOption == 0): 
 			motor1 = Motor(0) 
 			motor2 = Motor(1)
+			bluetooth = Bluetooth(2)
 			#print ("I'm making a motor")
-			#print("Who is USB0")
+			print("Who is USB0")
 			print(motor1.who())
-			#print("Who is USB1")
+			print("Who is USB1")
 			print(motor2.who())
+			print("Who is USB2")
+			print(bluetooth.who())
 			if (motor1.who().strip() == "X"):
 				self.motorX = motor1
-				#print ("I MADE USB0 MOTOR X")
-				self.motorY = motor2
-				#print ("I MADE USB1 MOTOR Y")
+				print ("I MADE USB0 MOTOR X")
+				if (motor2.who().strip() == "Y"):
+					self.motorY = motor2
+					print ("I MADE USB1 MOTOR Y")
+					self.bt = bluetooth
+				else:
+					self.bt = Bluetooth(motor2.serialPort)
+					self.motorY = Motor(bluetooth.serialPort)
 			else:
-				self.motorX = motor2
-				#print ("I MADE USB1 MOTOR X")
-				self.motorY = motor1
-				#print ("I MADE USB0 MOTOR Y")
-			#print("WE MADE THE MOTORS")
+				if (motor2.who().strip() == "Y"):
+					self.bt = Bluetooth(motor1.serialPort)
+					self.motorY = motor2
+					self.motorX = Motor(bluetooth.serialPort)
+				elif (bluetooth.who().strip() == "BT"):
+					self.bt = bluetooth
+					self.motorY = motor1
+					self.motorX = motor2	
+				elif (bluetooth.who().strip() == "Y"):
+					self.bt = Bluetooth(motor2.serialPort)
+					self.motorY = motor1
+					self.motorX = Motor(bluetooth.serialPort)	
+				else:
+					print("something went wrong here folks")
+			
+			print("USBs are set up")
+				
 		self.magnet = Magnet(0)
 		self.x = None  #need to initialize table before knowing 
 		self.y = None
