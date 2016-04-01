@@ -23,7 +23,8 @@ class Game:
         self.btSide = BLACK
         self.aiDepth = 2
         self.ai = AI(self.board, not self.playerSide, self.aiDepth)
-        self.engine = chess.uci.popen_engine(r"C:\Users\Owner\Desktop\stockfish-7-win\Windows\stockfish 7 x64.exe")
+        #self.engine = chess.uci.popen_engine(r"C:\Users\Owner\Desktop\stockfish-7-win\Windows\stockfish 7 x64.exe")
+        self.engine = chess.uci.popen_engine("stockfish")
         self.engine.uci()
         #self.engine.setoption({"UCI_Chess960": True})
         self.engine.setoption({"Threads":4})
@@ -32,11 +33,19 @@ class Game:
         self.table.drawMotors()  
         self.table.initialize_Coord()  
         
-<<<<<<< HEAD
         self.bt = btOption
+        
+        print("\n\nLet the print tests begin... \n")
+        print(self.table)
+        print()
+        print(self.table.motorX.who())
+        print(self.table.motorY.who())
+        print(self.table.bt.who())
+        print("\n\n")
+
         self.bluetooth = self.table.bt
         #self.bluetooth = Bluetooth(self.table.motorY.serialPort)
-=======
+
         #self.button = Button(16)
         #self.button2 = Button(5)
         
@@ -45,7 +54,7 @@ class Game:
         #self.bt = btOption
         #self.bluetooth = Bluetooth(self.table.motorY.serialPort)
         #self.bluetooth = Bluetooth(3)      #new code for bluetooth separate from motorY
->>>>>>> bb847f689d18231a02e61d36829320d026207be4
+
         self.gameMode = gameMode
 
     def askForPlayerSide(self):

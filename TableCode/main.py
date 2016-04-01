@@ -25,8 +25,6 @@ testingOption = input(
             "Are Motors Contected?[y/n]? ").lower()
 testingOption = 0 if testingOption == "y" else 1
 
-<<<<<<< HEAD
-=======
 #Voice Control Input
 voiceOption = input(
             "Is Voice Control Being Used?[y/n]? ").lower()
@@ -37,7 +35,6 @@ if voiceOption == 0:
     voiceOption2 = 2 if voiceOption2 == "2" else 1
 
 #Bluetooth Input
->>>>>>> bb847f689d18231a02e61d36829320d026207be4
 '''
 btOption = input(
             "BlueTooth On?[y/n]? ").lower()

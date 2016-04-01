@@ -371,7 +371,7 @@ class Board:
 
         if move.kingsideCastle:
             #update for correct notation
-            print("Queen Side Castle")
+            print("King Side Castle")
             print(move.piece)
             print(move.piece.position)
             return "O-O"

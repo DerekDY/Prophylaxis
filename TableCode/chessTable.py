@@ -232,13 +232,20 @@ class ChessTable(XYTable):  #testing on when 1
                                     parser = InputParser(board, side)
                                     moveMade = parser.moveForShortNotation("O-O")
                                 #white castle queen side
-                                if moveTo[0:2] == [2,0] and move.newPos[0:2] == (2,0):
+                                if moveTo[0:2] == [2,0] and move.newPos[0:2] == (3,0):
                                     print("white queen side castle was made")
                                     print(move)
                                     print(move.piece.side)
                                     side = move.piece.side
                                     parser = InputParser(board, side)
+                                    moveMade = parser.moveForShortNotation("Ka1")
+                                    print(moveMade)
+                                    moveMade = parser.moveForShortNotation("Kb1")
+                                    print(moveMade)
+                                    moveMade = parser.moveForShortNotation("0-0")
+                                    print(moveMade)
                                     moveMade = parser.moveForShortNotation("0-0-0")
+                                    print(moveMade)
                                 #white castle king side
                                 if moveTo[0:2] == [5,0] and move.newPos[0:2] == (6,0):
                                     print("white king side castle was made")
@@ -247,7 +254,8 @@ class ChessTable(XYTable):  #testing on when 1
                                     side = move.piece.side
                                     parser = InputParser(board, side)
                                     moveMade = parser.moveForShortNotation("O-O")
-       
+                                #else:
+                                #    print("none of the if statements were true")
                             else:
                                 if move.promotion:
                                     print("promotion move")
