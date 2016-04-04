@@ -108,23 +108,9 @@ void loop()
     }
 
     // Next up, see if we have any data to get from the Serial console
-/*
-    if (Serial.available()) {
-      // Read a line from Serial
-      Serial.setTimeout(100); // 100 millisecond timeout
-      String s = Serial.readString();
 
-      // We need to convert the line to bytes, no more than 20 at this time
-      uint8_t sendbuffer[20];
-      s.getBytes(sendbuffer, 20);
-      char sendbuffersize = min(20, s.length());
+// deleted code goes here 
 
-      Serial.print(F("\n* Sending -> \"")); Serial.print((char *)sendbuffer); Serial.println("\"");
-
-      // write the data
-      BTLEserial.write(sendbuffer, sendbuffersize);
-    }
-*/
   }
 
   //Serial Loop
@@ -132,7 +118,7 @@ void loop()
   // print the string when a newline arrives:
   if (stringComplete) {
     if (inputString == "who\n"){
-      Serial.println("BT");
+      Serial.println("Z");
     }
     else if (inputString.substring(0,1) == "t"){
       Serial.println("inT\n");
@@ -156,6 +142,25 @@ void loop()
     Serial.flush();
   }
 }
+
+
+/*
+    if (Serial.available()) {
+      // Read a line from Serial
+      Serial.setTimeout(100); // 100 millisecond timeout
+      String s = Serial.readString();
+
+      // We need to convert the line to bytes, no more than 20 at this time
+      uint8_t sendbuffer[20];
+      s.getBytes(sendbuffer, 20);
+      char sendbuffersize = min(20, s.length());
+
+      Serial.print(F("\n* Sending -> \"")); Serial.print((char *)sendbuffer); Serial.println("\"");
+
+      // write the data
+      BTLEserial.write(sendbuffer, sendbuffersize);
+    }
+*/
 
 
 
