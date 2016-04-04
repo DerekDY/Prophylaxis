@@ -29,7 +29,7 @@ void setup() {
   //Bluetooth
   //Serial.begin(9600);
   while(!Serial); // Leonardo/Micro should wait for serial init
-  Serial.println(F("Adafruit Bluefruit Low Energy nRF8001 Print echo demo"));
+  //Serial.println(F("Adafruit Bluefruit Low Energy nRF8001 Print echo demo"));
 
   BTLEserial.setDeviceName("ProphBT"); /* 7 characters max! */
 
@@ -83,15 +83,15 @@ void loop()
   // If the status changed....
   if (status != laststatus) {
     // print it out!
-    if (status == ACI_EVT_DEVICE_STARTED) {
-        Serial.println(F("* Advertising started"));
-    }
-    if (status == ACI_EVT_CONNECTED) {
-        Serial.println(F("* Connected!"));
-    }
-    if (status == ACI_EVT_DISCONNECTED) {
-        Serial.println(F("* Disconnected or advertising timed out"));
-    }
+    //if (status == ACI_EVT_DEVICE_STARTED) {
+    //    Serial.println(F("* Advertising started"));
+    //}
+    //if (status == ACI_EVT_CONNECTED) {
+    //    Serial.println(F("* Connected!"));
+    //}
+    //if (status == ACI_EVT_DISCONNECTED) {
+    //    Serial.println(F("* Disconnected or advertising timed out"));
+    //}
     // OK set the last status change to this one
     laststatus = status;
   }
