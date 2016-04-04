@@ -108,9 +108,26 @@ void loop()
     }
 
     // Next up, see if we have any data to get from the Serial console
+<<<<<<< HEAD
+=======
+
+    if (Serial.available()) {
+      // Read a line from Serial
+      Serial.setTimeout(100); // 100 millisecond timeout
+      String s = Serial.readString();
+>>>>>>> origin/master
 
 // deleted code goes here 
 
+<<<<<<< HEAD
+=======
+      Serial.print(F("\n* Sending -> \"")); Serial.print((char *)sendbuffer); Serial.println("\"");
+
+      // write the data
+      BTLEserial.write(sendbuffer, sendbuffersize);
+    }
+
+>>>>>>> origin/master
   }
 
   //Serial Loop

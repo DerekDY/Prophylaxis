@@ -6,9 +6,9 @@ class Bluetooth:
 	
 	def __init__(self, sPort):
 		print("Making Connection...")
-		self.sPort = sPort
-		self.serialPort = serial.Serial('/dev/ttyUSB' + str(sPort), 9600)
-	
+		#self.sPort = sPort
+		#self.serialPort = serial.Serial('/dev/ttyUSB' + str(sPort), 9600)
+		self.serialPort = sPort
 	
 	def deciferMove(self,msg):
 		pos = str(msg)

@@ -34,39 +34,61 @@ class XYTable:
 		if (testingOption == 0): 
 			motor1 = Motor(0) 
 			motor2 = Motor(1)
-			bluetooth = Bluetooth(2)
+			motor3 = Motor(2)
+			#bluetooth = Bluetooth(2)
 			#print ("I'm making a motor")
+			print("Making USB Connections")
 			print("Who is USB0")
 			print(motor1.who())
 			print("Who is USB1")
 			print(motor2.who())
 			print("Who is USB2")
-			print(bluetooth.who())
+			print(motor3.who())
+
 			if (motor1.who().strip() == "X"):
+				print("USB1 is motor X")
 				self.motorX = motor1 
 				if (motor2.who().strip() == "Y"):
 					self.motorY = motor2
-					self.bt = bluetooth
+					#self.bt = bluetooth
+					self.bt = Bluetooth(motor3.serialPort)
 				else:
 					self.bt = Bluetooth(motor2.serialPort)
-					self.motorY = Motor(bluetooth.serialPort)
-			else:
-				if (motor2.who().strip() == "Y"):
+					#self.motorY = Motor(bluetooth.serialPort)
+					self.motorY = Motor(motor3.serialPort)
+			elif (motor2.who().strip() == "X"):
+				print("USB2 is motor X")
+				self.motorX = motor2 
+				if (motor1.who().strip() == "Y"):
+					self.motorY = motor1
+					#self.bt = bluetooth
+					self.bt = Bluetooth(motor3.serialPort)
+				else:
 					self.bt = Bluetooth(motor1.serialPort)
-					self.motorY = motor2
-					self.motorX = Motor(bluetooth.serialPort)
-				elif (bluetooth.who().strip() == "BT"):
-					self.bt = bluetooth
+					#self.motorY = Motor(bluetooth.serialPort)
+					self.motorY = Motor(motor3.serialPort)
+			elif (motor3.who().strip() == "X"):
+				print("USB3 is motor X")
+				self.motorX = motor3 
+				if (motor1.who().strip() == "Y"):
+					print("USB1 is motor Y")
 					self.motorY = motor1
-					self.motorX = motor2	
-				elif (bluetooth.who().strip() == "Y"):
+					#self.bt = bluetooth
+					print(self.motorY)
+					print(motor2.serialPort)
 					self.bt = Bluetooth(motor2.serialPort)
-					self.motorY = motor1
-					self.motorX = Motor(bluetooth.serialPort)	
+					print(self.bt)
 				else:
-					print("something went wrong here folks")
+					self.bt = Bluetooth(motor1.serialPort)
+					#self.motorY = Motor(bluetooth.serialPort)
+					self.motorY = Motor(motor2.serialPort)
+			else:
+				print("something went wrong here folks")
 			
 			print("USBs are set up")
+			print(self.motorX)
+			print(self.motorY)
+			print(self.bt)
 			
 		self.magnet = Magnet(0)
 		self.x = None  #need to initialize table before knowing 
