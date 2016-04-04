@@ -108,7 +108,7 @@ void loop()
     }
 
     // Next up, see if we have any data to get from the Serial console
-/*
+
     if (Serial.available()) {
       // Read a line from Serial
       Serial.setTimeout(100); // 100 millisecond timeout
@@ -124,7 +124,7 @@ void loop()
       // write the data
       BTLEserial.write(sendbuffer, sendbuffersize);
     }
-*/
+
   }
 
   //Serial Loop
