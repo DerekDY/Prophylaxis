@@ -28,7 +28,7 @@ class GameScene: SKScene {
         // Draw the board
         drawBoard()
         setupLabel()
-        self.game = ChessGame(whitePlayerName: "WHITE", blackPlayerName: "BLACK", board: boardSpaces, label: myLabel)
+        self.game = ChessGame(whitePlayerName: "WHITE", blackPlayerName: "BLACK", board: boardSpaces, label: myLabel, scene: self)
         drawMenuBar()
         drawMenu()
         
@@ -41,12 +41,12 @@ class GameScene: SKScene {
     }
     //GAME LOGIC
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        /* Called when a touch begins */
-        if self.myLabel.text == "Game Ended..."{
-            self.myLabel.text = ""
-            showMenu()
-            return
-        }
+//        /* Called when a touch begins */
+//        if self.myLabel.text == "Game Ended..."{
+//            self.myLabel.text = ""
+//            showMenu()
+//            return
+//        }
         
         
         for touch in touches {
@@ -58,26 +58,30 @@ class GameScene: SKScene {
                     print("Playing Offline")
                     online = false
                     clearMenu()
+                    return
                 }else if name == "online"{
                     print("Playing Online")
                     online = true
                     game.playOnline()  //start the socket connection
                     clearMenu()
+                    return
                 }
                 if name == "bluetooth"{
                     if (bluetooth){
                         print("Turning Off bluetooth")
+                        game.nrfManager.disconnect()
                         bluetooth = false
                     }else{
                         print("Starting bluetooth")
                         bluetooth = true
-
+                        self.game.connectBluetooth()
                     }
                                         
                 }
                 
                 if name == "close"{
-                    closeGame()
+                    game.resetGame()
+                    return
                 }
                 if online == true{
                     if game.gameStarted != true{
@@ -85,6 +89,9 @@ class GameScene: SKScene {
                     }
                     if game.onlineSide != game.playerTurn{
                         self.myLabel.text = "\(game.playerTurn)'s Move"
+                        return
+                    }
+                    if bluetooth{
                         return
                     }
                     //self.myLabel.text = "Your Move!"
@@ -117,6 +124,7 @@ class GameScene: SKScene {
                         //check if legal move
                         var fromSpace = previouslyTouchedPiece.parent as! BoardSpace
                         if previouslyTouchedPiece.isValidMove(fromSpace, target: space, board: self.game.board){
+                            //check to see if casteling
                             if previouslyTouchedPiece.stringRep == "K"{
                                 if abs(fromSpace.x - space.x) == 2{
                                     game.board.move(previouslyTouchedPiece, space: space, piecetotake: nil)
@@ -156,7 +164,7 @@ class GameScene: SKScene {
                                 }
                             }
                             //Put code here to check if en pessant
-                            if previouslyTouchedPiece.stringRep == "P"{
+                            else if previouslyTouchedPiece.stringRep == "P"{
                                 let pawn = previouslyTouchedPiece as! Pawn
                                 let isWhite = pawn.pieceColor == PieceColor.White
                                 let currentSpace = pawn.parent as! BoardSpace
@@ -237,15 +245,6 @@ class GameScene: SKScene {
         
     }
     
-    func closeGame(){
-        if !online{
-            showMenu()
-        }
-        self.game.resetGame()
-        
-        
-    }
-    
     func drawMenuBar(){
         let screenSize: CGRect = UIScreen.mainScreen().bounds
         let screenWidth = screenSize.width
@@ -269,6 +268,9 @@ class GameScene: SKScene {
     }
     
     func showMenu(){
+        if (self.childNodeWithName("blur") != nil){
+            return
+        }
         self.addChild(self.menuParent)
         let board = self.childNodeWithName("blureffect") as! SKEffectNode
         board.filter = self.blurFilter
@@ -285,8 +287,6 @@ class GameScene: SKScene {
         let screenWidth = screenSize.width
         let screenHeight = screenSize.height
         
-        //let squareSize = CGSizeMake(screenWidth*2, screenHeight*2)
-        //let blurEffect =
         self.blurFilter = CIFilter(name: "CIGaussianBlur")
         // Set the blur amount. Adjust this to achieve the desired effect
         let blurAmount = 20.0

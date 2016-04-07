@@ -149,7 +149,7 @@ extension NRFManager {
             log("Asked to connect, but already connected!")
             return
         }
-        
+        log("made it to connect")
         scanForPeripheral()
     }
     

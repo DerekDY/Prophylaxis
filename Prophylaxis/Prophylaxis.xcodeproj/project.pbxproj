@@ -47,6 +47,7 @@
 		1982C4911C4C1BD6000183E4 /* King.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1982C4901C4C1BD6000183E4 /* King.swift */; };
 		1982C4931C4C1BDC000183E4 /* Bishop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1982C4921C4C1BDC000183E4 /* Bishop.swift */; };
 		1982C4951C4DAFBB000183E4 /* ChessGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1982C4941C4DAFBB000183E4 /* ChessGame.swift */; };
+		19A71B9C1CB0560A0026356D /* NRFManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A71B9B1CB0560A0026356D /* NRFManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -92,6 +93,7 @@
 		1982C4901C4C1BD6000183E4 /* King.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = King.swift; path = "Chess Pieces/King.swift"; sourceTree = "<group>"; };
 		1982C4921C4C1BDC000183E4 /* Bishop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Bishop.swift; path = "Chess Pieces/Bishop.swift"; sourceTree = "<group>"; };
 		1982C4941C4DAFBB000183E4 /* ChessGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChessGame.swift; sourceTree = "<group>"; };
+		19A71B9B1CB0560A0026356D /* NRFManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NRFManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +162,7 @@
 				197AA1B31C4B3AD8001D7BBE /* BoardSpace.swift */,
 				197AA1AC1C4B2EA6001D7BBE /* ChessPiece.swift */,
 				1982C4841C4C01F6000183E4 /* Board.swift */,
+				19A71B9B1CB0560A0026356D /* NRFManager.swift */,
 				197AA16F1C4AFB87001D7BBE /* AppDelegate.swift */,
 				1982C4921C4C1BDC000183E4 /* Bishop.swift */,
 				1982C4901C4C1BD6000183E4 /* King.swift */,
@@ -279,6 +282,7 @@
 				1982C4931C4C1BDC000183E4 /* Bishop.swift in Sources */,
 				197AA1741C4AFB87001D7BBE /* GameScene.swift in Sources */,
 				197AA1761C4AFB87001D7BBE /* GameViewController.swift in Sources */,
+				19A71B9C1CB0560A0026356D /* NRFManager.swift in Sources */,
 				195ABC5F1C505A11007D119A /* SocketAckEmitter.swift in Sources */,
 				195ABC6B1C505A11007D119A /* SocketIOClient.swift in Sources */,
 				195ABC6C1C505A11007D119A /* SocketIOClientOption.swift in Sources */,

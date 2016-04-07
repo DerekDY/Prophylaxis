@@ -106,7 +106,7 @@ class Board: NSObject, NSCopying {
                 let currentSpace = boardSpaces[x][y]
                 if let currentPiece = currentSpace.getPiece(){
                     if currentPiece.pieceColor != side{
-                        print("Calling is Valid Move for: \(currentPiece.stringRep)")
+                        //print("Calling is Valid Move for: \(currentPiece.stringRep)")
                         if currentPiece.isValidMove(boardSpaces[x][y], target: kingSpace, board: self) {
                             if currentPiece.pieceColor == PieceColor.White{
                                 self.blackInCheck = true
