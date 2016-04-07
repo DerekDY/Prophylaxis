@@ -6,8 +6,10 @@ import time
 from chessTable import *
 import sys
 import random
-#from Buttons import *
+
+from buttonListener import *
 #from BlueTooth import *
+from ledmatrix import *
 
 WHITE = True
 BLACK = False
@@ -24,7 +26,7 @@ class Game:
         self.aiDepth = 2
         self.ai = AI(self.board, not self.playerSide, self.aiDepth)
         #self.engine = chess.uci.popen_engine(r"C:\Users\Owner\Desktop\stockfish-7-win\Windows\stockfish 7 x64.exe")
-        self.engine = chess.uci.popen_engine("stockfish")
+        self.engine = chess.uci.popen_engine("/usr/games/stockfish")
         self.engine.uci()
         #self.engine.setoption({"UCI_Chess960": True})
         self.engine.setoption({"Threads":4})
@@ -34,6 +36,14 @@ class Game:
         self.table.initialize_Coord()  
         
         self.bt = btOption
+        
+        self.ledMatrix = LEDMatrix()
+        pin1 = 19   
+        pin2 = 21
+        pin3 = 13   #not being used 
+        self.selectButton = ButtonListener(pin1)
+        self.scrollButton = ButtonListener(pin2)
+        self.newGameButton = ButtonListener(pin3)
         
         #Print Tests for Motors and Bluetooth
         '''
@@ -48,9 +58,6 @@ class Game:
         
         self.bluetooth = self.table.bt
         #self.bluetooth = Bluetooth(self.table.motorY.serialPort)
-
-        #self.button = Button(16)
-        #self.button2 = Button(5)
         
         self.voiceControl = voiceControl
         
@@ -61,6 +68,7 @@ class Game:
         self.gameMode = gameMode
 
     def askForPlayerSide(self):
+        '''
         playerChoiceInput = input(
             "What side would you like to play as [wB]? ").lower()
         if 'w' in playerChoiceInput:
@@ -71,58 +79,129 @@ class Game:
             print("You will play as black")
             self.playerSide = BLACK
             self.btSide = WHITE 		
+        '''
         
-        #print("Starting Button Tests")
-        #self.button.testButton()
-        #print("End of Button Tests")
-        '''
-        self.button.getButton()
-        print(self.button.value)
-        if(self.button.value == 1):
-            print("You will play as white")
-            self.playerSide = WHITE
-        else:
-            print("You will play as black")
-            self.playerSide = BLACK
-        '''
+        #Set up LED Matrix
+        smallFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/4x6.bdf"
+        normFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/5x8.bdf"
+        bigFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/6x10.bdf"
+        fontColor = "0, 255, 255"
+        errorColor = "255,0,0"
+        sleepTime = 0.3
+        self.ledMatrix.clear()
+        
+        #Choose Player Side
+        time.sleep(sleepTime)
+        self.ledMatrix.display("SIDE","[W/B]?",fontColor, normFont)  
+        self.scrollButton.startListener()
+        self.selectButton.startListener()
+        scrollCount = 0
+        while True:
+            if self.scrollButton.wasPressed():
+                self.scrollButton.stopListener()
+                time.sleep(sleepTime)
+                self.scrollButton.startListener()
+                scrollCount = scrollCount + 1
+                if scrollCount == 3:
+                    scrollCount = 1
+                print("Scroll Button was Pressed")
+                print(scrollCount)
+                self.scrollButton.stopListener()
+                self.scrollButton.startListener()
+                if scrollCount == 1:
+                    self.ledMatrix.display(" WHITE", "", fontColor, normFont)
+                elif scrollCount == 2:
+                    self.ledMatrix.display(" BLACK", "", fontColor, normFont)
+                else:
+                    self.ledMatrix.display("SIDE","[W/B]?", fontColor, normFont)  
+                    
+            if self.selectButton.wasPressed():
+                print("Select Button was Pressed")
+                self.ledMatrix.clear()
+                sideOption = scrollCount
+                self.playerSide = WHITE if sideOption == 1 else BLACK
+                break
 
     def askForDepthOfAI(self):
         #depthInput = 5
+        '''
         try:
             Input = int(input("Choose Your AI Difficulty\n   1 - Dumb As a Box of Rocks\n   2 - Beginner\n   3 - Intermediate\n   4 - Master\n   5 - GrandMaster\n   6 - Super GrandMaster\n"))
         except:
             print("Invalid Input, Defaulting to an Intermediate Player")
+        '''
         
-        #only take input if button is pressed
-        #self.button2.getButton()
-        #tmpValue = self.button2.value
-        '''
-        while(True):
-            self.button2.getButton()
-            if(self.button2.value != tmpValue):
+        #Set up LED Matrix
+        smallFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/4x6.bdf"
+        normFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/5x8.bdf"
+        bigFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/6x10.bdf"
+        fontColor = "0, 255, 255"
+        errorColor = "255,0,0"
+        sleepTime = 0.3
+        self.ledMatrix.clear()
+        
+        #Choose Player Side
+        time.sleep(sleepTime)
+        self.ledMatrix.display("  AI"," SKILL",fontColor, normFont)  
+        self.scrollButton.startListener()
+        self.selectButton.startListener()
+        scrollCount = 0
+        while True:
+            if self.scrollButton.wasPressed():
+                self.scrollButton.stopListener()
+                time.sleep(sleepTime)
+                self.scrollButton.startListener()
+                scrollCount = scrollCount + 1
+                if scrollCount == 7:
+                    scrollCount = 1
+                print("Scroll Button was Pressed")
+                print(scrollCount)
+                self.scrollButton.stopListener()
+                self.scrollButton.startListener()
+                if scrollCount == 1:
+                    self.ledMatrix.display("BOX OF", "ROCKS", fontColor, normFont)
+                elif scrollCount == 2:
+                    self.ledMatrix.display("BEGI-", "-NNER", fontColor, normFont)
+                elif scrollCount == 3:
+                    self.ledMatrix.display("INTER-", "-MEDIATE", fontColor, smallFont)
+                elif scrollCount == 4:
+                    self.ledMatrix.display("MASTER", "", fontColor, normFont)
+                elif scrollCount == 5:
+                    self.ledMatrix.display("GRAND", "MASTER", fontColor, normFont)
+                elif scrollCount == 6:
+                    self.ledMatrix.display("WIZARD", "", fontColor, normFont)                                                                                                 
+                else:
+                    self.ledMatrix.display("SIDE","[W/B]?", fontColor, normFont)  
+                    
+            if self.selectButton.wasPressed():
+                print("Select Button was Pressed")
+                self.ledMatrix.clear()
+                aiOption = scrollCount
                 break
-        '''
-        if(Input == 1):
+        
+        if(aiOption == 1):
             self.engine.setoption({"Skill Level":0})
             depthInput = 1
-        elif(Input == 2):
+        elif(aiOption == 2):
             self.engine.setoption({"Skill Level":1})
             depthInput = 2           
-        elif(Input == 3):
+        elif(aiOption == 3):
             self.engine.setoption({"Skill Level":6})
             depthInput = 5           
-        elif(Input == 4):
+        elif(aiOption == 4):
             self.engine.setoption({"Skill Level":11})
             depthInput = 10        
-        elif(Input == 5):
+        elif(aiOption == 5):
             self.engine.setoption({"Skill Level":17})
             depthInput = 13      
-        elif(Input == 6):
+        elif(aiOption == 6):
             self.engine.setoption({"Skill Level":20})
             depthInput = 15   
         else:
             self.engine.setoption({"Skill Level":6})               
             depthInput = 2
+            
+            
         #print("engine: \n")
         #print(self.engine)
         #print(self.engine.uci)
@@ -297,16 +376,7 @@ class Game:
                 else:
                     command = input("It's your move."
                                     " Type '?' for options. ? ").lower()
-               
-                    '''
-                    #only take input  if button is pressed
-                    self.button2.getButton()
-                    tmpValue = self.button2.value
-                    while(True):
-                        self.button2.getButton()
-                        if(self.button2.value != tmpValue):
-                            break
-                    '''    
+                  
                     if command == 'u':
                         self.undoLastTwoMoves()
                         continue
@@ -341,7 +411,11 @@ class Game:
                         print(self.bt) 
                     '''
                 else:
+                    bigFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/6x10.bdf"
+                    errorColor = "255,0,0"
+                    self.ledMatrix.display("ERROR","IDIOT", errorColor, bigFont)
                     print("Couldn't parse input, enter a valid command or move.")
+                    
 
             else:
 				#if Human vs Bluetooth
@@ -492,16 +566,7 @@ class Game:
                     parser2 = InputParser(self.board, self.btSide)
                     command = input("It's your move."
                                     " Type '?' for options. ? ").lower()
-               
-                    '''
-                    #only take input  if button is pressed
-                    self.button2.getButton()
-                    tmpValue = self.button2.value
-                    while(True):
-                        self.button2.getButton()
-                        if(self.button2.value != tmpValue):
-                            break
-                    '''    
+                 
                     if command == 'u':
                         self.undoLastTwoMoves()
                         continue

@@ -36,7 +36,7 @@ class XYTable:
 			motor2 = Motor(1)
 			motor3 = Motor(2)
 			#bluetooth = Bluetooth(2)
-			#print ("I'm making a motor")
+			
 			print("Making USB Connections")
 			'''
 			print("Who is USB0")
