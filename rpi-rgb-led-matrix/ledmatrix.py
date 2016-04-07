@@ -16,3 +16,6 @@ class LEDMatrix():
     def clear(self):
         if (self.p != None):
             self.p.terminate()
+
+            
+#matrix.drawPixel(x,y,matrix.Color333(r,g,b))    c code

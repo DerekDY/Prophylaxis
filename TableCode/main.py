@@ -17,7 +17,8 @@ newGameButton = ButtonListener(pin3)
   
 #LED Display Setup  
 ledMatrix = LEDMatrix()
-
+smallFont = "/fonts/4x6.bdf"
+fontColor = "255,205,0")
 
 #New Game and Title Screen
 newGameButton.startListener()
@@ -43,18 +44,20 @@ while True:
         if scrollCount == 5:
             scrollCount = 1
         print("Scroll Button was Pressed")
+        print(scrollCount)
         scrollButton.stopListener()
         scrollButton.startListener()
         if scrollCount == 1:
-            ledMatrix.display("1 - Human vs AI")
+            ledMatrix.display("Human", "v AI", fontColor)
         elif scrollCount == 2:
-            ledMatrix.display("2 - Human vs Bluetooth")
+            ledMatrix.display("Human", "v App", fontColor)
         elif scrollCount == 3:
-            ledMatrix.display("3 - Bluetooth vs AI")
+            ledMatrix.display("App", "v AI", fontColor)
         elif scrollCount == 4:
-            ledMatrix.display("4 - Human vs Human")
+            ledMatrix.display("Human", "v Human", fontColor, smallFont)
         else:
-            ledMatrix.display("Choose Game Mode","Scroll For Options","fonts/4x6.bdf")  
+            ledMatrix.display("Choose"," Mode")  
+            
     if selectButton.wasPressed():
         print("Select Button was Pressed")
         gameMode = scrollCount
