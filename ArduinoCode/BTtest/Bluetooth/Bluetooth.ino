@@ -98,9 +98,9 @@ void loop()
 
   if (status == ACI_EVT_CONNECTED) {
     // Lets see if there's any data for us!
-    if (BTLEserial.available()) {
-      Serial.print("* "); Serial.print(BTLEserial.available()); Serial.println(F(" bytes available from BTLE"));
-    }
+    //if (BTLEserial.available()) {
+    //  Serial.print("* "); Serial.print(BTLEserial.available()); Serial.println(F(" bytes available from BTLE"));
+    //}
     // OK while we still have something to read, get a character and print it out
     while (BTLEserial.available()) {
       char c = BTLEserial.read();
