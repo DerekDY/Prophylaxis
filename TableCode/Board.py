@@ -129,6 +129,61 @@ class Board:
             self.pieces.extend([Pawn(self, WHITE, C(5, 2), 0)])
             self.pieces.extend([Pawn(self, WHITE, C(6, 3), 0)])
             self.pieces.extend([Rook(self, WHITE, C(0, 3), 0)])
+        elif testing ==7:
+            self.pieces.extend([Rook(self, BLACK, C(7, 7), 0)])
+            self.pieces.extend([King(self, BLACK, C(4, 7), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(2, 3), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(3, 2), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(4, 3), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(5, 2), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(6, 3), 0)])
+            self.pieces.extend([Rook(self, WHITE, C(0, 3), 0)])
+        elif testing ==8:
+            self.pieces.extend([Rook(self, BLACK, C(0, 0), 0)])
+            self.pieces.extend([King(self, BLACK, C(4, 0), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(2, 3), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(3, 2), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(4, 3), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(5, 2), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(6, 3), 0)])
+            self.pieces.extend([Rook(self, WHITE, C(0, 3), 0)])
+        elif testing ==9:
+            self.pieces.extend([Rook(self, BLACK, C(7, 0), 0)])
+            self.pieces.extend([King(self, BLACK, C(4, 0), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(2, 3), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(3, 2), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(4, 3), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(5, 2), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(6, 3), 0)])
+            self.pieces.extend([Rook(self, WHITE, C(0, 3), 0)])
+        elif testing ==10:
+            self.pieces.extend([Pawn(self, BLACK, C(6, 6), 0)])
+            self.pieces.extend([Pawn(self, WHITE, C(5, 4), 0)])
+            # need to move the pawn so that the en passant is a legal move
+        elif testing == 11:
+            self.pieces.extend([Knight(self, WHITE, C(4, 4), 0)])
+            self.pieces.extend([Queen(self, BLACK, C(7, 1), 0)])
+        elif testing == 12:
+            self.pieces.extend([Rook(self, BLACK, C(0, 7), 0),
+                                Knight(self, BLACK, C(1, 7), 0),
+                                Bishop(self, BLACK, C(2, 7), 0),
+                                Queen(self, BLACK, C(3, 7), 0),
+                                King(self, BLACK, C(4, 7), 0),
+                                Bishop(self, BLACK, C(5, 7), 1),
+                                Knight(self, BLACK, C(6, 7), 1),
+                                Rook(self, BLACK, C(7, 7), 1)])
+            for x in range(8):
+                self.pieces.append(Pawn(self, BLACK, C(x, 6), x))
+            for x in range(8):
+                self.pieces.append(Pawn(self, WHITE, C(x, 1), x))
+            self.pieces.extend([Rook(self, WHITE, C(0, 0), 0),
+                                Knight(self, WHITE, C(1, 0), 0),
+                                Bishop(self, WHITE, C(2, 0), 0),
+                                Queen(self, WHITE, C(3, 0), 0),
+                                King(self, WHITE, C(4, 0), 0),
+                                Bishop(self, WHITE, C(5, 0), 1),
+                                Knight(self, WHITE, C(6, 0), 1),
+                                Rook(self, WHITE, C(7, 0), 1)])
             
             
     def __str__(self):
@@ -157,18 +212,30 @@ class Board:
                 self.points += 1
             if pawnTaken.side == BLACK:
                 self.points -= 1
-
+        
         elif lastMove.promotion:
+            #print("promotion in undo move")
             pawnPromoted = lastMove.piece
+            #print("pawnPromoted")
+            #print(pawnPromoted)
             promotedPiece = self.pieceAtPosition(lastMove.newPos)
-            self.pieces.remove(promotedPiece)
+            #print("promotedPiece")
+            #print(promotedPiece)
+            if promotedPiece:
+                self.pieces.remove(promotedPiece)
             self.pieces.append(pawnPromoted)
-            if pawnPromoted.side == WHITE:
-                self.points -= promotedPiece.value - 1
-            elif pawnPromoted.side == BLACK:
-                self.points += promotedPiece.value - 1
+            #print("pieces")
+            #for p in self.pieces:
+            #    print(p)
+            #print("pieces done")
+            if promotedPiece:
+                if pawnPromoted.side == WHITE:
+                    self.points -= promotedPiece.value - 1
+                elif pawnPromoted.side == BLACK:
+                    self.points += promotedPiece.value - 1
+            
             pawnPromoted.movesMade -= 1
-
+        
         else:
             pieceToMoveBack = lastMove.piece
             self.movePieceToPosition(pieceToMoveBack, lastMove.oldPos)
@@ -210,6 +277,7 @@ class Board:
 
     def addMoveToHistory(self, move):
         pieceTaken = None
+        print(move.pessant)
         if move.pessant:
             pieceTaken = move.specialMovePiece
             self.history.append([move, pieceTaken])
@@ -288,11 +356,26 @@ class Board:
         pieceToTake = move.pieceToCapture
 
         if move.queensideCastle:
-            return "0-0-0"
+            #update for correct notation
+            print("Queen Side Castle")
+            print(move.piece)
+            print(move.piece.position)
+            if move.newPos == (2,0):
+                return "Ka1"
+            elif move.newPos == (2,7):
+                return "Ka8"
+            else:
+                print("Not a valid queen side castle")
+                
+            #return "0-0-0"
 
         if move.kingsideCastle:
+            #update for correct notation
+            print("King Side Castle")
+            print(move.piece)
+            print(move.piece.position)
             return "O-O"
-
+            
         if pieceToMove.stringRep != 'p':
             notation += pieceToMove.stringRep
 
@@ -424,13 +507,20 @@ class Board:
             pawnToMove.movesMade += 1
 
         elif move.promotion:
+            #Get rid of remove statements to still test if the move is valid
+            
+            pieceToTake = move.pieceToCapture
+            if pieceToTake:
+                self.pieces.remove(pieceToTake)
+            
             self.pieces.remove(move.piece)
             self.pieces.append(move.specialMovePiece)
+            
             if move.piece.side == WHITE:
                 self.points += move.specialMovePiece.value - 1
             if move.piece.side == BLACK:
                 self.points -= move.specialMovePiece.value - 1
-
+            
         else:
             pieceToMove = move.piece
             pieceToTake = move.pieceToCapture
@@ -448,45 +538,48 @@ class Board:
 
     '''This was written by Derek'''
     def makeChosenMove(self, move):
-        self.addMoveToHistory(move)
-        if move.kingsideCastle or move.queensideCastle:
-            kingToMove = move.piece
-            rookToMove = move.specialMovePiece
-            self.movePieceToPosition(kingToMove, move.newPos)
-            self.movePieceToPosition(rookToMove, move.rookMovePos)
-            kingToMove.movesMade += 1
-            rookToMove.movesMade += 1
+        if move:
+            self.addMoveToHistory(move)
+            if move.kingsideCastle or move.queensideCastle:
+                kingToMove = move.piece
+                rookToMove = move.specialMovePiece
+                self.movePieceToPosition(kingToMove, move.newPos)
+                self.movePieceToPosition(rookToMove, move.rookMovePos)
+                kingToMove.movesMade += 1
+                rookToMove.movesMade += 1
 
-        elif move.pessant:
-            pawnToMove = move.piece
-            pawnToTake = move.specialMovePiece
-            pawnToMove.position = move.newPos
-            self.removePiece(pawnToTake)
-            pawnToMove.movesMade += 1
+            elif move.pessant:
+                pawnToMove = move.piece
+                pawnToTake = move.specialMovePiece
+                pawnToMove.position = move.newPos
+                self.removePiece(pawnToTake)
+                pawnToMove.movesMade += 1
 
-        elif move.promotion:
-            self.pieces.remove(move.piece)
-            self.pieces.append(move.specialMovePiece)
-            if move.piece.side == WHITE:
-                self.points += move.specialMovePiece.value - 1
-            if move.piece.side == BLACK:
-                self.points -= move.specialMovePiece.value - 1
+            elif move.promotion:
+                #print("makeChosenMove: move is a promotion")
+                self.pieces.remove(move.piece)
+                if move.pieceToCapture:
+                    self.pieces.remove(move.pieceToCapture) #added to fix promotion
+                self.pieces.append(move.specialMovePiece)
+                if move.piece.side == WHITE:
+                    self.points += move.specialMovePiece.value - 1
+                if move.piece.side == BLACK:
+                    self.points -= move.specialMovePiece.value - 1
+            else:
+                pieceToMove = move.piece
+                pieceToTake = move.pieceToCapture
+                print(str(pieceToTake))
+                if pieceToTake:
+                    if pieceToTake.side == WHITE:
+                        self.points -= pieceToTake.value
+                    if pieceToTake.side == BLACK:
+                        self.points += pieceToTake.value
+                    self.removePiece(pieceToTake)
 
-        else:
-            pieceToMove = move.piece
-            pieceToTake = move.pieceToCapture
-            print(str(pieceToTake))
-            if pieceToTake:
-                if pieceToTake.side == WHITE:
-                    self.points -= pieceToTake.value
-                if pieceToTake.side == BLACK:
-                    self.points += pieceToTake.value
-                self.removePiece(pieceToTake)
-
-            self.movePieceToPosition(pieceToMove, move.newPos)
-            pieceToMove.movesMade += 1
-        self.movesMade += 1
-        self.currentSide = not self.currentSide
+                self.movePieceToPosition(pieceToMove, move.newPos)
+                pieceToMove.movesMade += 1
+            self.movesMade += 1
+            self.currentSide = not self.currentSide
 
     '''This was written by Derek'''
     def removePiece(self, pieceToRemove):
@@ -494,28 +587,58 @@ class Board:
         side = pieceToRemove.side
         letter = pieceToRemove.stringRep
         #adding a captured piece to the bins 
+        
+        # White Capture Bin #
+              #[P0 B0]
+              #[P1 B1]
+              #[P2 N0]
+              #[P3 N1]
+              #[P4 R0] 
+              #[P5 R1] 
+              #[P6 Q0] 
+              #[P7   ] 
+              
+        # Black Capture Bin #
+              #[B0 P0]
+              #[B1 P1]
+              #[N0 P2]
+              #[N1 P3]
+              #[R0 P4] 
+              #[R1 P5] 
+              #[Q0 P6] 
+              #[   P7]
+        
+        # numbers assuming 0 at top #
+        #B = 0
+        #N = 2
+        #R = 4
+        #Q = 6
+        
+        # 0,0 assumed to be top left #
+        
+        #changed all of these after working with test moves but not sure if it will work for main.py
         if side == WHITE:
             if letter == "p":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, 7 - number), number)])
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, number), number)])   
             elif letter == "R":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, 7 - R + number), number)])
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, R + number), number)])
             elif letter == "N":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, 7 - N + number), number)])
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, N + number), number)])  
             elif letter == "Q":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, 7 - Q + number), number)])
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, Q + number), number)])
             elif letter == "B":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, 7 - B + number), number)])
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, B + number), number)]) 
         else:
             if letter == "p":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(1, number), number)])
+                self.blackCaptured.extend([Captured( letter, BLACK, C(1, number), number)])   
             elif letter == "R":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(0, (R + number)), number)])
+                self.blackCaptured.extend([Captured( letter, BLACK, C(0, R + number), number)])
             elif letter == "N":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(0, (N + number)), number)])
+                self.blackCaptured.extend([Captured( letter, BLACK, C(0, N + number), number)]) 
             elif letter == "Q":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(0, (Q + number)), number)])
+                self.blackCaptured.extend([Captured( letter, BLACK, C(0, Q + number), number)])
             elif letter == "B":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(0, (B + number)), number)])
+                self.blackCaptured.extend([Captured( letter, BLACK, C(0, B + number), number)]) 
         #removing the piece from the 
         self.pieces.remove(pieceToRemove)
         print("Piece added to Captured bin")
@@ -553,7 +676,9 @@ class Board:
         for piece in self.pieces:
             if piece.side == side:
                 if includeKing or piece.stringRep != 'K':
+                    #print("all moves")
                     for move in piece.getPossibleMoves():
+                        #print(move)
                         unfilteredMoves.append(move)
         #print("--- %s seconds ---" % (time.time() - start_time))
         return unfilteredMoves
@@ -567,16 +692,27 @@ class Board:
 
     def moveIsLegal(self, move):
         side = move.piece.side
-        self.makeMove(move)
-        isLegal = self.testIfLegalBoard(not side)
-        self.undoLastMove()
+        #print("checking if move is legal")
+        if move.specialMovePiece:
+            #print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+            #print("special move piece in move is legal")
+            #print(move.specialMovePiece)
+            #print(move)
+            isLegal = self.testIfLegalBoard(not side)
+        else:
+            self.makeMove(move)
+            isLegal = self.testIfLegalBoard(not side)
+            self.undoLastMove()
         return isLegal
+        
 
     # TODO: remove side parameter, unneccesary
     def getAllMovesLegal(self, side):
         unfilteredMoves = list(self.getAllMovesUnfiltered(side))
         legalMoves = []
+        #print("unfiltered")
         for move in unfilteredMoves:
+            #print(move)
             if self.moveIsLegal(move):
                 legalMoves.append(move)
         return legalMoves

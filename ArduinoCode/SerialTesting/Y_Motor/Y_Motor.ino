@@ -1,5 +1,5 @@
 /*
-Serial Comunication witht the motors 
+Serial Comunication with the motors 
  */
 
 #define clkPin 2
@@ -28,7 +28,7 @@ void setup() {
 void moveF(int steps){
   long speedup = 0;
   boolean errorFound = false;
-  digitalWrite(dirPin, LOW);
+  digitalWrite(dirPin, HIGH);
   for(long i = 0; i < steps; i++){
     if (digitalRead(limitPin) == HIGH){
       errorFound = true;
@@ -54,7 +54,7 @@ void moveF(int steps){
 void moveB(int steps){
   long speedup = 0;
   boolean errorFound = false;
-  digitalWrite(dirPin, HIGH);
+  digitalWrite(dirPin, LOW);
   for(long i = 0; i < steps; i++){
     if (digitalRead(limitPin) == HIGH){
       errorFound = true;
@@ -78,7 +78,7 @@ void moveB(int steps){
 }
 
 void zero(){
-  digitalWrite(dirPin, HIGH);
+  digitalWrite(dirPin, LOW);
   while (true) {
     if (digitalRead(limitPin) == HIGH){
       break;
