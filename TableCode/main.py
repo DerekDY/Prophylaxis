@@ -22,7 +22,7 @@ ledMatrix = LEDMatrix()
 smallFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/4x6.bdf"
 normFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/5x8.bdf"
 bigFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/6x10.bdf"
-fontColor = "0, 255, 255"
+fontColor = "135, 206, 250"
 errorColor = "255,0,0"
 
 '''

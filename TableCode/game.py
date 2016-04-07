@@ -38,6 +38,9 @@ class Game:
         self.bt = btOption
         
         self.ledMatrix = LEDMatrix()
+        self.sleepTime = 0.3
+        
+        #Set up buttons
         pin1 = 19   
         pin2 = 21
         pin3 = 13   #not being used 
@@ -81,25 +84,18 @@ class Game:
             self.btSide = WHITE 		
         '''
         
-        #Set up LED Matrix
-        smallFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/4x6.bdf"
-        normFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/5x8.bdf"
-        bigFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/6x10.bdf"
-        fontColor = "0, 255, 255"
-        errorColor = "255,0,0"
-        sleepTime = 0.3
         self.ledMatrix.clear()
         
         #Choose Player Side
-        time.sleep(sleepTime)
-        self.ledMatrix.display("SIDE","[W/B]?",fontColor, normFont)  
+        time.sleep(self.sleepTime)
+        self.ledMatrix.display("SIDE","[W/B]?", self.ledMatrix.fontColor, self.ledMatrix.normFont)  
         self.scrollButton.startListener()
         self.selectButton.startListener()
         scrollCount = 0
         while True:
             if self.scrollButton.wasPressed():
                 self.scrollButton.stopListener()
-                time.sleep(sleepTime)
+                time.sleep(self.sleepTime)
                 self.scrollButton.startListener()
                 scrollCount = scrollCount + 1
                 if scrollCount == 3:
@@ -109,11 +105,11 @@ class Game:
                 self.scrollButton.stopListener()
                 self.scrollButton.startListener()
                 if scrollCount == 1:
-                    self.ledMatrix.display(" WHITE", "", fontColor, normFont)
+                    self.ledMatrix.display(" WHITE", "", self.ledMatrix.fontColor, self.ledMatrix.normFont)
                 elif scrollCount == 2:
-                    self.ledMatrix.display(" BLACK", "", fontColor, normFont)
+                    self.ledMatrix.display(" BLACK", "", self.ledMatrix.fontColor, self.ledMatrix.normFont)
                 else:
-                    self.ledMatrix.display("SIDE","[W/B]?", fontColor, normFont)  
+                    self.ledMatrix.display("SIDE","[W/B]?", self.ledMatrix.fontColor, self.ledMatrix.normFont)  
                     
             if self.selectButton.wasPressed():
                 print("Select Button was Pressed")
@@ -132,24 +128,18 @@ class Game:
         '''
         
         #Set up LED Matrix
-        smallFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/4x6.bdf"
-        normFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/5x8.bdf"
-        bigFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/6x10.bdf"
-        fontColor = "0, 255, 255"
-        errorColor = "255,0,0"
-        sleepTime = 0.3
         self.ledMatrix.clear()
         
         #Choose Player Side
-        time.sleep(sleepTime)
-        self.ledMatrix.display("  AI"," SKILL",fontColor, normFont)  
+        time.sleep(self.sleepTime)
+        self.ledMatrix.display("  AI"," SKILL")  
         self.scrollButton.startListener()
         self.selectButton.startListener()
         scrollCount = 0
         while True:
             if self.scrollButton.wasPressed():
                 self.scrollButton.stopListener()
-                time.sleep(sleepTime)
+                time.sleep(self.sleepTime)
                 self.scrollButton.startListener()
                 scrollCount = scrollCount + 1
                 if scrollCount == 7:
@@ -159,19 +149,19 @@ class Game:
                 self.scrollButton.stopListener()
                 self.scrollButton.startListener()
                 if scrollCount == 1:
-                    self.ledMatrix.display("BOX OF", "ROCKS", fontColor, normFont)
+                    self.ledMatrix.display("BOX OF", "ROCKS", self.ledMatrix.fontColor, self.ledMatrix.normFont)
                 elif scrollCount == 2:
-                    self.ledMatrix.display("BEGI-", "-NNER", fontColor, normFont)
+                    self.ledMatrix.display("BEGI-", "-NNER", self.ledMatrix.fontColor, self.ledMatrix.normFont)
                 elif scrollCount == 3:
-                    self.ledMatrix.display("INTER-", "-MEDIATE", fontColor, smallFont)
+                    self.ledMatrix.display("INTER-", "-MEDIATE", self.ledMatrix.fontColor, self.ledMatrix.smallFont)
                 elif scrollCount == 4:
-                    self.ledMatrix.display("MASTER", "", fontColor, normFont)
+                    self.ledMatrix.display("MASTER", "", self.ledMatrix.fontColor, self.ledMatrix.normFont)
                 elif scrollCount == 5:
-                    self.ledMatrix.display("GRAND", "MASTER", fontColor, normFont)
+                    self.ledMatrix.display("GRAND", "MASTER", self.ledMatrix.fontColor, self.ledMatrix.normFont)
                 elif scrollCount == 6:
-                    self.ledMatrix.display("WIZARD", "", fontColor, normFont)                                                                                                 
+                    self.ledMatrix.display("WIZARD", "", self.ledMatrix.fontColor, self.ledMatrix.normFont)                                                                                                 
                 else:
-                    self.ledMatrix.display("SIDE","[W/B]?", fontColor, normFont)  
+                    self.ledMatrix.display("SIDE","[W/B]?", self.ledMatrix.fontColor, self.ledMatrix.normFont)  
                     
             if self.selectButton.wasPressed():
                 print("Select Button was Pressed")
@@ -300,7 +290,9 @@ class Game:
         print("Taking move from phone")
         #switch parser side and find move from given coords
         parser.side = self.btSide
-        pos = self.bluetooth.waitformove()               
+        pos = self.bluetooth.waitformove() 
+        print("Move from bluetooth: ")
+        print(pos)             
         startPos = self.board.humanCoordToPosition(pos[0:2])
         endPos = self.board.humanCoordToPosition(pos[2:4])
         piece = self.board.pieceAtPosition(startPos)
@@ -396,11 +388,13 @@ class Game:
                     else:
                         parser.side = self.playerSide
                         move = parser.moveForShortNotation(command)
+                        self.ledMatrix.clear()
+                        self.ledMatrix.display("MOVE: ", "  " + command, self.ledMatrix.fontColor, self.ledMatrix.normFont)
 
                 if move:
                     #move = self.table.getmove(self.board)
                     self.makeMove(move)
-                    '''
+                    
                     if self.bt == 0:
                         print("bluetooth is on")
                         moveStr = str(move.oldPos[0]) + str(move.oldPos[1]) + str(move.newPos[0]) + str(move.newPos[1])
@@ -409,7 +403,7 @@ class Game:
                     else:
                         print("bt is off ")
                         print(self.bt) 
-                    '''
+                    
                 else:
                     bigFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/6x10.bdf"
                     errorColor = "255,0,0"

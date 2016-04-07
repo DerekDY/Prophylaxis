@@ -44,9 +44,7 @@ class Bluetooth:
 			serialmsg = self.serialPort.readline().decode('UTF-8')
 			print("serial message: \n")
 			print(serialmsg)
-			#serialmsg2 = self.serialPort.readline().decode('UTF-8')
-			#print("serial message 2: \n")
-			#print(serialmsg2)
+
 			if ("#" in serialmsg):
 				msgtemp = serialmsg.split('#')
 				msg = msgtemp[0]
@@ -61,8 +59,9 @@ class Bluetooth:
 				
 	def sendmove(self, move):
 		print("Serial Port")
-		print(self.serialPort)		
-		self.serialPort.write(bytes("t" + move + "\n", 'UTF-8'))
+		print(self.serialPort)	
+		#self.serialPort.write(bytes("testString", 'UTF-8'))	
+		self.serialPort.write(bytes("t" + move, 'UTF-8'))
 		
 	def who(self):
 		#print("Telling them who I am")
