@@ -4,18 +4,18 @@ import time
 delay = 0.000001
 
 GPIO.setmode(GPIO.BCM)
-red1_pin = 17
-green1_pin = 18
-blue1_pin = 22
-red2_pin = 23
-green2_pin = 24
-blue2_pin = 25
-clock_pin = 3
-a_pin = 7
-b_pin = 8
-c_pin = 9
+red1_pin = 11
+green1_pin = 27
+blue1_pin = 7
+red2_pin = 8
+green2_pin = 9
+blue2_pin = 10
+clock_pin = 17
+a_pin = 22
+b_pin = 23
+c_pin = 24
 latch_pin = 4
-oe_pin = 2
+oe_pin = 18
 
 GPIO.setup(red1_pin, GPIO.OUT)
 GPIO.setup(green1_pin, GPIO.OUT)
@@ -30,7 +30,7 @@ GPIO.setup(c_pin, GPIO.OUT)
 GPIO.setup(latch_pin, GPIO.OUT)
 GPIO.setup(oe_pin, GPIO.OUT)
 
-screen = [[0 for x in xrange(32)] for x in xrange(16)]
+screen = [[0 for x in range(32)] for x in range(16)]
 
 def clock():
     GPIO.output(clock_pin, 1)
@@ -100,3 +100,4 @@ fill_rectangle(15, 0, 19, 7, 7)
 
 while True:
     refresh()
+    
