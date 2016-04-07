@@ -1,13 +1,20 @@
-/* 
- *  Bluetooth 
- *  Serial Communication and Bluetooth
- */
+/*********************************************************************
+This is an example for our nRF8001 Bluetooth Low Energy Breakout
 
-//Serial
-String inputString = "";         // a string to hold incoming data
-boolean stringComplete = false;  // whether the string is complete
+  Pick one up today in the adafruit shop!
+  ------> http://www.adafruit.com/products/1697
 
-//Bluetooth
+Adafruit invests time and resources providing this open source code, 
+please support Adafruit and open-source hardware by purchasing 
+products from Adafruit!
+
+Written by Kevin Townsend/KTOWN  for Adafruit Industries.
+MIT license, check LICENSE for more information
+All text above, and the splash screen below must be included in any redistribution
+*********************************************************************/
+
+// This version uses the internal data queing so you can treat it like Serial (kinda)!
+
 #include <SPI.h>
 #include "Adafruit_BLE_UART.h"
 
@@ -18,63 +25,31 @@ boolean stringComplete = false;  // whether the string is complete
 #define ADAFRUITBLE_RST 9
 
 Adafruit_BLE_UART BTLEserial = Adafruit_BLE_UART(ADAFRUITBLE_REQ, ADAFRUITBLE_RDY, ADAFRUITBLE_RST);
-
-void setup() {
-  //Serial
-  // initialize serial:
-  Serial.begin(9600); 
-  // reserve 200 bytes for the inputString:
-  inputString.reserve(200);
-
-  //Bluetooth
-  //Serial.begin(9600);
+/**************************************************************************/
+/*!
+    Configure the Arduino and start advertising with the radio
+*/
+/**************************************************************************/
+void setup(void)
+{ 
+  Serial.begin(9600);
   while(!Serial); // Leonardo/Micro should wait for serial init
-  //Serial.println(F("Adafruit Bluefruit Low Energy nRF8001 Print echo demo"));
+  Serial.println(F("Bluetooth Testing"));
 
-  BTLEserial.setDeviceName("ProphBT"); /* 7 characters max! */
+  BTLEserial.setDeviceName("JERRY"); /* 7 characters max! */
 
   BTLEserial.begin();
 }
 
-/*
-  SerialEvent occurs whenever a new data comes in the
- hardware serial RX.  This routine is run between each
- time loop() runs, so using delay inside loop can delay
- response.  Multiple bytes of data may be available.
+/**************************************************************************/
+/*!
+    Constantly checks for new events on the nRF8001
 */
- 
-void serialEvent() {
-  while (Serial.available()) {
-    // get the new byte:
-    char inChar = (char)Serial.read(); 
-    // add it to the inputString:
-    inputString += inChar;
-    // if the incoming character is a newline, set a flag
-    // so the main loop can do something about it:
-    if (inChar == '\n') {
-      stringComplete = true;
-    } 
-  }
-}
-
-
-void bluetooth(String sendStr){
-      Serial.println("BT\n");
-      //convert string to bytes for bluetooth
-      uint8_t sendbuffer[20];
-      sendStr.getBytes(sendbuffer, 20);
-      char sendbuffersize = min(20, sendStr.length());
-      //write to bluetooth
-      BTLEserial.write(sendbuffer, sendbuffersize);
-}
-
-
+/**************************************************************************/
 aci_evt_opcode_t laststatus = ACI_EVT_DISCONNECTED;
 
 void loop()
 {
-  //Bluetooth Loop
-  
   // Tell the nRF8001 to do whatever it should be working on.
   BTLEserial.pollACI();
 
@@ -83,15 +58,15 @@ void loop()
   // If the status changed....
   if (status != laststatus) {
     // print it out!
-    //if (status == ACI_EVT_DEVICE_STARTED) {
-    //    Serial.println(F("* Advertising started"));
-    //}
-    //if (status == ACI_EVT_CONNECTED) {
-    //    Serial.println(F("* Connected!"));
-    //}
-    //if (status == ACI_EVT_DISCONNECTED) {
-    //    Serial.println(F("* Disconnected or advertising timed out"));
-    //}
+    if (status == ACI_EVT_DEVICE_STARTED) {
+        Serial.println(F("* Bluetooth Test"));
+    }
+    if (status == ACI_EVT_CONNECTED) {
+        Serial.println(F("* Connected!"));
+    }
+    if (status == ACI_EVT_DISCONNECTED) {
+        Serial.println(F("* Disconnected or advertising timed out"));
+    }
     // OK set the last status change to this one
     laststatus = status;
   }
@@ -114,53 +89,6 @@ void loop()
       Serial.setTimeout(100); // 100 millisecond timeout
       String s = Serial.readString();
 
-// deleted code goes here 
-
-      Serial.print(F("\n* Sending -> \"")); Serial.print((char *)sendbuffer); Serial.println("\"");
-
-      // write the data
-      BTLEserial.write(sendbuffer, sendbuffersize);
-    }
-
-  }
-
-  //Serial Loop
-
-  // print the string when a newline arrives:
-  if (stringComplete) {
-    if (inputString == "who\n"){
-      Serial.println("Z");
-    }
-    else if (inputString.substring(0,1) == "t"){
-      Serial.println("inT\n");
-      String sendStr = inputString.substring(1,7);
-      Serial.println("Str:\n");
-      Serial.println(sendStr);
-      /*
-      if (Serial.available()) {
-      // Read a line from Serial
-      Serial.setTimeout(100); // 100 millisecond timeout
-      String s = Serial.readString();
-      */
-      bluetooth(sendStr);    
-    }
-    else { 
-      Serial.println(inputString); 
-      // clear the string:
-    }
-    inputString = "";
-    stringComplete = false;
-    Serial.flush();
-  }
-}
-
-
-/*
-    if (Serial.available()) {
-      // Read a line from Serial
-      Serial.setTimeout(100); // 100 millisecond timeout
-      String s = Serial.readString();
-
       // We need to convert the line to bytes, no more than 20 at this time
       uint8_t sendbuffer[20];
       s.getBytes(sendbuffer, 20);
@@ -171,19 +99,5 @@ void loop()
       // write the data
       BTLEserial.write(sendbuffer, sendbuffersize);
     }
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  }
+}
