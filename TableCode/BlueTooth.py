@@ -38,18 +38,20 @@ class Bluetooth:
 		return pos
 	
 	def waitformove(self):
-		print("in waitformove")
 		while(True):
-			print("test")
+			print("Waiting for Move...")
 			print(self.serialPort)
 			serialmsg = self.serialPort.readline().decode('UTF-8')
 			print("serial message: \n")
 			print(serialmsg)
+			#serialmsg2 = self.serialPort.readline().decode('UTF-8')
+			#print("serial message 2: \n")
+			#print(serialmsg2)
 			if ("#" in serialmsg):
 				msgtemp = serialmsg.split('#')
 				msg = msgtemp[0]
-				#print(msg)
-				#print("# in message")
+				print("# in message")
+				print(msg)
 				break
 		startPos = self.deciferMove(msg[0:2])
 		endPos = self.deciferMove(msg[2:4])

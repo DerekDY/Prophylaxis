@@ -1,12 +1,12 @@
 from game import *
-from ledmatrix import *
-from button import *
-from buttonListener import *
+#from ledmatrix import *
+#from button import *
+#from buttonListener import *
 
 #GameMode Input
 gameMode = input(
         "Choose Game Mode \n   1 - Human vs AI \n   2 - Human vs Bluetooth \n   3 - Bluetooth vs AI \n   4 - Human vs Human \n")
-
+'''
 #Button Setup
 pin1 = 19
 pin2 = 21
@@ -27,9 +27,9 @@ while True:
         newGameButton.stopListener()
         break
     else:
-        ledMatrix.display("The Knight")
+        ledMatrix.display("The","Knight")
         time.sleep(3)
-        ledMatrix.display("Press New Game")
+        ledMatrix.display("Press", "NewGame")
         
 #Game Mode Selection using LED Display
 ledMatrix.clear
@@ -60,7 +60,7 @@ while True:
         gameMode = scrollCount
         print(gameMode)
         break
-        
+'''        
 if gameMode == "1":
     gameMode = 1
     btOption = 1

@@ -38,15 +38,17 @@ class XYTable:
 			#bluetooth = Bluetooth(2)
 			#print ("I'm making a motor")
 			print("Making USB Connections")
+			'''
 			print("Who is USB0")
 			print(motor1.who())
 			print("Who is USB1")
 			print(motor2.who())
 			print("Who is USB2")
 			print(motor3.who())
-
+			'''
+			
 			if (motor1.who().strip() == "X"):
-				print("USB1 is motor X")
+				#print("USB1 is motor X")
 				self.motorX = motor1 
 				if (motor2.who().strip() == "Y"):
 					self.motorY = motor2
@@ -57,7 +59,7 @@ class XYTable:
 					#self.motorY = Motor(bluetooth.serialPort)
 					self.motorY = Motor(motor3.serialPort)
 			elif (motor2.who().strip() == "X"):
-				print("USB2 is motor X")
+				#print("USB2 is motor X")
 				self.motorX = motor2 
 				if (motor1.who().strip() == "Y"):
 					self.motorY = motor1
@@ -68,10 +70,10 @@ class XYTable:
 					#self.motorY = Motor(bluetooth.serialPort)
 					self.motorY = Motor(motor3.serialPort)
 			elif (motor3.who().strip() == "X"):
-				print("USB3 is motor X")
+				#print("USB3 is motor X")
 				self.motorX = motor3 
 				if (motor1.who().strip() == "Y"):
-					print("USB1 is motor Y")
+					#print("USB1 is motor Y")
 					self.motorY = motor1
 					#self.bt = bluetooth
 					print(self.motorY)
@@ -86,9 +88,11 @@ class XYTable:
 				print("something went wrong here folks")
 			
 			print("USBs are set up")
+			'''
 			print(self.motorX)
 			print(self.motorY)
 			print(self.bt)
+			'''
 			
 		self.magnet = Magnet(0)
 		self.x = None  #need to initialize table before knowing 

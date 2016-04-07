@@ -35,6 +35,8 @@ class Game:
         
         self.bt = btOption
         
+        #Print Tests for Motors and Bluetooth
+        '''
         print("\n\nLet the print tests begin... \n")
         print(self.table)
         print()
@@ -42,7 +44,8 @@ class Game:
         print(self.table.motorY.who())
         print(self.table.bt.who())
         print("\n\n")
-
+        '''
+        
         self.bluetooth = self.table.bt
         #self.bluetooth = Bluetooth(self.table.motorY.serialPort)
 
