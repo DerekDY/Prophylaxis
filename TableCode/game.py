@@ -132,7 +132,7 @@ class Game:
         
         #Choose Player Side
         time.sleep(self.sleepTime)
-        self.ledMatrix.display("  AI"," SKILL")  
+        self.ledMatrix.display("  AI"," SKILL", self.ledMatrix.fontColor, self.ledMatrix.normFont)  
         self.scrollButton.startListener()
         self.selectButton.startListener()
         scrollCount = 0
@@ -230,14 +230,40 @@ class Game:
         return randomMove
 
 
+
+
     def makeMove(self, move):
         print()
         #print("testing this dang thing")
         print(move)
         print(move.notation)
         print("Making move : " + move.notation)
+        print("Testing LED Display")
+        print(move.piece.stringRep)
+        m = LEDMatrix()
+        m.displayMove(move.piece.stringRep)
+        
+        #King appears to have no sringRep / no piece notation ???
+        
+        mProcess = Process(target=m.refresh, args=())
+        mProcess.start()
+        time.sleep(5)
+        
+        if move.pieceToCapture:
+            print("Piece to capture")
+            mProcess.terminate()
+            m.clear()
+            time.sleep(1)
+            
+            m = LEDMatrix()
+            m.displayCapture(move.pieceToCapture.stringRep)
+            mProcess = Process(target=m.refresh, args=())
+            mProcess.start()
+            time.sleep(5)
+            
         self.board.makeChosenMove(move)
-
+        mProcess.terminate()
+        
         '''
         print("New Code: ")
         if move.queensideCastle:
@@ -388,8 +414,8 @@ class Game:
                     else:
                         parser.side = self.playerSide
                         move = parser.moveForShortNotation(command)
-                        self.ledMatrix.clear()
-                        self.ledMatrix.display("MOVE: ", "  " + command, self.ledMatrix.fontColor, self.ledMatrix.normFont)
+                        #self.ledMatrix.clear()
+                        #self.ledMatrix.display("MOVE: ", "  " + command, self.ledMatrix.fontColor, self.ledMatrix.normFont)
 
                 if move:
                     #move = self.table.getmove(self.board)
@@ -594,5 +620,7 @@ class Game:
                 if self.gameMode != 4:
                     self.table.move(move)          
                 self.makeMove(move)
+
+                    
                  
                 

@@ -39,6 +39,25 @@ while True:
         ledMatrix.display("Press", "NewGame")
 '''
 
+ledMatrix.draw_logo(2)
+  
+selectButton.startListener()
+
+#Process Setup
+mProcess = Process(target=ledMatrix.refresh, args=())
+mProcess.start()
+while(True):
+    if selectButton.wasPressed():
+        print("Select Button was Pressed")
+        mProcess.terminate()
+        break
+mProcess.join()
+
+
+time.sleep(3)
+ledMatrix.clear()
+
+
 #Game Mode Selection using LED Display
 ledMatrix.clear()
 ledMatrix.display(" CHOOSE","  MODE",fontColor, smallFont)  
