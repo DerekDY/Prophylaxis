@@ -184,7 +184,28 @@ class Board:
                                 Bishop(self, WHITE, C(5, 0), 1),
                                 Knight(self, WHITE, C(6, 0), 1),
                                 Rook(self, WHITE, C(7, 0), 1)])
-            
+        elif testing == 13:
+            self.pieces.extend([Rook(self, BLACK, C(0, 4), 0),
+                                Knight(self, BLACK, C(1, 7), 0),
+                                Bishop(self, BLACK, C(1, 2), 0),
+                                Queen(self, BLACK, C(3, 7), 0),
+                                King(self, BLACK, C(4, 7), 0),
+                                Bishop(self, BLACK, C(5, 7), 1),
+                                Knight(self, BLACK, C(6, 4), 1),
+                                Rook(self, BLACK, C(7, 7), 1)])
+            for x in range(8):
+                self.pieces.append(Pawn(self, BLACK, C(x, 6), x))
+            for x in range(7):
+                self.pieces.append(Pawn(self, WHITE, C(x, 1), x))
+            self.pieces.extend([Pawn(self,  WHITE, C(6, 2), 7),
+                                Rook(self, WHITE, C(0, 2), 0),
+                                Knight(self, WHITE, C(3, 3), 0),
+                                Bishop(self, WHITE, C(2, 0), 0),
+                                Queen(self, WHITE, C(3, 0), 0),
+                                King(self, WHITE, C(4, 0), 0),
+                                Bishop(self, WHITE, C(5, 0), 1),
+                                Knight(self, WHITE, C(6, 0), 1),
+                                Rook(self, WHITE, C(1, 5), 1)])
             
     def __str__(self):
         return self.wrapStringRep(self.makeStringRep(self.pieces))

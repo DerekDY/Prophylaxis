@@ -1,10 +1,16 @@
-from MCP23017 import MCP23017
-import quick2wire
+from MCP23017_I2C import *
+from Expander import *
 
-exp = MCP23017.MCP23017(0x25, 1)
+expander = Expander(0x25)
+
+#for x in range(16):
+#	expander.setup(x, 'OUT')
+
+#for x in range(16):
+#	print(expander.output(x, 'HIGH'))
 
 for x in range(16):
-	expander = MCP23017.PortManager(exp, 0x00, x)
-	print(expander.digital_read())
-	
-print(exp.read(0x09))
+	expander.setup(x, 'IN')
+
+for x in range(16):
+	print(expander.input(x))

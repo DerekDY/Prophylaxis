@@ -298,7 +298,7 @@ print(board11)
 print()
 print("###############################################")
 print("Test 12: Multiple Tests")
-board12 = Board(testing = 12)
+board12 = Board(testing = 13)
 print(board12)
 print()
 numPassed = 0
@@ -320,14 +320,15 @@ currentBoard = newReed
 print(board12.pieceAtPosition(C(0,0)))
 
 vl = VoiceListener(21, 1)
+isWhiteTurn = True
 while True:
     print(board12)
-    myMove = vl.listen(board12, True)
-    print(myMove)
-    #piece, endCoords, capturePiece = vl.listen(board12, True)
-    #print(piece)
-    #print(endCoords)
-    #print(capturePiece)
+    result, myMove = vl.listen(board12, isWhiteTurn)
+    print(result)
+    if result == "move":
+        if board12.isLegal(myMove):
+            board12.makeChosenMove(myMove)
+            isWhiteTurn = not isWhiteTurn
 
 move = table12.getMove(board12, currentBoard)
 print(move)

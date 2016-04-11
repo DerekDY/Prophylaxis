@@ -7,7 +7,6 @@ from Coordinate import Coordinate as C
 import Move
 import subprocess
 import time
-import copy
 
 MODELDIR = "../../pocketsphinx-python/pocketsphinx/model"
 DATADIR = "../../pocketsphinx-python/pocketsphinx/test/data"
@@ -46,36 +45,20 @@ class VoiceListener():
             if seg.word != "<s>" and seg.word != "<sil>":
                 result.append(seg.word)
                 print(seg.word)
-        # check for bad data
-        if len(result) == 0:
-            return "bad record", None  # can't decipher speech
-        move = self.decode(result)
-        # check for promotion
-        try:
-            if move[0] == 0:
-                return "promote", move[1]
-        except:
-            pass
-        # check for castling
-        try:
-            if move == 1:
-                return "0-0", None  # king side castle
-            if move == 2:
-                return "0-0-0", None  # queen side castle
-        except:
-            pass
-        return self.checkLegal(move)
+        return self.decode(result)
 
     def decode(self, result):
+        if len(result) == 0:
+            return None
         if result[0] == "promote":
-            return 0, result[2]
+            return 1, result[2]
         if result[2] == "castle":
             if result[0] == "king":
-                return 1
-            return 2  # queen side
+                return 2
+            return 3  # queen side
         if result[0] == "pawn":
             # check that only one pawn can do the move
-            if self.turn:  # WHITE
+            if self.turn == True:  # White
                 piecesFound = []
                 try:  #will fail if capture
                     if self.board.pieceAtPosition(C(self.convert(result[2]), self.convert(result[3]))) == None:  # no capture
@@ -89,7 +72,7 @@ class VoiceListener():
                     piecesFound.append(self.isAt(result, "p", -1, -1))
                     piecesFound.append(self.isAt(result, "p", 1, -1))
                 return self.check(piecesFound, result)
-            else:  # BLACK
+            else:  # Black
                 piecesFound = []
                 if self.board.pieceAtPosition(C(self.convert(result[2]), self.convert(result[3]))) != None:  # capture
                     piecesFound.append(self.isAt(result, "p", -1, 1))
@@ -144,20 +127,20 @@ class VoiceListener():
             return self.check(piecesFound, result)
         if result[0] == "king":
             piecesFound = []
-            piecesFound.append(self.isAt(result, "K", -1, 0))
-            piecesFound.append(self.isAt(result, "K", 1, 0))
-            piecesFound.append(self.isAt(result, "K", 0, -1))
-            piecesFound.append(self.isAt(result, "K", 0, 1))
-            piecesFound.append(self.isAt(result, "K", -1, -1))
-            piecesFound.append(self.isAt(result, "K", -1, 1))
-            piecesFound.append(self.isAt(result, "K", 1, -1))
-            piecesFound.append(self.isAt(result, "K", 1, 1))
+            piecesFound.append(self.isAt(result, "N", -1, 0))
+            piecesFound.append(self.isAt(result, "N", 1, 0))
+            piecesFound.append(self.isAt(result, "N", 0, -1))
+            piecesFound.append(self.isAt(result, "N", 0, 1))
+            piecesFound.append(self.isAt(result, "N", -1, -1))
+            piecesFound.append(self.isAt(result, "N", -1, 1))
+            piecesFound.append(self.isAt(result, "N", 1, -1))
+            piecesFound.append(self.isAt(result, "N", 1, 1))
             return self.check(piecesFound, result)
         # else: user gave 2 coordinates
         try:
             return Move.Move(self.board.pieceAtPosition(C(self.convert(result[0]), self.convert(result[1]))), C(self.convert(result[3]), self.convert(result[4])), self.board.pieceAtPosition(C(self.convert(result[3]), self.convert(result[4]))))
         except:
-            return None
+            return 0
 
     def isAt(self, result, piece, x, y):
         p = self.board.pieceAtPosition(C(self.convert(result[2]) + x, self.convert(result[3]) + y))
@@ -207,155 +190,39 @@ class VoiceListener():
         # see if there is exactly one match
         if len(pieces) == 1:
             return Move.Move(pieces[0], C(self.convert(result[2]), self.convert(result[3])), self.board.pieceAtPosition(C(self.convert(result[2]), self.convert(result[3]))))
-        return None
+        return 0
 
     def convert(self, r):
         if r == "alpha":
             return 0
-        if r == "bravo":
+        elif r == "bravo":
             return 1
-        if r == "charlie":
+        elif r == "charlie":
             return 2
-        if r == "delta":
+        elif r == "delta":
             return 3
-        if r == "echo":
+        elif r == "echo":
             return 4
-        if r == "foxtrot":
+        elif r == "foxtrot":
             return 5
-        if r == "golf":
+        elif r == "golf":
             return 6
-        if r == "hotel":
+        elif r == "hotel":
             return 7
-        if r == "one":
+        elif r == "one":
             return 0
-        if r == "two":
+        elif r == "two":
             return 1
-        if r == "three":
+        elif r == "three":
             return 2
-        if r == "four":
+        elif r == "four":
             return 3
-        if r == "five":
+        elif r == "five":
             return 4
-        if r == "six":
+        elif r == "six":
             return 5
-        if r == "seven":
+        elif r == "seven":
             return 6
-        if r == "eight":
+        else:
             return 7
-        return None  # should never get here
  
-    def checkLegal(self, move):
-        try:
-            # check that destination square is valid
-            if move.pieceToCapture is not None:
-                if move.pieceToCapture.side == self.turn:  # can't capure a piece of your color
-                    return "illegal move", None
-            #TODO(?): don't allow a move that leaves king in check
-            if move.piece.stringRep == "p":
-                dx = move.newPos[0] - move.oldPos[0]
-                dy = move.newPos[1] - move.oldPos[1]
-                if self.turn:  # WHITE
-                    if move.pieceToCapture is not None:  # capturing
-                        if abs(dx) == 1 and dy == 1:
-                            return "move", move
-                        return "illegal move", None
-                    if dx == 0 and dy == 1:
-                        return "move", move
-                    if dx == 0 and dy == 2 and move.oldPos[1] == 1:  # can move forward 2 spaces
-                        return "move", move
-                    return "illegal move", None
-                else:  # BLACK
-                    if move.pieceToCapture is not None:  # capturing
-                        if abs(dx) == 1 and dy == -1:
-                            return "move", move
-                        return "illegal move", None
-                    if dx == 0 and dy == -1:
-                        return "move", move
-                    if dx == 0 and dy == -2 and move.oldPos[1] == 6:  # can move forward 2 spaces
-                        return "move", move
-                    return "illegal move", None
-            if move.piece.stringRep == "R":
-                if self.checkLine(move) == 1:  # straight line move, no pieces in the way
-                    return "move", move
-                return "illegal move", None
-            if move.piece.stringRep == "N":
-                dx = move.newPos[0] - move.oldPos[0]
-                dy = move.newPos[1] - move.oldPos[1]
-                if (abs(dx) == 1 and abs(dy) == 2 or (abs(dx) == 2 and abs(dy) == 1):
-                    return "move", move
-                return "illegal move", None
-            if move.piece.stringRep == "B":
-                if self.checkLine(move) == 2:  # diagonal move, no pieces in the way
-                    return "move", move
-                return "illegal move", None
-            if move.piece.stringRep == "Q":
-                if self.checkLine(move) == 1 or self.checkLine(move) == 2:
-                    return "move", move
-                return "illegal move", None
-            if move.piece.stringRep == "K":
-                dx = move.newPos[0] - move.oldPos[0]
-                dy = move.newPos[1] - move.oldPos[1]
-                if abs(dx) > 1 or abs(dy) > 1:
-                    return "illegal move", None
-                return "move", move
-            return "illegal move", None  # should never get here
-        except:
-            return "illegal move", None
-
-    def checkLine(self, move):
-        x0 = move.oldPos[0]
-        x1 = move.newPos[0]
-        y0 = move.oldPos[1]
-        y1 = move.newPos[1]
-        dx = x1 - x0
-        dy = y1 - y0
-        if dx == 0:
-            if dy < 0:
-                for i in range(y1 + 1, y0):
-                    if self.board.pieceAtPosition(C(x0, i)) is not None:
-                        return 0  # piece in the way
-            else:
-                for i in range(y0 + 1, y1):
-                    if self.board.pieceAtPosition(C(x0, i)) is not None:
-                        return 0
-            return 1  # straight
-        if dy == 0:
-            if dx < 0:
-                for i in range(x1 + 1, x0):
-                    if self.board.pieceAtPosition(C(i, y0)) is not None:
-                        return 0
-            else:
-                for i in range(x0 + 1, x1):
-                    if self.board.pieceAtPosition(C(i, y0)) is not None:
-                        return 0
-            return 1  # straight
-        if dx == dy:
-            if dy < 0:
-                j = x1 + 1
-                for i in range(y1 + 1, y0):
-                    if self.board.pieceAtPosition(C(j, i)) is not None:
-                        return 0  #piece in the way
-                    j += 1
-            else:
-                j = x0 + 1
-                for i in range(y0 + 1, y1):
-                    if self.board.pieceAtPosition(C(j, i)) is not None:
-                        return 0
-                    j += 1
-            return 2  # diagonal
-        if dx == -dy:
-            if dy < 0:
-                j = x1 - 1
-                for i in range(y1 + 1, y0):
-                    if self.board.pieceAtPosition(C(j, i)) is not None:
-                        return 0
-                    j -= 1
-            else:
-                j = x0 - 1
-                for i in range(y0 + 1, y1):
-                    if self.board.pieceAtPosition(C(j, i)) is not None:
-                        return 0
-                    j -= 1
-            return 2  # diagonal
-        return 0  # not on a line
-        
