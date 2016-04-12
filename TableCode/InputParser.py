@@ -20,7 +20,7 @@ class InputParser:
                 return move
 
     def notationForMove(self, move):
-        print(move)
+        #print(move)
         '''
         self.notation = None
         self.check = False
@@ -34,11 +34,15 @@ class InputParser:
         #print(move.specialMovePiece)
         #print(move.oldPos)
         #print(move.newPos)
+        #print(self.board.getSideOfMove(move))
+        #print(move.piece.side)
         side = self.board.getSideOfMove(move)
         moves = self.getLegalMovesWithShortNotation(side)
+        #print(moves)
         for m in moves:
             #print(m)
             #print(m.specialMovePiece)
+            #print(m.notation)
             if m == move:
                 #print(m)
                 #print(m.notation)

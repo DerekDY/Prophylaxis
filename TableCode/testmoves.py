@@ -564,7 +564,11 @@ print(move)
 print()
 
 parser = InputParser(board12, WHITE)
+print("THIS IS WHAT IS GOING DOWN!!!")
+print(move)
 notation = parser.notationForMove(move)
+print("Notation: ")
+print(notation)
 if notation == str("Qxd4"):
     numPassed = numPassed + 1
     board12.makeChosenMove(move)
@@ -596,6 +600,8 @@ print()
 
 parser = InputParser(board12, WHITE)
 notation = parser.notationForMove(move)
+print("Notation: ")
+print(notation)
 if notation == str("Bb4"):
     numPassed = numPassed + 1
     board12.makeChosenMove(move)
@@ -622,11 +628,16 @@ newReed =  [[0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0], \
             
 currentBoard = newReed
 move = table12.getMove(board12, currentBoard)
+print("Move: ")
 print(move)
 print()
 
 parser = InputParser(board12, WHITE)
+print("THIS IS WHAT IS GOING DOWN!!!")
+print(move)
 notation = parser.notationForMove(move)
+print("Notation: ")
+print(notation)
 if notation == str("Nc3"):
     numPassed = numPassed + 1
     board12.makeChosenMove(move)
@@ -635,6 +646,7 @@ if notation == str("Nc3"):
     print(board12)
     
 else:
+    board12.makeChosenMove(move)
     print("Failed move 11 of 30")
 
 enter = input("Enter to continue")

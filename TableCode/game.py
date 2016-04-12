@@ -32,7 +32,7 @@ class Game:
         self.engine.setoption({"Threads":4})
         self.engine.setoption({"Skill Level":3})
         #deleted
-        self.table.drawMotors()  
+        #self.table.drawMotors()  
         self.table.initialize_Coord()  
         
         self.bt = btOption

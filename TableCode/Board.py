@@ -667,16 +667,12 @@ class Board:
             return -self.points
 
 
-    #TRYING TO PARALELIZE!
+
     def getAllMovesUnfiltered(self, side, includeKing=True):
-        #pool = mp.Pool(processes=4)
-        #unfilteredMoves = mp.Queue()
-        #start_time = time.time()
         unfilteredMoves = []
         for piece in self.pieces:
             if piece.side == side:
                 if includeKing or piece.stringRep != 'K':
-                    #print("all moves")
                     for move in piece.getPossibleMoves():
                         #print(move)
                         unfilteredMoves.append(move)
@@ -692,8 +688,10 @@ class Board:
 
     def moveIsLegal(self, move):
         side = move.piece.side
+        #print(move)
         #print("checking if move is legal")
-        if move.specialMovePiece:
+        #print(move.specialMovePiece)
+        if move.specialMovePiece != None:
             #print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
             #print("special move piece in move is legal")
             #print(move.specialMovePiece)

@@ -14,9 +14,6 @@ from BlueTooth import *
 
 '''
 Class: 			XYTable
-Author: 		Derek De Young
-Revision Date: 		9-28-15
-Last revision:		2-6-2016
 Description: 	This class encapsulates the 2 motors and magnets of the 
                 XY table into one class				
 Paramaters: 	self (XYTable object)
@@ -28,9 +25,9 @@ class XYTable:
 
 	def __init__(self, testingOption = 0):   #when testing is 1 the physical motors will not be made 
 		self.testing = testingOption
-		self.motorXG = MotorG(0)
-		self.motorYG = MotorG(1)
-		self.screwThis = MotorG(0)
+		#self.motorXG = MotorG(0)
+		#self.motorYG = MotorG(1)
+		#self.screwThis = MotorG(0)
 		if (testingOption == 0): 
 			motor1 = Motor(0) 
 			motor2 = Motor(1)
@@ -118,10 +115,10 @@ class XYTable:
 
 	'''
 	def initialize_Coord(self):
-		self.motorXG.zero()
-		self.motorYG.zero()
+		#self.motorXG.zero()
+		#self.motorYG.zero()
 		if (self.testing == 0):
-			#print("Zero that ish?")
+			print("Zeroing!")
 			xProcess = Process(target=self.motorX.zero, args=())
 			yProcess = Process(target=self.motorY.zero, args=())
 			xProcess.start()
@@ -133,7 +130,7 @@ class XYTable:
 		#initialize the coordinates	
 		self.x = 0
 		self.y = 0
-		#print ("Table is initialized")
+		print ("Table is initialized")
 		#print ("Coordinates are: " + str(self.x) + ", " + str(self.y))
 
 
@@ -160,6 +157,7 @@ class XYTable:
 	def moveto(self, new_x, new_y):
 		dx = new_x - self.x
 		dy = new_y - self.y 
+		'''
 		dxg = int(new_x/2.25 - self.x/2.25)
 		dyg = int(new_y/2.25 - self.y/2.25)
 		if (dx < 0):
@@ -170,6 +168,7 @@ class XYTable:
 			self.motorYG.cw(abs(dyg))
 		else:
 			self.motorYG.ccw(abs(dyg))
+		'''
 		if (self.testing == 0):
 			xProcess = Process(target=self.motorX.move, args=(dx,))
 			yProcess = Process(target=self.motorY.move, args=(dy,))
@@ -191,16 +190,16 @@ class XYTable:
 
 	'''	
 	def grab(self):
+		'''
 		self.motorXG.body.setFill('red')
 		self.motorYG.body.setFill('red')
+		'''
 		#self.magnet.grab()
+		print("Grabbing")
 
 
 	'''
 	Function: 		self.release()
-	Author: 		Derek De Young
-	Revision Date: 	9-28-15
-	Last revision: 
 	Description: 	This function will call magnet.release to turn off the magnet
 	Paramaters: 	self (XYTable object)
 	Return: 		none (Table is initialized and ready to be powered down)
@@ -208,8 +207,11 @@ class XYTable:
 
 	'''	
 	def release(self):
+		'''
 		self.motorXG.body.setFill('')
 		self.motorYG.body.setFill('')
+		'''
+		print("Release")
 		#self.magnet.release()
 		
 		 

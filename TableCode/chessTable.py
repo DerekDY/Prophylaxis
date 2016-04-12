@@ -44,7 +44,7 @@ class ChessTable(XYTable):  #testing on when 1
         ###############################
         self.row = 0
         self.column = 0
-        self.win = GraphWin('XY Table Testing', 310, 210)
+        #self.win = GraphWin('XY Table Testing', 310, 210)
         self.lightsW = "lights"
         self.lightsB = "lights"
         self.whiteCaptured = [[0 for x in range(2)] for y in range(8)]
@@ -112,19 +112,6 @@ class ChessTable(XYTable):  #testing on when 1
             #print(p.position)
             engineBoard[7 - p.position[1]][p.position[0]] = 1   #engine boards sides were flipped from the engine board
         
-        '''
-        print()
-        print("Engine Board: \n")
-        for i in range(8):
-            print(engineBoard[i])
-        print()
-        
-        print("Updated Board: \n")
-        for i in range(8):
-            print(update[i])
-        print()
-        '''
-        
         #check for changes and then assign the position that was moved to and moved from
         for i in range(8):
             for j in range(8):
@@ -135,7 +122,7 @@ class ChessTable(XYTable):  #testing on when 1
                         moveFrom.extend([j,7-i])
         
         
-        
+        print(moveTo)
         #go through all of the pieces of the original engine board
         for p in board.pieces:
             #find piece that correlates to the position that the piece was moved from
@@ -209,6 +196,7 @@ class ChessTable(XYTable):  #testing on when 1
                         #print("move to: ")
                         #print(moveTo)
                         #print(move.newPos)
+                        if move.queensidecastle
                         if len(moveTo) != 0:
                             #castle moves
                             if len(moveTo) == 4:
