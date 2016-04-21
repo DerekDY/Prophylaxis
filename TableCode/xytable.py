@@ -11,6 +11,7 @@ from Coordinate import Coordinate as C
 from subprocess import call
 from multiprocessing import Process
 from BlueTooth import *
+from ledmatrix import *
 
 '''
 Class: 			XYTable
@@ -25,65 +26,202 @@ class XYTable:
 
 	def __init__(self, testingOption = 0):   #when testing is 1 the physical motors will not be made 
 		self.testing = testingOption
-		#self.motorXG = MotorG(0)
-		#self.motorYG = MotorG(1)
-		#self.screwThis = MotorG(0)
+		print("Making xy tbale")
+		print(testingOption)
+		testingOption = 0
+		self.testing = testingOption
 		if (testingOption == 0): 
 			motor1 = Motor(0) 
 			motor2 = Motor(1)
 			motor3 = Motor(2)
+			motor4 = Motor(3)
 			#bluetooth = Bluetooth(2)
+			motor1is= None
+			motor2is= None
+			motor3is= None
+			motor4is= None
+			time.sleep(1.5)
+			if motor1.connected:
+				motor1is = motor1.who()
+				#print("USB0 connected")
+			if motor2.connected:
+				motor2is = motor2.who()
+				#print("USB1 connected")
+			if motor3.connected:
+				motor3is = motor3.who()
+				#print("USB2 connected")
+			if motor4.connected:
+				motor4is = motor4.who()
+				#print("USB3 connected")
 			
-			print("Making USB Connections")
-			'''
-			print("Who is USB0")
-			print(motor1.who())
-			print("Who is USB1")
-			print(motor2.who())
-			print("Who is USB2")
-			print(motor3.who())
-			'''
 			
-			if (motor1.who().strip() == "X"):
-				#print("USB1 is motor X")
+			if (motor1is.strip() == "X"):
+				print("USB0 is MotorX")
 				self.motorX = motor1 
-				if (motor2.who().strip() == "Y"):
+				if (motor2is.strip() == "Y"):
+					print("USB1 is MotorY")
 					self.motorY = motor2
-					#self.bt = bluetooth
-					self.bt = Bluetooth(motor3.serialPort)
-				else:
+					if motor3is.strip() == "Z":
+						print("USB2 is BT")
+						print("USB3 is Matrix")
+						self.ledMatrix = LEDMatrix(motor4.serialPort)
+						self.bt = Bluetooth(motor3.serialPort)
+					else: 
+						print("USB2 is Matrix")
+						print("USB3 is BT")
+						self.ledMatrix = LEDMatrix(motor3.serialPort)
+						self.bt = Bluetooth(motor4.serialPort)
+				elif (motor2is.strip() == "Z"):
+					print("USB1 is BT")
 					self.bt = Bluetooth(motor2.serialPort)
-					#self.motorY = Motor(bluetooth.serialPort)
-					self.motorY = Motor(motor3.serialPort)
-			elif (motor2.who().strip() == "X"):
-				#print("USB2 is motor X")
-				self.motorX = motor2 
-				if (motor1.who().strip() == "Y"):
-					self.motorY = motor1
-					#self.bt = bluetooth
-					self.bt = Bluetooth(motor3.serialPort)
+					if motor3is.strip() == "Y":
+						print("USB2 is MotorY")
+						self.motorY = motor3
+						print("USB3 is Matrix")
+						self.ledMatrix = LEDMatrix(motor4.serialPort)
+					else: 
+						print("USB2 is Matrix")
+						print("USB3 is MotorY")
+						self.ledMatrix = LEDMatrix(motor3.serialPort)
+						self.motorY = motor4
 				else:
-					self.bt = Bluetooth(motor1.serialPort)
-					#self.motorY = Motor(bluetooth.serialPort)
-					self.motorY = Motor(motor3.serialPort)
-			elif (motor3.who().strip() == "X"):
-				#print("USB3 is motor X")
-				self.motorX = motor3 
-				if (motor1.who().strip() == "Y"):
-					#print("USB1 is motor Y")
-					self.motorY = motor1
-					#self.bt = bluetooth
-					print(self.motorY)
-					print(motor2.serialPort)
+					print("USB1 is Matrix")
+					self.ledMatrix = LEDMatrix(motor2.serialPort)
+					if motor3is.strip() == "Z":
+						print("USB2 is BT")
+						print("USB3 is MotorY")
+						self.bt = Bluetooth(motor3.serialPort)
+						self.motorY = motor4
+					else: 
+						print("USB2 is MotorY")
+						print("USB3 is BT")
+						self.motorY = motor3
+						self.bt = Bluetooth(motor4.serialPort)
+			elif (motor1is.strip() == "Y"):
+				print("USB0 is MotorY")
+				self.motorY = motor1 
+				if (motor2is.strip() == "X"):
+					print("USB1 is MotorX")
+					self.motorX = motor2
+					if motor3is.strip() == "Z":
+						print("USB2 is BT")
+						print("USB3 is Matrix")
+						self.bt = Bluetooth(motor3.serialPort)
+						self.ledMatrix = LEDMatrix(motor4.serialPort)
+					else: 
+						print("USB2 is Matrix")
+						print("USB3 is BT")
+						self.ledMatrix = LEDMatrix(motor3.serialPort)
+						self.bt = Bluetooth(motor4.serialPort)
+				elif (motor2is.strip() == "Z"):
+					print("USB1 is BT")
 					self.bt = Bluetooth(motor2.serialPort)
-					print(self.bt)
+					if motor3is.strip() == "X":
+						print("USB2 is MotorX")
+						self.motorX = motor3
+						print("USB3 is Matrix")
+						self.ledMatrix = LEDMatrix(motor4.serialPort)
+					else: 
+						print("USB2 is Matrix")
+						print("USB3 is MotorX")
+						self.ledMatrix = LEDMatrix(motor3.serialPort)
+						self.motorX = motor4
 				else:
-					self.bt = Bluetooth(motor1.serialPort)
-					#self.motorY = Motor(bluetooth.serialPort)
-					self.motorY = Motor(motor2.serialPort)
+					print("USB1 is Matrix")
+					self.ledMatrix = LEDMatrix(motor2.serialPort)
+					if motor3is.strip() == "Z":
+						print("USB2 is BT")
+						print("USB3 is MotorX")
+						self.bt = Bluetooth(motor3.serialPort)
+						self.motorX = motor4
+					else: 
+						print("USB2 is MotorX")
+						print("USB3 is BT")
+						self.motorX = motor3
+						self.bt = Bluetooth(motor4.serialPort)
+			elif (motor1is.strip() == "Z"):
+				print("USB0 is BT")
+				self.bt = Bluetooth(motor1.serialPort) 
+				if (motor2is.strip() == "X"):
+					print("USB1 is MotorX")
+					self.motorX = motor2
+					if motor3is.strip() == "Y":
+						print("USB2 is MotorY")
+						self.ledMatrix = LEDMatrix(motor4.serialPort)
+						print("USB3 is Matrix") 
+						self.motorY = motor3
+					else: 
+						self.ledMatrix = LEDMatrix(motor3.serialPort)
+						print("USB2 is Matrix") 
+						print("USB3 is MotorY")
+						self.motorY = motor4
+				elif (motor2is.strip() == "Y"):
+					print("USB1 is MotorY")
+					self.motorY = motor2
+					if motor3is.strip() == "X":
+						print("USB2 is MotorX")
+						self.motorX = motor3
+						self.ledMatrix = LEDMatrix(motor4.serialPort)
+						print("USB3 is Matrix") 
+					else: 
+						self.ledMatrix = LEDMatrix(motor3.serialPort)
+						print("USB2 is Matrix") 
+						print("USB3 is MotorX")
+						self.motorX = motor4
+				else:
+					print("USB1 is Unused")
+					if motor3is.strip() == "Y":
+						print("USB2 is MotorY")
+						print("USB3 is MotorX")
+						self.motorY = motor3
+						self.motorX = motor4
+					else: 
+						print("USB2 is MotorX")
+						print("USB3 is MotorY")
+						self.motorX = motor3
+						self.motorY = motor4		
 			else:
-				print("something went wrong here folks")
-			
+				self.ledMatrix = LEDMatrix(motor1.serialPort)
+				print("USB0 is Matrix") 
+				if (motor2is.strip() == "X"):
+					print("USB1 is MotorX")
+					self.motorX = motor2
+					if motor3is.strip() == "Y":
+						print("USB2 is MotorY")
+						print("USB3 is BT")
+						self.motorY = motor3
+						self.bt = Bluetooth(motor4.serialPort)
+					else: 
+						print("USB2 is BT")
+						print("USB3 is MotorY")
+						self.bt = Bluetooth(motor3.serialPort)
+						self.motorY = motor4
+				elif (motor2is.strip() == "Y"):
+					print("USB1 is MotorY")
+					self.motorY = motor2
+					if motor3is.strip() == "X":
+						print("USB2 is MotorX")
+						self.motorX = motor3
+						print("USB3 is BT")
+						self.bt = Bluetooth(motor4.serialPort)
+					else: 
+						print("USB2 is BT")
+						print("USB3 is MotorX")
+						self.bt = Bluetooth(motor3.serialPort)
+						self.motorX = motor4
+				else:
+					print("USB1 is BT")
+					self.bt = Bluetooth(motor2.serialPort)
+					if motor3is.strip() == "Y":
+						print("USB2 is MotorY")
+						print("USB3 is MotorX")
+						self.motorY = motor3
+						self.motorX = motor4
+					else: 
+						print("USB2 is MotorX")
+						print("USB3 is MotorY")
+						self.motorX = motor3
+						self.motorY = motor4		
 			print("USBs are set up")
 			'''
 			print(self.motorX)

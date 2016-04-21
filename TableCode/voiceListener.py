@@ -14,7 +14,7 @@ DATADIR = "../../pocketsphinx-python/pocketsphinx/test/data"
 
 class VoiceListener():
 
-    def __init__(self, pin, card):
+    def __init__(self, pin, card, turn):
         config = Decoder.default_config()
         config.set_string('-hmm', path.join(MODELDIR, 'en-us/en-us'))
         config.set_string('-jsgf', path.join(MODELDIR, 'en-us/chess.jsgf'))
@@ -22,15 +22,16 @@ class VoiceListener():
         self.decoder = Decoder(config)
         self.bl = ButtonListener(pin)
         self.card = card
-	
-    def listen(self, b, turn):
-        self.board = b
         self.turn = turn
+
+    def listen(self, b):
+        self.board = b
         self.bl.startListener()
         while not self.bl.wasPressed():
             pass
         self.bl.stopListener()
-        subprocess.Popen(["arecord", "-D", "plughw:" + str(self.card) + ",0", "-d", "2.5", "-f", "S16_LE", "-r", "16000", "out.wav"])
+        subprocess.Popen(["arecord", "-D", "plughw:" + str(self.card)
++ ",0", "-d", "2.5", "-f", "S16_LE", "-r", "16000", "out.wav"])
         time.sleep(2.6)
         self.decoder.start_utt()
         stream = open("out.wav", 'rb')
@@ -56,12 +57,36 @@ class VoiceListener():
                 return "promote", move[1]
         except:
             pass
-        # check for castling
+        # check for castling, multiple target error
         try:
-            if move == 1:
-                return "0-0", None  # king side castle
+            if move == 1:  # king side castle
+                if self.turn:  # WHITE
+                    pos = C(4, 0)
+                else:  # BLACK
+                    pos = C(4, 7)
+                # find king -- shouldn't have moved
+                p = self.board.pieceAtPosition(pos)
+                if p is not None:
+                    if p.stringRep == "K" and p.side == self.turn:
+                        for m in p.getPossibleMoves():
+                            if m.kingsideCastle:
+                                return "move", m
+                return "illegal move", None
             if move == 2:
-                return "0-0-0", None  # queen side castle
+                if self.turn:  # WHITE
+                    pos = C(4, 0)
+                else:  # BLACK
+                    pos = C(4, 7)
+                # find king -- shouldn't have moved
+                p = self.board.pieceAtPosition(pos)
+                if p is not None:
+                    if p.stringRep == "K" and p.side == self.turn:
+                        for m in p.getPossibleMoves():
+                            if m.queensideCastle:
+                                return "move", m
+                return "illegal move", None
+            if move == 3:
+                return "multiple targets", None  # multiple targets
         except:
             pass
         return self.checkLegal(move)
@@ -74,34 +99,34 @@ class VoiceListener():
                 return 1
             return 2  # queen side
         if result[0] == "pawn":
-            # check that only one pawn can do the move
-            if self.turn:  # WHITE
-                piecesFound = []
-                try:  #will fail if capture
-                    if self.board.pieceAtPosition(C(self.convert(result[2]), self.convert(result[3]))) == None:  # no capture
-                        piecesFound.append(self.isAt(result, "p", 0, -1))
-                        try:
-                            if piecesFound[0] == None:  # pawn might be 2 squares back
-                                piecesFound.append(self.isAt(result, "p", 0, -2))
-                        except:
-                            pass
-                except:  # capture
-                    piecesFound.append(self.isAt(result, "p", -1, -1))
-                    piecesFound.append(self.isAt(result, "p", 1, -1))
-                return self.check(piecesFound, result)
+            if self.turn: # WHITE
+                offset = -1
             else:  # BLACK
-                piecesFound = []
-                if self.board.pieceAtPosition(C(self.convert(result[2]), self.convert(result[3]))) != None:  # capture
-                    piecesFound.append(self.isAt(result, "p", -1, 1))
-                    piecesFound.append(self.isAt(result, "p", 1, 1))
-                else:  # no piece taken - forward move
-                    piecesFound.append(self.isAt(result, "p", 0, 1))
+                offset = 1
+            # check that only one pawn can do the move
+            piecesFound = []
+            try:  # will fail if capture
+                if self.board.pieceAtPosition(C(self.convert(result[2]), self.convert(result[3]))) == None:  # no normal capture
+                    # check for en passant
                     try:
-                        if piecesFound[0] == None:  # pawn might be 2 squares back
-                            piecesFound.append(self.isAt(result, "p", 0, 2))
+                        lm = self.board.getLastMove()
+                        if lm.piece.stringRep == "p" and lm.newPos - lm.oldPos == C(0, 2 * offset) and lm.oldPos + C(0, offset) == C(self.convert(result[2]), self.convert(result[3])):
+                            # only legal possibility is en passant
+                            piecesFound.append(self.isAt(result, "p",-1, offset))
+                            piecesFound.append(self.isAt(result, "p",1, offset))
+                            return self.check(piecesFound, result, offset)
                     except:
                         pass
-                return self.check(piecesFound, result)
+                    piecesFound.append(self.isAt(result, "p", 0, offset))
+                    try:
+                        if piecesFound[0] == None:  # pawn might be 2 squares back
+                            piecesFound.append(self.isAt(result, "p", 0, 2 * offset))
+                    except:
+                        pass
+            except:  # capture
+                piecesFound.append(self.isAt(result, "p", -1, offset))
+                piecesFound.append(self.isAt(result, "p", 1, offset))
+            return self.check(piecesFound, result)
         if result[0] == "knight":
             # check that only one knight can do the move
             piecesFound = []
@@ -173,7 +198,7 @@ class VoiceListener():
             return None
         except:
             return None
-    
+
     def scanLine(self, result, piece, dx, dy):
         x = dx
         y = dy
@@ -194,8 +219,8 @@ class VoiceListener():
             x += dx
             y += dy
         return None
-    
-    def check(self, piecesFound, result):
+
+    def check(self, piecesFound, result, enPassantOffset = 0):
         # create new list without Nones
         pieces = []
         for piece in piecesFound:
@@ -206,7 +231,9 @@ class VoiceListener():
                 pieces.append(piece)
         # see if there is exactly one match
         if len(pieces) == 1:
-            return Move.Move(pieces[0], C(self.convert(result[2]), self.convert(result[3])), self.board.pieceAtPosition(C(self.convert(result[2]), self.convert(result[3]))))
+            return Move.Move(pieces[0], C(self.convert(result[2]), self.convert(result[3])), self.board.pieceAtPosition(C(self.convert(result[2]), self.convert(result[3]) - enPassantOffset)))
+        if len(pieces) > 1:  # multiple targets
+            return 3
         return None
 
     def convert(self, r):
@@ -243,37 +270,40 @@ class VoiceListener():
         if r == "eight":
             return 7
         return None  # should never get here
- 
+
     def checkLegal(self, move):
         try:
+            # check that piece to move is your color
+            if move.piece.side != self.turn:
+                return "illegal move", None
             # check that destination square is valid
             if move.pieceToCapture is not None:
-                if move.pieceToCapture.side == self.turn:  # can't capure a piece of your color
+                if move.pieceToCapture.side == self.turn:  # can't capture a piece of your color
                     return "illegal move", None
-            #TODO(?): don't allow a move that leaves king in check
             if move.piece.stringRep == "p":
                 dx = move.newPos[0] - move.oldPos[0]
                 dy = move.newPos[1] - move.oldPos[1]
                 if self.turn:  # WHITE
-                    if move.pieceToCapture is not None:  # capturing
-                        if abs(dx) == 1 and dy == 1:
-                            return "move", move
-                        return "illegal move", None
-                    if dx == 0 and dy == 1:
-                        return "move", move
-                    if dx == 0 and dy == 2 and move.oldPos[1] == 1:  # can move forward 2 spaces
-                        return "move", move
-                    return "illegal move", None
+                    offset = 1
+                    testPoint = 1
                 else:  # BLACK
-                    if move.pieceToCapture is not None:  # capturing
-                        if abs(dx) == 1 and dy == -1:
-                            return "move", move
+                    offset = -1
+                    testPoint = 6
+                if abs(dx) == 1 and dy == offset: # capturing
+                    if move.pieceToCapture is not None:
+                        return "move", move
+                    # check for en passant
+                    try:
+                        lm = self.board.getLastMove()
+                        if lm.piece.stringRep == "p" and lm.oldPos - lm.newPos == C(0, 2 * offset) and lm.newPos + C(0, offset) == move.newPos:
+                            return "move", Move.Move(move.piece, move.newPos, self.board.pieceAtPosition(C(move.newPos[0], move.newPos[1] - offset)))
+                    except:
                         return "illegal move", None
-                    if dx == 0 and dy == -1:
-                        return "move", move
-                    if dx == 0 and dy == -2 and move.oldPos[1] == 6:  # can move forward 2 spaces
-                        return "move", move
-                    return "illegal move", None
+                if dx == 0 and dy == offset:
+                    return "move", move
+                if dx == 0 and dy == 2 * offset and move.oldPos[1] == testPoint and self.board.pieceAtPosition(C(move.oldPos[0], testPoint + offset)) is None:  # can move forward 2 spaces
+                    return "move", move
+                return "illegal move", None
             if move.piece.stringRep == "R":
                 if self.checkLine(move) == 1:  # straight line move, no pieces in the way
                     return "move", move
@@ -281,7 +311,7 @@ class VoiceListener():
             if move.piece.stringRep == "N":
                 dx = move.newPos[0] - move.oldPos[0]
                 dy = move.newPos[1] - move.oldPos[1]
-                if (abs(dx) == 1 and abs(dy) == 2 or (abs(dx) == 2 and abs(dy) == 1):
+                if (abs(dx) == 1 and abs(dy) == 2) or (abs(dx) == 2 and abs(dy) == 1):
                     return "move", move
                 return "illegal move", None
             if move.piece.stringRep == "B":
@@ -358,4 +388,3 @@ class VoiceListener():
                     j -= 1
             return 2  # diagonal
         return 0  # not on a line
-        

@@ -235,20 +235,11 @@ class Board:
                 self.points -= 1
         
         elif lastMove.promotion:
-            #print("promotion in undo move")
             pawnPromoted = lastMove.piece
-            #print("pawnPromoted")
-            #print(pawnPromoted)
             promotedPiece = self.pieceAtPosition(lastMove.newPos)
-            #print("promotedPiece")
-            #print(promotedPiece)
             if promotedPiece:
                 self.pieces.remove(promotedPiece)
             self.pieces.append(pawnPromoted)
-            #print("pieces")
-            #for p in self.pieces:
-            #    print(p)
-            #print("pieces done")
             if promotedPiece:
                 if pawnPromoted.side == WHITE:
                     self.points -= promotedPiece.value - 1
@@ -298,7 +289,6 @@ class Board:
 
     def addMoveToHistory(self, move):
         pieceTaken = None
-        print(move.pessant)
         if move.pessant:
             pieceTaken = move.specialMovePiece
             self.history.append([move, pieceTaken])
@@ -709,14 +699,7 @@ class Board:
 
     def moveIsLegal(self, move):
         side = move.piece.side
-        #print(move)
-        #print("checking if move is legal")
-        #print(move.specialMovePiece)
-        if move.specialMovePiece != None:
-            #print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-            #print("special move piece in move is legal")
-            #print(move.specialMovePiece)
-            #print(move)
+        if move.specialMovePiece:
             isLegal = self.testIfLegalBoard(not side)
         else:
             self.makeMove(move)

@@ -1,6 +1,7 @@
 from xytable import *
 from Move import *
 from InputParser import InputParser
+from Coordinate import Coordinate as C
 
 ####### for testmoves #########
 #from reedBoard import *
@@ -45,8 +46,6 @@ class ChessTable(XYTable):  #testing on when 1
         self.row = 0
         self.column = 0
         #self.win = GraphWin('XY Table Testing', 310, 210)
-        self.lightsW = "lights"
-        self.lightsB = "lights"
         self.whiteCaptured = [[0 for x in range(2)] for y in range(8)]
         self.blackCaptured = [[0 for x in range(2)] for y in range(8)]
         self.playableBoard = [[0 for x in range(8)] for y in range(8)]
@@ -89,7 +88,167 @@ class ChessTable(XYTable):  #testing on when 1
         for i in range(8):
             for j in range(8):
                 self.playableBoard[i][j] = fullBoard[i][j+2] 
-    
+                
+    def pieceInCaptureBin(self, captured):
+        found = False
+        if captured.side == WHITE:
+            if captured.stringRep == "p":
+                if self.whiteCaptured[captured.number][0]== 1:
+                    found = True
+            elif captured.stringRep == "B":
+                if self.whiteCaptured[B + captured.number][1]== 1:
+                    found = True
+            elif captured.stringRep == "N":
+                if self.whiteCaptured[N + captured.number][1]== 1:
+                    found = True
+            elif captured.stringRep == "R":
+                if self.whiteCaptured[R + captured.number][1]== 1:
+                    found = True
+            elif captured.stringRep == "Q":
+                if self.whiteCaptured[Q + captured.number][1]== 1:
+                    found = True
+        else:
+            if captured.stringRep == "p":
+                if self.blackCaptured[captured.number][1]== 1:
+                    found = True    
+            elif captured.stringRep == "B":
+                if self.blackCaptured[B + captured.number][0]== 1:
+                    found = True
+            elif captured.stringRep == "N":
+                if self.blackCaptured[N + captured.number][0]== 1:
+                    found = True
+            elif captured.stringRep == "R":
+                if self.blackCaptured[R + captured.number][0]== 1:
+                    found = True
+            elif captured.stringRep == "Q":
+                if self.blackCaptured[Q + captured.number][0]== 1:
+                    found = True
+        return found
+                
+    def getMoveNew(self, board, currentBoard):
+        self.splitBoard(currentBoard)
+        update = self.playableBoard
+        whiteCaptured = self.whiteCaptured
+        blackCaptured = self.blackCaptured
+        moveMade = None
+        moveTo = []
+        moveFrom= []
+        
+        engineBoard = [[0 for x in range(8)] for y in range(8)]
+        for p in board.pieces:
+            #print(p.position)
+            engineBoard[7 - p.position[1]][p.position[0]] = 1   #engine boards sides were flipped from the engine board
+        
+        #check for changes and then assign the position that was moved to and moved from
+        complexMove = False
+        for i in range(8):
+            for j in range(8):
+                if engineBoard[i][j] != update[i][j]:
+                    if update[i][j] == 1:
+                        moveTo.append(C(j,7-i))
+                    else:
+                        moveFrom.append(C(j,7-i))
+                            
+        #Check if there is an error
+        if len(moveTo) > 2 or len(moveFrom) > 2:
+            print("To Many Moves")
+            return None
+        else:
+            #special moves
+            if len(moveFrom) == 2:
+                piece1 = board.pieceAtPosition(moveFrom[0])
+                piece2 = board.pieceAtPosition(moveFrom[1])
+                king = None
+                pawn1 = None
+                print("Special Move")
+                if piece1.stringRep == "K":
+                    king = piece1
+                    if piece2.strinRep == "R":
+                        rook = piece2
+                elif piece1.stringRep == "R":
+                    rook = piece1
+                    if piece2.stringRep == "K":
+                        king = piece2
+                elif piece1.stringRep == "p":
+                    if piece2.stringRep == "p":
+                        if piece1.side == board.currentSide:
+                            pawn1 = piece1
+                            pawn2 = piece2
+                        else:
+                            pawn1 = piece2
+                            pawn2 = piece1
+                else:
+                    print("Could not find Special Move")
+                    
+                        
+                    
+                    
+                if king:
+                    for move in king.getPossibleMoves():
+                        if move.queensideCastle or move.kingsideCastle:
+                            print("It is a castle move")
+                            if rook == move.rookMove.piece:
+                                print("rookMove is the rook")
+                                moveMade = move
+                            #this is redundent 
+                            elif rook == move.specialMovePiece:
+                                print("special move piece found")
+                                moveMade = move
+                            else:
+                                print("Couldnt Find it")
+                                
+                        if moveMade:
+                            return moveMade
+                            break
+                            
+                if pawn1 and pawn2:
+                    print("It is a en pessant")
+                    for move in pawn1.getPossibleMoves():
+                        if move.pessant: 
+                            if pawn2 == move.pieceToCapture:
+                                if self.pieceInCaptureBin(pawn2):
+                                    moveMade = move
+                        else:
+                            moveMade = None
+                        if moveMade:
+                            return moveMade
+                            break
+                    
+                    
+                
+                
+            #normal moves
+            elif len(moveFrom) == 1:
+                print("Normal Move")
+                piece = board.pieceAtPosition(moveFrom[0])
+                print(piece)
+                for move in piece.getPossibleMoves():
+                    #check if it is a capture 
+                    if len(moveTo) == 0:
+                        if move.pieceToCapture:
+                            captured = move.pieceToCapture
+                            if self.pieceInCaptureBin(captured):
+                                moveMade = move
+                        #something broke
+                        else:
+                            moveMade = None
+                                
+                    #simple move
+                    else:
+                        if move.newPos == moveTo[0]:
+                            moveMade = move
+                        
+                    if moveMade:
+                        return moveMade
+                        break
+                
+                
+            else:
+                print("Piece Not Moved")
+                return None
+        piece1 = board.pieceAtPosition(moveFrom[0])
+        
+        print("*******************************")
     
     def getMove(self, board, currentBoard):
         self.splitBoard(currentBoard)
@@ -126,6 +285,7 @@ class ChessTable(XYTable):  #testing on when 1
         #go through all of the pieces of the original engine board
         for p in board.pieces:
             #find piece that correlates to the position that the piece was moved from
+            
             if p.position[0] == moveFrom[0] and p.position[1] == moveFrom[1]:   #reverse indexing
                 print("position of moved piece: ")
                 print(p.position)
@@ -141,7 +301,7 @@ class ChessTable(XYTable):  #testing on when 1
                     #print(move)
                     if move.pieceToCapture:     #move includes the capturing of a piece
                         print("Captured Piece \n")
-                        print(move.pieceToCapture)
+                        #print(move.pieceToCapture)
                         captured = move.pieceToCapture
                         #check for piece capture
                         print(blackCaptured)
@@ -196,7 +356,12 @@ class ChessTable(XYTable):  #testing on when 1
                         #print("move to: ")
                         #print(moveTo)
                         #print(move.newPos)
-                        if move.queensidecastle
+                        if move.kingsideCastle:
+                            print("IT IS CLEARLY A CASTLE MOVE")
+                            
+                        elif move.queensideCastle:
+                            print("IT IS CLEARLY A CASTLE MOVE")
+                            
                         if len(moveTo) != 0:
                             #castle moves
                             if len(moveTo) == 4:
@@ -252,7 +417,7 @@ class ChessTable(XYTable):  #testing on when 1
                                 else:
                                     if moveTo[0] == move.newPos[0] and moveTo[1] == move.newPos[1]:
                                         moveMade = move
-                                '''
+                                
                                 if move.piece.stringRep == 'p':
                                     print("piece is a pawn")
                                     print(move.newPos)
@@ -263,7 +428,7 @@ class ChessTable(XYTable):  #testing on when 1
                                     else:
                                         if moveTo[0] == move.newPos[0] and moveTo[1] == move.newPos[1]:
                                             moveMade = move
-                                '''
+                                
                                 
                                 '''
                                 print(blackCaptured)
@@ -286,10 +451,10 @@ class ChessTable(XYTable):  #testing on when 1
                                         print(fullString)
                                         
                                         moveMade = parser.moveForShortNotation(fullString)                                        
-                                '''
+                                
 
                                     
-                            '''
+                            
                             if move.piece.stringRep == 'R' or move.piece.stringRep == 'K': #maybe get rid of king statmenet
                                 #deal with castling 
                                 print("castling")

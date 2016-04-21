@@ -16,11 +16,12 @@ BLACK = False
 
 
 class Game:
-    def __init__(self, testingOptions = 0, btOption = 0, gameMode = 1, voiceControl = 0): #1 for use without motors
+    def __init__(self, table, testingOptions = 0, btOption = 0, gameMode = 1, voiceControl = 0, led = False): #1 for use without motors
         self.board = Board()
+        self.led = led
         self.uciBoard = chess.Board()
         #self.uciBoard = chess.Board(chess960 = True)
-        self.table = ChessTable(testingOptions)
+        self.table = table
         self.playerSide = WHITE
         self.btSide = BLACK
         self.aiDepth = 2
@@ -31,15 +32,10 @@ class Game:
         #self.engine.setoption({"UCI_Chess960": True})
         self.engine.setoption({"Threads":4})
         self.engine.setoption({"Skill Level":3})
-        #deleted
-        #self.table.drawMotors()  
-        self.table.initialize_Coord()  
-        
         self.bt = btOption
-        
-        self.ledMatrix = LEDMatrix()
+        self.ledMatrix = self.table.ledMatrix
         self.sleepTime = 0.3
-        
+        self.table.initialize_Coord() 
         #Set up buttons
         pin1 = 19   
         pin2 = 21
@@ -47,17 +43,6 @@ class Game:
         self.selectButton = ButtonListener(pin1)
         self.scrollButton = ButtonListener(pin2)
         self.newGameButton = ButtonListener(pin3)
-        
-        #Print Tests for Motors and Bluetooth
-        '''
-        print("\n\nLet the print tests begin... \n")
-        print(self.table)
-        print()
-        print(self.table.motorX.who())
-        print(self.table.motorY.who())
-        print(self.table.bt.who())
-        print("\n\n")
-        '''
         
         self.bluetooth = self.table.bt
         #self.bluetooth = Bluetooth(self.table.motorY.serialPort)
@@ -71,104 +56,103 @@ class Game:
         self.gameMode = gameMode
 
     def askForPlayerSide(self):
-        '''
-        playerChoiceInput = input(
-            "What side would you like to play as [wB]? ").lower()
-        if 'w' in playerChoiceInput:
-            print("You will play as white")
-            self.playerSide = WHITE
-            self.btSide = BLACK
+        if self.led == False:
+            playerChoiceInput = input(
+                "What side would you like to play as [wB]? ").lower()
+            if 'w' in playerChoiceInput:
+                print("You will play as white")
+                self.playerSide = WHITE
+                self.btSide = BLACK
+            else:
+                print("You will play as black")
+                self.playerSide = BLACK
+                self.btSide = WHITE 		
         else:
-            print("You will play as black")
-            self.playerSide = BLACK
-            self.btSide = WHITE 		
-        '''
-        
-        self.ledMatrix.clear()
-        
-        #Choose Player Side
-        time.sleep(self.sleepTime)
-        self.ledMatrix.display("SIDE","[W/B]?", self.ledMatrix.fontColor, self.ledMatrix.normFont)  
-        self.scrollButton.startListener()
-        self.selectButton.startListener()
-        scrollCount = 0
-        while True:
-            if self.scrollButton.wasPressed():
-                self.scrollButton.stopListener()
-                time.sleep(self.sleepTime)
-                self.scrollButton.startListener()
-                scrollCount = scrollCount + 1
-                if scrollCount == 3:
-                    scrollCount = 1
-                print("Scroll Button was Pressed")
-                print(scrollCount)
-                self.scrollButton.stopListener()
-                self.scrollButton.startListener()
-                if scrollCount == 1:
-                    self.ledMatrix.display(" WHITE", "", self.ledMatrix.fontColor, self.ledMatrix.normFont)
-                elif scrollCount == 2:
-                    self.ledMatrix.display(" BLACK", "", self.ledMatrix.fontColor, self.ledMatrix.normFont)
-                else:
-                    self.ledMatrix.display("SIDE","[W/B]?", self.ledMatrix.fontColor, self.ledMatrix.normFont)  
-                    
-            if self.selectButton.wasPressed():
-                print("Select Button was Pressed")
-                self.ledMatrix.clear()
-                sideOption = scrollCount
-                self.playerSide = WHITE if sideOption == 1 else BLACK
-                break
+            self.ledMatrix.sendString("clear")
+            
+            #Choose Player Side
+            time.sleep(self.sleepTime)
+            self.ledMatrix.sendMultLines("SIDE","W/B ?") 
+            self.scrollButton.startListener()
+            self.selectButton.startListener()
+            scrollCount = 0
+            while True:
+                if self.scrollButton.wasPressed():
+                    self.scrollButton.stopListener()
+                    time.sleep(self.sleepTime)
+                    self.scrollButton.startListener()
+                    scrollCount = scrollCount + 1
+                    if scrollCount == 3:
+                        scrollCount = 1
+                    print("Scroll Button was Pressed")
+                    print(scrollCount)
+                    self.scrollButton.stopListener()
+                    self.scrollButton.startListener()
+                    if scrollCount == 1:
+                        self.ledMatrix.sendString("WHITE")
+                    elif scrollCount == 2:
+                        self.ledMatrix.sendString("BLACK")
+                    else:
+                        self.ledMatrix.sendMultLines("SIDE","W/B ?")  
+                        
+                if self.selectButton.wasPressed():
+                    print("Select Button was Pressed")
+                    self.ledMatrix.sendString("clear")
+                    sideOption = scrollCount
+                    self.playerSide = WHITE if sideOption == 1 else BLACK
+                    break
 
     def askForDepthOfAI(self):
         #depthInput = 5
-        '''
-        try:
-            Input = int(input("Choose Your AI Difficulty\n   1 - Dumb As a Box of Rocks\n   2 - Beginner\n   3 - Intermediate\n   4 - Master\n   5 - GrandMaster\n   6 - Super GrandMaster\n"))
-        except:
-            print("Invalid Input, Defaulting to an Intermediate Player")
-        '''
-        
-        #Set up LED Matrix
-        self.ledMatrix.clear()
-        
-        #Choose Player Side
-        time.sleep(self.sleepTime)
-        self.ledMatrix.display("  AI"," SKILL", self.ledMatrix.fontColor, self.ledMatrix.normFont)  
-        self.scrollButton.startListener()
-        self.selectButton.startListener()
-        scrollCount = 0
-        while True:
-            if self.scrollButton.wasPressed():
-                self.scrollButton.stopListener()
-                time.sleep(self.sleepTime)
-                self.scrollButton.startListener()
-                scrollCount = scrollCount + 1
-                if scrollCount == 7:
-                    scrollCount = 1
-                print("Scroll Button was Pressed")
-                print(scrollCount)
-                self.scrollButton.stopListener()
-                self.scrollButton.startListener()
-                if scrollCount == 1:
-                    self.ledMatrix.display("BOX OF", "ROCKS", self.ledMatrix.fontColor, self.ledMatrix.normFont)
-                elif scrollCount == 2:
-                    self.ledMatrix.display("BEGI-", "-NNER", self.ledMatrix.fontColor, self.ledMatrix.normFont)
-                elif scrollCount == 3:
-                    self.ledMatrix.display("INTER-", "-MEDIATE", self.ledMatrix.fontColor, self.ledMatrix.smallFont)
-                elif scrollCount == 4:
-                    self.ledMatrix.display("MASTER", "", self.ledMatrix.fontColor, self.ledMatrix.normFont)
-                elif scrollCount == 5:
-                    self.ledMatrix.display("GRAND", "MASTER", self.ledMatrix.fontColor, self.ledMatrix.normFont)
-                elif scrollCount == 6:
-                    self.ledMatrix.display("WIZARD", "", self.ledMatrix.fontColor, self.ledMatrix.normFont)                                                                                                 
-                else:
-                    self.ledMatrix.display("SIDE","[W/B]?", self.ledMatrix.fontColor, self.ledMatrix.normFont)  
-                    
-            if self.selectButton.wasPressed():
-                print("Select Button was Pressed")
-                self.ledMatrix.clear()
-                aiOption = scrollCount
-                break
-        
+        if self.led == False:
+            try:
+                aiOption = int(input("Choose Your AI Difficulty\n   1 - Dumb As a Box of Rocks\n   2 - Beginner\n   3 - Intermediate\n   4 - Master\n   5 - GrandMaster\n   6 - Super GrandMaster\n"))
+            except:
+                print("Invalid Input, Defaulting to an Intermediate Player")
+        else:
+            
+            #Set up LED Matrix
+            self.ledMatrix.sendString("clear")
+            
+            #Choose Player Side
+            time.sleep(self.sleepTime)
+            self.ledMatrix.sendMultLines("AI","SKILL") 
+            self.scrollButton.startListener()
+            self.selectButton.startListener()
+            scrollCount = 0
+            while True:
+                if self.scrollButton.wasPressed():
+                    self.scrollButton.stopListener()
+                    time.sleep(self.sleepTime)
+                    self.scrollButton.startListener()
+                    scrollCount = scrollCount + 1
+                    if scrollCount == 7:
+                        scrollCount = 1
+                    print("Scroll Button was Pressed")
+                    print(scrollCount)
+                    self.scrollButton.stopListener()
+                    self.scrollButton.startListener()
+                    if scrollCount == 1:
+                        self.ledMatrix.sendMultLines("LEVEL","1/6") 
+                    elif scrollCount == 2:
+                        self.ledMatrix.sendMultLines("LEVEL","2/6") 
+                    elif scrollCount == 3:
+                        self.ledMatrix.sendMultLines("LEVEL","3/6") 
+                    elif scrollCount == 4:
+                        self.ledMatrix.sendMultLines("LEVEL","4/6") 
+                    elif scrollCount == 5:
+                        self.ledMatrix.sendMultLines("LEVEL","5/6") 
+                    elif scrollCount == 6:
+                        self.ledMatrix.sendMultLines("LEVEL","6/6")                                                                                                 
+                    else:
+                        self.ledMatrix.sendMultLines("AI","SKILL")  
+                        
+                if self.selectButton.wasPressed():
+                    print("Select Button was Pressed")
+                    self.ledMatrix.sendString("clear")
+                    aiOption = scrollCount
+                    break
+            
         if(aiOption == 1):
             self.engine.setoption({"Skill Level":0})
             depthInput = 1
@@ -238,43 +222,37 @@ class Game:
         print(move)
         print(move.notation)
         print("Making move : " + move.notation)
-        print("Testing LED Display")
-        print(move.piece.stringRep)
-        m = LEDMatrix()
-        m.displayMove(move.piece.stringRep)
-        
-        #King appears to have no sringRep / no piece notation ???
-        
-        mProcess = Process(target=m.refresh, args=())
-        mProcess.start()
-        time.sleep(5)
-        
-        if move.pieceToCapture:
-            print("Piece to capture")
-            mProcess.terminate()
-            m.clear()
-            time.sleep(1)
-            
-            m = LEDMatrix()
-            m.displayCapture(move.pieceToCapture.stringRep)
-            mProcess = Process(target=m.refresh, args=())
-            mProcess.start()
-            time.sleep(5)
-            
-        self.board.makeChosenMove(move)
-        mProcess.terminate()
-        
-        '''
-        print("New Code: ")
-        if move.queensideCastle:
-            print("queen side castle")
-            self.uciBoard.push_san('e1b1') 
-        elif move.kingsideCastle:
-            print("king side castle")
-            self.uciBoard.push_san('e1g1')
+        if self.led:
+            '''
+            print("Testing LED Display")
+            print(move.piece.stringRep)
+            self.ledMatrix.sendString("move" + str(move.piece.stringRep) + str(move.newPos))
+            time.sleep(3)
+            if move.pieceToCapture:
+                self.ledMatrix.sendString("capture" + str(move.pieceToCapture.stringRep))
+            time.sleep(3)
+            '''   
+            self.board.makeChosenMove(move)
+            #self.ledMatrix.sendString("clear")
         else:
-        '''
-        self.uciBoard.push_san(move.notation) 
+            self.board.makeChosenMove(move)
+        if move.kingsideCastle:
+            if move.piece.side == WHITE:
+                castleMove = chess.Move.from_uci("e1g1")
+            else:
+                castleMove = chess.Move.from_uci("e8g8")
+            self.uciBoard.push(castleMove)
+        elif move.queensideCastle:
+            #get the notation of the move in 'e1b1' style
+            if move.piece.side == WHITE:
+                castleMove = chess.Move.from_uci("e1c1")
+            else:
+                castleMove = chess.Move.from_uci("e8c1")
+            self.uciBoard.push(castleMove)
+        else:
+            self.uciBoard.push_san(move.notation)
+        
+        #self.uciBoard.push_san(move.notation) 
         
     def printPointAdvantage(self):
         print("Currently, the point difference is : " +
@@ -392,6 +370,8 @@ class Game:
                         move = parser.moveForShortNotation(message)
                      '''
                 else:
+                    if self.led:
+                        self.ledMatrix.sendMultLines("YOUR","MOVE")
                     command = input("It's your move."
                                     " Type '?' for options. ? ").lower()
                   
@@ -414,13 +394,17 @@ class Game:
                     else:
                         parser.side = self.playerSide
                         move = parser.moveForShortNotation(command)
-                        #self.ledMatrix.clear()
-                        #self.ledMatrix.display("MOVE: ", "  " + command, self.ledMatrix.fontColor, self.ledMatrix.normFont)
-
+                        '''
+                        self.ledMatrix.sendString("clear")
+                        alphaPos = self.board.positionToHumanCoord(move.newPos)
+                        self.ledMatrix.sendString("move" + str(move.piece.stringRep) + str(alphaPos))
+                        time.sleep(3)
+                        '''
                 if move:
                     #move = self.table.getmove(self.board)
                     self.makeMove(move)
-                    
+                    print("Human Move: ")
+                    print(move)
                     if self.bt == 0:
                         print("bluetooth is on")
                         moveStr = str(move.oldPos[0]) + str(move.oldPos[1]) + str(move.newPos[0]) + str(move.newPos[1])
@@ -431,11 +415,13 @@ class Game:
                         print(self.bt) 
                     
                 else:
-                    bigFont = "/home/pi/Prophylaxis/rpi-rgb-led-matrix/fonts/6x10.bdf"
-                    errorColor = "255,0,0"
-                    self.ledMatrix.display("ERROR","IDIOT", errorColor, bigFont)
+                    self.ledMatrix.sendMultLines("MOVE","ERROR")
                     print("Couldn't parse input, enter a valid command or move.")
-                    
+                    time.sleep(3)
+                    self.ledMatrix.sendMultLines("UNDO","MOVE")
+                    time.sleep(3)
+                    #wait for
+                    #verify the board is in the same state!!!!!
 
             else:
 				#if Human vs Bluetooth
@@ -446,112 +432,7 @@ class Game:
                 else:
                     print("AI thinking...")
                     
-                '''
-                - - - - - Old AI OpenBook - - - - -
-                movecount = movecount + 1
-                #print(movecount)
-                #starting moves
-                #have multiple options for some of the starting moves -- need to implement a method
-                #to choose between the options at random. Should also go deeper with the starting moves
-                #as it heavily speeds up execution time of the AI
-                if movecount < 1:
-                    if movecount == 1:
-                        #white side initial moves
-                        if self.playerSide == BLACK:
-                            parser.side = WHITE
-                            move = parser.moveForShortNotation('e4')
-                        #black side counter moves
-                        else:
-                            parser.side = BLACK
-                            playersMove = self.board.getLastMove()  #white sides last move
-                            if playersMove.oldPos == (4,1) and playersMove.newPos == (4,3):
-                                moves = ['e5','c5','e6','d5','c6']
-                                alpha = random.choice(moves)
-                                
-                                #alpha values:
-                                #    e5 = Mirror
-                                #    c5 = Sicilian Defense
-                                #    e6 = French Defense
-                                #    d5 = Scandinavian Defense
-                                #    c6 = Caro-Kann
-                                
-                                move = parser.moveForShortNotation(alpha)          
-                            else:
-                                move = parser.moveForShortNotation('d5')
-                                
-                        parser.side = self.playerSide  #reset parser side
-                    if movecount == 2:
-                        #white side moves
-                        if self.playerSide == BLACK:
-                            parser.side = WHITE
-                            playersMove = self.board.getLastMove()  #black sides last move
-                            if playersMove.oldPos == (4,6) and playersMove.newPos == (4,4): 
-                                moves = ['f4','Nf3']
-                                alpha = random.choice(moves)
-                                
-                                #alpha values:
-                                #    f4 = King's Gambit
-                                #    Nf3 = Ruy Lopex
-                                
-                                move = parser.moveForShortNotation(alpha)          
-                            elif playersMove.oldPos == (4,6) and playersMove.newPos == (4,5):
-                                move = parser.moveForShortNotation('d4')    #French Defense Response
-                            elif playersMove.oldPos == (3,6) and playersMove.newPos == (3,4):
-                                move = parser.moveForShortNotation('exd5')  #Scandinavian Defense Response
-                            elif playersMove.oldPos == (2,6) and playersMove.newPos == (2,5):
-                                move = parser.moveForShortNotation('d4')    #Caro-Kann Response
-                            else:
-                                move = parser.moveForShortNotation('Nc3')
-                        #black side moves  
-                        else:
-                            parser.side = BLACK
-                            playersMove = self.board.getLastMove()  #white sides last move
-                            playersMove2 = self.board.history[-2][0]  #black sides last move
-                            if playersMove.oldPos == (3,1) and playersMove.newPos == (3,3):
-                                if playersMove2.newPos != (3,4):
-                                    move = parser.moveForShortNotation('d5') #French Defense / Caro-Kann Continued
-                                else:
-                                    move = self.getUCIEngineMove(self.aiDepth*1000)
-                                    move.notation = parser.notationForMove(move) 
-                            elif playersMove.oldPos == (4,3) and playersMove.newPos == (3,4):
-                                move = parser.moveForShortNotation('Qxd5') #Scandinavian Defense Continued
-                            elif playersMove.oldPos == (5,1) and playersMove.newPos == (5,3):
-                                if playersMove2.newPos != (3,4):
-                                    move = parser.moveForShortNotation('d5') #King's Gambit Defense
-                                else:
-                                    move = self.getUCIEngineMove(self.aiDepth*1000)
-                                    move.notation = parser.notationForMove(move)
-                            elif playersMove.oldPos == (6,0) and playersMove.newPos == (5,2):
-                                if playersMove2.newPos != (2,5):
-                                    move = parser.moveForShortNotation('Nc6') #Ruy Lopex
-                                else:
-                                    move = self.getUCIEngineMove(self.aiDepth*1000)
-                                    move.notation = parser.notationForMove(move)
-                            else:
-                                move = self.ai.getBestMove()
-                                move.notation = parser.notationForMove(move)
-                                
-                        parser.side = self.playerSide  #reset parser side 
-                        
-                    if movecount == 3:
-                        #white side moves
-                        if self.playerSide == BLACK:
-                            parser.side = WHITE
-                            playersMove = self.board.getLastMove()
-                            if playersMove.oldPos == (1,7) and playersMove.newPos == (2,5):
-                                move = parser.moveForShortNotation('Bb5') #Ruy Lopex
-                            else:
-                                move = self.getUCIEngineMove(self.aiDepth*1000)
-                                move.notation = parser.notationForMove(move)
-                        else:
-                            move = self.getUCIEngineMove(self.aiDepth*1000)
-                            move.notation = parser.notationForMove(move)
-                            
-                        parser.side = self.playerSide  #reset parser side 
                 
-                #following starting moves use the node tree to look for the best move  
-                else:
-                ''' 
                 #if Human vs Bluetooth
                 if (self.gameMode == 2):
                     move = self.btMove(parser)
@@ -606,7 +487,9 @@ class Game:
 
                     
                 else:
+                    self.ledMatrix.sendString("load")
                     move = self.getUCIEngineMove(self.aiDepth*1000)
+                    self.ledMatrix.sendString("l")
                     move.notation = parser.notationForMove(move)
                     #print(move.oldPos)
                     #print(move.newPos)
@@ -618,8 +501,24 @@ class Game:
                 #print(move)            #for testing purposes      
                 
                 if self.gameMode != 4:
-                    self.table.move(move)          
+                    self.ledMatrix.sendString("clear")
+                    alphaPos = self.board.positionToHumanCoord(move.newPos)
+                    self.ledMatrix.sendString("move" + str(move.piece.stringRep).lower() + str(alphaPos).upper())
+                        
+                    self.table.move(move)
+                    
+                    if move.pieceToCapture:
+                        print("there is a piece to capture")
+                        self.ledMatrix.sendString("capture" + str(move.pieceToCapture.stringRep).lower())
+                        time.sleep(5)
+                        
+                print("done making table move")
                 self.makeMove(move)
+                if self.uciBoard.is_check():
+                    print("King was put in check")
+                    self.ledMatrix.sendString("CHECK")
+                    time.sleep(5)
+                self.ledMatrix.sendString("clear")
 
                     
                  

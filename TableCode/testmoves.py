@@ -314,7 +314,7 @@ newReed =  [[0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], \
             
 table12 = ChessTable(1)
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -343,7 +343,7 @@ newReed =  [[0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], \
 			[0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -373,7 +373,7 @@ newReed =  [[0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], \
 			[0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -404,7 +404,7 @@ newReed =  [[0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0], \
 			[0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -435,7 +435,7 @@ newReed =  [[0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0], \
 			[0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -466,7 +466,7 @@ newReed =  [[0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0], \
 			[0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -497,7 +497,7 @@ newReed =  [[0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0], \
 			[0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -528,7 +528,7 @@ newReed =  [[0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0], \
 			[0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -559,13 +559,11 @@ newReed =  [[0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0], \
 			[0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
 parser = InputParser(board12, WHITE)
-print("THIS IS WHAT IS GOING DOWN!!!")
-print(move)
 notation = parser.notationForMove(move)
 print("Notation: ")
 print(notation)
@@ -594,7 +592,7 @@ newReed =  [[0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0], \
 			[0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -627,14 +625,12 @@ newReed =  [[0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0], \
 			[0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print("Move: ")
 print(move)
 print()
 
 parser = InputParser(board12, WHITE)
-print("THIS IS WHAT IS GOING DOWN!!!")
-print(move)
 notation = parser.notationForMove(move)
 print("Notation: ")
 print(notation)
@@ -664,7 +660,7 @@ newReed =  [[0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0], \
 			[0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -695,7 +691,7 @@ newReed =  [[0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0], \
 			[0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -726,7 +722,7 @@ newReed =  [[0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0], \
 			[0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -757,7 +753,7 @@ newReed =  [[0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1], \
 			[0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -788,7 +784,7 @@ newReed =  [[0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1], \
 			[0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -819,7 +815,7 @@ newReed =  [[0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1], \
 			[0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -851,7 +847,7 @@ newReed =  [[0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1], \
 			[0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -882,13 +878,14 @@ newReed =  [[0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1], \
 			[0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
 parser = InputParser(board12, WHITE)
 notation = parser.notationForMove(move)
-if notation == str("0-0-0"):
+print(notation)
+if notation == str("Ka1"):
     numPassed = numPassed + 1
     board12.makeChosenMove(move)
     print("Passed move 19 of 30")
@@ -913,7 +910,7 @@ newReed =  [[0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1], \
 			[0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -944,7 +941,7 @@ newReed =  [[0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1], \
 			[0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -975,7 +972,7 @@ newReed =  [[0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1], \
 			[0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -1007,7 +1004,7 @@ newReed =  [[0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1], \
 			[0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -1039,7 +1036,7 @@ newReed =  [[0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1], \
 			[0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -1070,7 +1067,7 @@ newReed =  [[0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1], \
 			[0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -1101,7 +1098,7 @@ newReed =  [[0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1], \
 			[1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -1132,7 +1129,7 @@ newReed =  [[0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1], \
 			[1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -1163,7 +1160,7 @@ newReed =  [[0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1], \
 			[1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -1194,7 +1191,7 @@ newReed =  [[0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1], \
 			[1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print(move)
 print()
 
@@ -1230,7 +1227,7 @@ newReed =  [[0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1], \
 			[1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0]]
             
 currentBoard = newReed
-move = table12.getMove(board12, currentBoard)
+move = table12.getMoveNew(board12, currentBoard)
 print("promotion move: ")
 print(move)
 print("Promotion: ")

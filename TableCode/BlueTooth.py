@@ -1,6 +1,5 @@
 import serial
 from xytable import *
-from game import *
 
 class Bluetooth:
 	

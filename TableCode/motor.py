@@ -14,9 +14,14 @@ class Motor:
 		#usb is the number of the USB identifier found in the '/dev/ttyUSB#' string
 		#XY is the orientation of the motor
 		#print("Now I'm actually making a motor")
-		self.serialPort = serial.Serial('/dev/ttyUSB' + str(usb), 9600)
+		self.connected = True
+		try:
+			self.serialPort = serial.Serial('/dev/ttyUSB' + str(usb), 9600)
+		except:
+			print("USB"+str(usb)+" Is not connected")
+			self.connected = False
 		#print("The serial connection was made")
-		time.sleep(1.5)
+		#time.sleep(1.5)
 		self.usb = usb
 
 	def waitfordone(self):

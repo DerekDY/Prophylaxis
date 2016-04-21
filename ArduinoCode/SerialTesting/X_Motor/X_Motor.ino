@@ -35,9 +35,9 @@ void moveF(int steps){
       Serial.println("Zero Error");
       break;
     }
-    digitalWrite(clkPin, HIGH);  
+    digitalWrite(clkPin, LOW);  
     delayMicroseconds(initSpeed - speedup);        //10000 hz       
-    digitalWrite(clkPin, LOW);   
+    digitalWrite(clkPin, HIGH);   
     delayMicroseconds(initSpeed - speedup);
     if ((i < ((initSpeed - maxSpeed))) && steps > (initSpeed - maxSpeed) * 2){
       speedup += 1;
@@ -61,9 +61,9 @@ void moveB(int steps){
       Serial.println("Zero Error");
       break;
     }
-    digitalWrite(clkPin, HIGH);  
+    digitalWrite(clkPin, LOW);  
     delayMicroseconds(initSpeed - speedup);        //10000 hz       
-    digitalWrite(clkPin, LOW);   
+    digitalWrite(clkPin, HIGH);   
     delayMicroseconds(initSpeed - speedup);
     if ((i < ((initSpeed - maxSpeed))) && steps > (initSpeed - maxSpeed) * 2){
       speedup += 1;
@@ -81,11 +81,18 @@ void zero(){
   digitalWrite(dirPin, HIGH);
   while (true) {
     if (digitalRead(limitPin) == HIGH){
+      digitalWrite(dirPin, LOW);
+      for (int i = 0; i < 1000; i++) {
+        digitalWrite(clkPin, LOW);  
+        delayMicroseconds(initSpeed);        //10000 hz       
+        digitalWrite(clkPin, HIGH);   
+        delayMicroseconds(initSpeed);
+      }
       break;
     }
-    digitalWrite(clkPin, HIGH);  
+    digitalWrite(clkPin, LOW);  
     delayMicroseconds(initSpeed);        //10000 hz       
-    digitalWrite(clkPin, LOW);   
+    digitalWrite(clkPin, HIGH);   
     delayMicroseconds(initSpeed);
   }
   Serial.println("Done");
