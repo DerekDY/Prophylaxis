@@ -15,19 +15,21 @@ led = int(input(
 
 ledOption = False if led == 2 else True
 
+reedBoard = int(input(
+        "Is Reed Board Connected?\n   1 - Yes \n   2 - No \n"))
+#GameMode Input
+
+reedOption = False if reedBoard == 2 else True
+
+
 if ledOption == False:
     gameMode = int(input(
         "Choose Game Mode \n   1 - Human vs AI \n   2 - Human vs Bluetooth \n   3 - Bluetooth vs AI \n   4 - Human vs Human \n"))
         
         
 #Button Setup
-pin1 = 19   
-pin2 = 21
-pin3 = 13   #not being used 
-selectButton = ButtonListener(pin1)
-scrollButton = ButtonListener(pin2)
-newGameButton = ButtonListener(pin3)
-
+selectButton = ButtonListener(14)
+scrollButton = ButtonListener(15)
 '''
 #New Game and Title Screen
 newGameButton.startListener()
@@ -252,7 +254,7 @@ else:
 '''
     
 #Set Up Game
-game = Game(table, testingOption, btOption, gameMode, led = ledOption)
+game = Game(table, testingOption, btOption, gameMode, led = ledOption, reedBoard = reedOption)
 game.askForPlayerSide()
 print()
 if gameMode != 2 and gameMode != 4:

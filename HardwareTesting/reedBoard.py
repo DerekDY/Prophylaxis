@@ -42,11 +42,11 @@ class ReedBoard:
 			# check which rows are high
 			for rIdx, rPin in enumerate(self.rPins):
 				if GPIO.input(rPin):
-					print("PIECE")
-					self.currentBoard[rIdx][cIdx] = 1
+					#print "piece at", rIdx, cIdx
+					self.currentBoard[rIdx][(self.numColumns - 1) - cIdx] = 1
 				else:
 					#print "no piece at", rIdx, cIdx
-					self.currentBoard[rIdx][cIdx] = 0
+					self.currentBoard[rIdx][(self.numColumns - 1) - cIdx] = 0
 			# increment to test next column
 			cIdx += 1
 			###

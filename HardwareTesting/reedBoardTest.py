@@ -7,7 +7,7 @@ def printBoard(board):
 	
 	
 print("Testing Board Script")
-testBoard = ReedBoard(4,[23,24],[17,27,22])
+testBoard = ReedBoard(12,[5,6,13,19],[24,25,8,7,12,16,20,21])
 counter = 0
 while(True):
 	print("_____________________________")

@@ -14,24 +14,27 @@ DATADIR = "../../pocketsphinx-python/pocketsphinx/test/data"
 
 class VoiceListener():
 
-    def __init__(self, pin, card, turn):
+    def __init__(self, card, turn, pin=0):
         config = Decoder.default_config()
         config.set_string('-hmm', path.join(MODELDIR, 'en-us/en-us'))
         config.set_string('-jsgf', path.join(MODELDIR, 'en-us/chess.jsgf'))
         config.set_string('-dict', path.join(MODELDIR, 'en-us/chess.dict'))
         self.decoder = Decoder(config)
-        self.bl = ButtonListener(pin)
+        if pin == 0:
+            self.bl = None
+        else:
+            self.bl = ButtonListener(pin)
         self.card = card
         self.turn = turn
 
     def listen(self, b):
         self.board = b
-        self.bl.startListener()
-        while not self.bl.wasPressed():
-            pass
-        self.bl.stopListener()
-        subprocess.Popen(["arecord", "-D", "plughw:" + str(self.card)
-+ ",0", "-d", "2.5", "-f", "S16_LE", "-r", "16000", "out.wav"])
+        if self.pin is not None:
+            self.bl.startListener()
+            while not self.bl.wasPressed():
+                pass
+            self.bl.stopListener()
+        subprocess.Popen(["arecord", "-D", "plughw:" + str(self.card) + ",0", "-d", "2.5", "-f", "S16_LE", "-r", "16000", "out.wav"])
         time.sleep(2.6)
         self.decoder.start_utt()
         stream = open("out.wav", 'rb')
@@ -112,8 +115,8 @@ class VoiceListener():
                         lm = self.board.getLastMove()
                         if lm.piece.stringRep == "p" and lm.newPos - lm.oldPos == C(0, 2 * offset) and lm.oldPos + C(0, offset) == C(self.convert(result[2]), self.convert(result[3])):
                             # only legal possibility is en passant
-                            piecesFound.append(self.isAt(result, "p",-1, offset))
-                            piecesFound.append(self.isAt(result, "p",1, offset))
+                            piecesFound.append(self.isAt(result, "p", -1, offset))
+                            piecesFound.append(self.isAt(result, "p", 1, offset))
                             return self.check(piecesFound, result, offset)
                     except:
                         pass

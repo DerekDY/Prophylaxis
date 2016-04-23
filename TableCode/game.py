@@ -16,11 +16,10 @@ BLACK = False
 
 
 class Game:
-    def __init__(self, table, testingOptions = 0, btOption = 0, gameMode = 1, voiceControl = 0, led = False): #1 for use without motors
+    def __init__(self, table, testingOptions = 0, btOption = 0, gameMode = 1, voiceControl = 0, led = False, reedBoard = True): #1 for use without motors
         self.board = Board()
         self.led = led
         self.uciBoard = chess.Board()
-        #self.uciBoard = chess.Board(chess960 = True)
         self.table = table
         self.playerSide = WHITE
         self.btSide = BLACK
@@ -29,7 +28,6 @@ class Game:
         #self.engine = chess.uci.popen_engine(r"C:\Users\Owner\Desktop\stockfish-7-win\Windows\stockfish 7 x64.exe")
         self.engine = chess.uci.popen_engine("/usr/games/stockfish")
         self.engine.uci()
-        #self.engine.setoption({"UCI_Chess960": True})
         self.engine.setoption({"Threads":4})
         self.engine.setoption({"Skill Level":3})
         self.bt = btOption
@@ -37,23 +35,18 @@ class Game:
         self.sleepTime = 0.3
         self.table.initialize_Coord() 
         #Set up buttons
-        pin1 = 19   
-        pin2 = 21
-        pin3 = 13   #not being used 
-        self.selectButton = ButtonListener(pin1)
-        self.scrollButton = ButtonListener(pin2)
-        self.newGameButton = ButtonListener(pin3)
-        
+        self.selectButton = ButtonListener(15)
+        self.scrollButton = ButtonListener(14)
+        self.voice2 = ButtonListener(23)
+        self.voice1 = ButtonListener(18)
+        self.reedBoardOption = reedBoard
         self.bluetooth = self.table.bt
-        #self.bluetooth = Bluetooth(self.table.motorY.serialPort)
-        
         self.voiceControl = voiceControl
-        
-        #self.bt = btOption
-        #self.bluetooth = Bluetooth(self.table.motorY.serialPort)
-        #self.bluetooth = Bluetooth(3)      #new code for bluetooth separate from motorY
-
         self.gameMode = gameMode
+        if voiceControl:
+            self.VoiceListener1 = VoiceListener(1, True);
+            if gameMode == 4:
+                self.VoiceListener2 = VoiceListener(2, False);
 
     def askForPlayerSide(self):
         if self.led == False:
@@ -76,26 +69,28 @@ class Game:
             self.scrollButton.startListener()
             self.selectButton.startListener()
             scrollCount = 0
+            optionChanged = False
             while True:
                 if self.scrollButton.wasPressed():
+                    optionChanged = True
                     self.scrollButton.stopListener()
                     time.sleep(self.sleepTime)
                     self.scrollButton.startListener()
                     scrollCount = scrollCount + 1
-                    if scrollCount == 3:
-                        scrollCount = 1
                     print("Scroll Button was Pressed")
-                    print(scrollCount)
-                    self.scrollButton.stopListener()
-                    self.scrollButton.startListener()
+                    #self.scrollButton.stopListener()
+                    #self.scrollButton.startListener()
                     if scrollCount == 1:
                         self.ledMatrix.sendString("WHITE")
                     elif scrollCount == 2:
                         self.ledMatrix.sendString("BLACK")
                     else:
-                        self.ledMatrix.sendMultLines("SIDE","W/B ?")  
+                        self.ledMatrix.sendString("WHITE")
+                        scrollCount = 1
                         
                 if self.selectButton.wasPressed():
+                    if optionChanged == False:
+                        continue
                     print("Select Button was Pressed")
                     self.ledMatrix.sendString("clear")
                     sideOption = scrollCount
@@ -120,18 +115,16 @@ class Game:
             self.scrollButton.startListener()
             self.selectButton.startListener()
             scrollCount = 0
+            optionChanged = False
             while True:
                 if self.scrollButton.wasPressed():
+                    
                     self.scrollButton.stopListener()
                     time.sleep(self.sleepTime)
                     self.scrollButton.startListener()
                     scrollCount = scrollCount + 1
-                    if scrollCount == 7:
-                        scrollCount = 1
                     print("Scroll Button was Pressed")
                     print(scrollCount)
-                    self.scrollButton.stopListener()
-                    self.scrollButton.startListener()
                     if scrollCount == 1:
                         self.ledMatrix.sendMultLines("LEVEL","1/6") 
                     elif scrollCount == 2:
@@ -145,9 +138,12 @@ class Game:
                     elif scrollCount == 6:
                         self.ledMatrix.sendMultLines("LEVEL","6/6")                                                                                                 
                     else:
-                        self.ledMatrix.sendMultLines("AI","SKILL")  
+                        self.ledMatrix.sendMultLines("LEVEL","1/6")
+                        scrollCount = 1  
                         
                 if self.selectButton.wasPressed():
+                    if optionChanged == False:
+                        continue
                     print("Select Button was Pressed")
                     self.ledMatrix.sendString("clear")
                     aiOption = scrollCount
@@ -174,11 +170,6 @@ class Game:
         else:
             self.engine.setoption({"Skill Level":6})               
             depthInput = 2
-            
-            
-        #print("engine: \n")
-        #print(self.engine)
-        #print(self.engine.uci)
         print()      
         self.aiDepth = depthInput
         print("AI Depth: ")
@@ -222,20 +213,7 @@ class Game:
         print(move)
         print(move.notation)
         print("Making move : " + move.notation)
-        if self.led:
-            '''
-            print("Testing LED Display")
-            print(move.piece.stringRep)
-            self.ledMatrix.sendString("move" + str(move.piece.stringRep) + str(move.newPos))
-            time.sleep(3)
-            if move.pieceToCapture:
-                self.ledMatrix.sendString("capture" + str(move.pieceToCapture.stringRep))
-            time.sleep(3)
-            '''   
-            self.board.makeChosenMove(move)
-            #self.ledMatrix.sendString("clear")
-        else:
-            self.board.makeChosenMove(move)
+        self.board.makeChosenMove(move)
         if move.kingsideCastle:
             if move.piece.side == WHITE:
                 castleMove = chess.Move.from_uci("e1g1")
@@ -251,8 +229,6 @@ class Game:
             self.uciBoard.push(castleMove)
         else:
             self.uciBoard.push_san(move.notation)
-        
-        #self.uciBoard.push_san(move.notation) 
         
     def printPointAdvantage(self):
         print("Currently, the point difference is : " +
@@ -331,7 +307,7 @@ class Game:
             print(self.board)
             #print(self.uciBoard)
             print()
-            '''
+            
             if self.board.isCheckmate():
                 if self.board.currentSide == self.playerSide:
                     print("Checkmate, you lost")
@@ -345,64 +321,105 @@ class Game:
                 else:
                     print("Stalemate")
                 return
-            '''
+            
             if self.board.currentSide == self.playerSide:
-                #self.button.getButton()
-                #tmpValue2 = self.button2.value 
-                #if(tmpValue2 != self.button.value):
-                #    print("Button Test")
                 
                 #if Bluetooth vs AI
                 if (self.gameMode == 3):
                     move = self.btMove(parser)
                     move.notation = parser.notationForMove(move)
-                    '''
-                    print("Taking move from phone")
-                    message = self.bluetooth.waitformove()
-                    print(message)
-                    move = parser.moveForShortNotation(message)
-                    if move:
-                        print(move)
-                    else:
-                        print("Couldn't parse input, enter a valid command or move.")
-                        message = self.bluetooth.waitformove()
-                        print(message)
-                        move = parser.moveForShortNotation(message)
-                     '''
+                    
                 else:
                     if self.led:
                         self.ledMatrix.sendMultLines("YOUR","MOVE")
-                    command = input("It's your move."
-                                    " Type '?' for options. ? ").lower()
-                  
-                    if command == 'u':
-                        self.undoLastTwoMoves()
-                        continue
-                    elif command == '?':
-                        self.printCommandOptions()
-                        continue
-                    elif command == 'l':
-                        self.printAllLegalMoves(parser)
-                        continue
-                    elif command == 'x':
-                        self.printAllUnfilteredMoves(self.board)
-                        continue
-                    elif command == 'r':
-                        move = self.getRandomMove(parser)
-                    elif command == 'quit':
-                        return
-                    else:
-                        parser.side = self.playerSide
-                        move = parser.moveForShortNotation(command)
-                        '''
-                        self.ledMatrix.sendString("clear")
-                        alphaPos = self.board.positionToHumanCoord(move.newPos)
-                        self.ledMatrix.sendString("move" + str(move.piece.stringRep) + str(alphaPos))
-                        time.sleep(3)
-                        '''
+                        self.scrollButton.startListener()
+                        self.selectButton.startListener()
+                        self.voice1.startListener()
+                    
+                    if self.reedBoardOption:
+                        scrollCount = 0
+                        menuOpened = False
+                        voiceCommandMade = False
+                        while True:
+                            if self.selectButton.wasPressed():
+                                if menuOpened:
+                                    if scrollCount == 1 or scrollCount == 2:
+                                        move = None
+                                        break
+                                else:
+                                    move = self.table.getMove(self.board)
+                                    break
+                            elif self.scrollButton.wasPressed():
+                                menuOpened = True
+                                self.scrollButton.stopListener()
+                                time.sleep(self.sleepTime)
+                                self.scrollButton.startListener()
+                                scrollCount = scrollCount + 1
+                                print("Scroll Button was Pressed")
+                                print(scrollCount)
+                                if scrollCount == 1:
+                                    self.ledMatrix.sendMultLines("GAME","MENU") 
+                                elif scrollCount == 2:
+                                    self.ledMatrix.sendMultLines("CARRY","ON") 
+                                elif scrollCount == 3:
+                                    self.ledMatrix.sendMultLines("NEW","GAME") 
+                                elif scrollCount == 4:
+                                    self.ledMatrix.sendMultLines("END","GAME")
+                                else:
+                                    self.ledMatrix.sendMultLines("CARRY","ON")
+                                    scrollCount = 2
+                            elif self.voiceControl:
+                                if menuOpened == False:
+                                    if self.voice1.wasPressed():
+                                        voiceCommandMade = True
+                                        result, voicemove = VoiceListener1.listen(self.board)
+                                        if result == "move":
+                                            if self.board.moveIsLegal(voicevove):  # fails if king would be in check after move
+                                                move = voicemove
+                                            else:
+                                                print("illegal move")
+                                                move = None
+                                        else:
+                                            move = None
+                                        break   
+                                        
+                                        
+                                        
+                                    
+                                
+                    else:                        
+                        command = input("It's your move."
+                                        " Type '?' for options. ? ").lower()
+                      
+                        if command == 'u':
+                            self.undoLastTwoMoves()
+                            continue
+                        elif command == '?':
+                            self.printCommandOptions()
+                            continue
+                        elif command == 'l':
+                            self.printAllLegalMoves(parser)
+                            continue
+                        elif command == 'x':
+                            self.printAllUnfilteredMoves(self.board)
+                            continue
+                        elif command == 'r':
+                            move = self.getRandomMove(parser)
+                        elif command == 'quit':
+                            return
+                        else:
+                            parser.side = self.playerSide
+                            move = parser.moveForShortNotation(command)
+                            '''
+                            self.ledMatrix.sendString("clear")
+                            alphaPos = self.board.positionToHumanCoord(move.newPos)
+                            self.ledMatrix.sendString("move" + str(move.piece.stringRep) + str(alphaPos))
+                            time.sleep(3)
+                            '''
                 if move:
-                    #move = self.table.getmove(self.board)
                     self.makeMove(move)
+                    if voiceCommandMade:
+                        self.table.move(move)
                     print("Human Move: ")
                     print(move)
                     if self.bt == 0:
@@ -412,16 +429,28 @@ class Game:
                         self.bluetooth.sendmove(moveStr)
                     else:
                         print("bt is off ")
-                        print(self.bt) 
                     
                 else:
-                    self.ledMatrix.sendMultLines("MOVE","ERROR")
-                    print("Couldn't parse input, enter a valid command or move.")
-                    time.sleep(3)
-                    self.ledMatrix.sendMultLines("UNDO","MOVE")
-                    time.sleep(3)
-                    #wait for
-                    #verify the board is in the same state!!!!!
+                    if voiceCommandMade:
+                        if result == "illegal move":
+                            print(result)
+                            self.ledMatrix.sendMultLines("MOVE","ERROR")
+                        elif result == "bad record":
+                            print(result)
+                            self.ledMatrix.sendMultLines("SPEAK","AGAIN")
+                        elif result == "multiple targets":
+                            print(result)
+                            self.ledMatrix.sendMultLines("SPEAK","COORD")
+                    elif menuOppened:
+                        self.ledMatrix.sendMultLines("YOUR","MOVE")
+                    else:
+                        self.ledMatrix.sendMultLines("MOVE","ERROR")
+                        print("Couldn't parse input, enter a valid command or move.")
+                        time.sleep(3)
+                        self.ledMatrix.sendMultLines("UNDO","MOVE")
+                        time.sleep(3)
+                        #wait for
+                        #verify the board is in the same state!!!!!
 
             else:
 				#if Human vs Bluetooth
@@ -437,34 +466,59 @@ class Game:
                 if (self.gameMode == 2):
                     move = self.btMove(parser)
                     move.notation = parser.notationForMove(move)
-                    '''
-                    print("Taking move from phone")
-                    #switch parser side and find move from given coords
-                    parser.side = self.btSide
-                    pos = self.bluetooth.waitformove()               
-                    startPos = self.board.humanCoordToPosition(pos[0:2])
-                    endPos = self.board.humanCoordToPosition(pos[2:4])
-                    piece = self.board.pieceAtPosition(startPos)
-                    for move in piece.getPossibleMoves():
-                        if move.newPos == endPos:
-                            chosenMove = move
-                        else:
-							print("move is invalid")   
-                            self.btMove()      
-                    move = chosenMove 
-                    move.notation = parser.notationForMove(move) 
-                    #check if move is valid                     
-                    if move:
-                        print(move)
-                    else:
-                        print("Couldn't parse input, enter a valid command or move.")
-                        message = self.bluetooth.waitformove()
-                        print(message)
-                        move = parser.moveForShortNotation(message)
-                    '''
+                    
                 elif (self.gameMode == 4):
                     print("gameMode is 4")
                     parser2 = InputParser(self.board, self.btSide)
+                    if self.reedBoardOption:
+                        scrollCount = 0
+                        menuOpened = False
+                        voiceCommandMade = False
+                        while True:
+                            if self.selectButton.wasPressed():
+                                if menuOpened:
+                                    if scrollCount == 1 or scrollCount == 2:
+                                        move = None
+                                        break
+                                else:
+                                    move = self.table.getMove(self.board)
+                                    break
+                            elif self.scrollButton.wasPressed():
+                                menuOpened = True
+                                self.scrollButton.stopListener()
+                                time.sleep(self.sleepTime)
+                                self.scrollButton.startListener()
+                                scrollCount = scrollCount + 1
+                                print("Scroll Button was Pressed")
+                                print(scrollCount)
+                                if scrollCount == 1:
+                                    self.ledMatrix.sendMultLines("GAME","MENU") 
+                                elif scrollCount == 2:
+                                    self.ledMatrix.sendMultLines("CARRY","ON") 
+                                elif scrollCount == 3:
+                                    self.ledMatrix.sendMultLines("NEW","GAME") 
+                                elif scrollCount == 4:
+                                    self.ledMatrix.sendMultLines("END","GAME")
+                                else:
+                                    self.ledMatrix.sendMultLines("CARRY","ON")
+                                    scrollCount = 2
+                            elif self.voiceControl:
+                                if menuOpened == False:
+                                    if self.voice1.wasPressed():
+                                        voiceCommandMade = True
+                                        result2, voicemove = VoiceListener1.listen(self.board)
+                                        if result2 == "move":
+                                            if self.board.moveIsLegal(voicevove):  # fails if king would be in check after move
+                                                move = voicemove
+                                            else:
+                                                print("illegal move")
+                                                move = None
+                                        else:
+                                            move = None
+                                        break
+                    
+                    
+                    
                     command = input("It's your move."
                                     " Type '?' for options. ? ").lower()
                  
@@ -513,7 +567,29 @@ class Game:
                         time.sleep(5)
                         
                 print("done making table move")
-                self.makeMove(move)
+                
+                if move:
+                    self.makeMove(move)
+                else:
+                    if voiceCommandMade:
+                        if result2 == "illegal move":
+                            print(result)
+                            self.ledMatrix.sendMultLines("MOVE","ERROR")
+                        elif result2 == "bad record":
+                            print(result)
+                            self.ledMatrix.sendMultLines("SPEAK","AGAIN")
+                        elif result2 == "multiple targets":
+                            print(result)
+                            self.ledMatrix.sendMultLines("SPEAK","COORD")
+                    elif menuOppened:
+                        self.ledMatrix.sendMultLines("YOUR","MOVE")
+                    else:
+                        self.ledMatrix.sendMultLines("MOVE","ERROR")
+                        print("Couldn't parse input, enter a valid command or move.")
+                        time.sleep(3)
+                        self.ledMatrix.sendMultLines("UNDO","MOVE")
+                        time.sleep(3)
+                    
                 if self.uciBoard.is_check():
                     print("King was put in check")
                     self.ledMatrix.sendString("CHECK")
