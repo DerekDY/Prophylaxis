@@ -9,8 +9,7 @@ import subprocess
 import time
 import copy
 
-MODELDIR = "../../pocketsphinx-python/pocketsphinx/model"
-DATADIR = "../../pocketsphinx-python/pocketsphinx/test/data"
+MODELDIR = "../"
 
 class VoiceListener():
 
@@ -20,6 +19,7 @@ class VoiceListener():
         config.set_string('-jsgf', path.join(MODELDIR, 'en-us/chess.jsgf'))
         config.set_string('-dict', path.join(MODELDIR, 'en-us/chess.dict'))
         self.decoder = Decoder(config)
+        self.pin = pin
         if pin == 0:
             self.bl = None
         else:
@@ -29,7 +29,7 @@ class VoiceListener():
 
     def listen(self, b):
         self.board = b
-        if self.pin is not None:
+        if not self.pin == 0:
             self.bl.startListener()
             while not self.bl.wasPressed():
                 pass

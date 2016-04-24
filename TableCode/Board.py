@@ -599,7 +599,7 @@ class Board:
         letter = pieceToRemove.stringRep
         #adding a captured piece to the bins 
         
-        # White Capture Bin #
+        # Black Capture Bin #
               #[P0 B0]
               #[P1 B1]
               #[P2 N0]
@@ -609,15 +609,15 @@ class Board:
               #[P6 Q0] 
               #[P7   ] 
               
-        # Black Capture Bin #
-              #[B0 P0]
-              #[B1 P1]
-              #[N0 P2]
-              #[N1 P3]
-              #[R0 P4] 
-              #[R1 P5] 
-              #[Q0 P6] 
+        # White Capture Bin #
               #[   P7]
+              #[Q0 P6]
+              #[R1 P5]
+              #[R0 P4]
+              #[N1 P3] 
+              #[N0 P2] 
+              #[B1 P1] 
+              #[B0 P0]
         
         # numbers assuming 0 at top #
         #B = 0
@@ -628,28 +628,28 @@ class Board:
         # 0,0 assumed to be top left #
         
         #changed all of these after working with test moves but not sure if it will work for main.py
-        if side == WHITE:
+        if side == BLACK:
             if letter == "p":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, number), number)])   
+                self.blackCaptured.extend([Captured( letter, BLACK, C(0, number), number)])   
             elif letter == "R":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, R + number), number)])
+                self.blackCaptured.extend([Captured( letter, BLACK, C(1, R + number), number)])
             elif letter == "N":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, N + number), number)])  
+                self.blackCaptured.extend([Captured( letter, BLACK, C(1, N + number), number)])  
             elif letter == "Q":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, Q + number), number)])
+                self.blackCaptured.extend([Captured( letter, BLACK, C(1, Q + number), number)])
             elif letter == "B":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, B + number), number)]) 
+                self.blackCaptured.extend([Captured( letter, BLACK, C(1, B + number), number)]) 
         else:
             if letter == "p":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(1, number), number)])   
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, 7 - number), number)])   
             elif letter == "R":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(0, R + number), number)])
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, 7-(R + number)), number)])
             elif letter == "N":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(0, N + number), number)]) 
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, 7 - (N + number)), number)]) 
             elif letter == "Q":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(0, Q + number), number)])
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, 7 - (Q + number)), number)])
             elif letter == "B":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(0, B + number), number)]) 
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, 7 - (B + number)), number)]) 
         #removing the piece from the 
         self.pieces.remove(pieceToRemove)
         print("Piece added to Captured bin")

@@ -73,15 +73,15 @@ class ChessTable(XYTable):  #testing on when 1
         self.row = newRow
         self.column = newColumn
 
-    def splitBoard(self, currentBoard):
-        fullBoard = currentBoard #board from reed switches
+    def splitBoard(self):
+        fullBoard = self.boardRep #board from reed switches
         for i in range(8):
             for j in range(2):
-                self.whiteCaptured[i][j] = fullBoard[i][j]
+                self.blackCaptured[i][j] = fullBoard[i][j]
                 
         for i in range(8):
             for j in range(2):
-                self.blackCaptured[i][j] = fullBoard[i][j+10]
+                self.whiteCaptured[i][j] = fullBoard[i][j+10]
     
         for i in range(8):
             for j in range(8):
@@ -89,37 +89,37 @@ class ChessTable(XYTable):  #testing on when 1
                 
     def pieceInCaptureBin(self, captured):
         found = False
-        if captured.side == WHITE:
+        if captured.side == BLACK:
             if captured.stringRep == "p":
-                if self.whiteCaptured[captured.number][0]== 1:
+                if self.blackCaptured[captured.number][0]== 1:
                     found = True
             elif captured.stringRep == "B":
-                if self.whiteCaptured[B + captured.number][1]== 1:
+                if self.blackCaptured[B + captured.number][1]== 1:
                     found = True
             elif captured.stringRep == "N":
-                if self.whiteCaptured[N + captured.number][1]== 1:
+                if self.blackCaptured[N + captured.number][1]== 1:
                     found = True
             elif captured.stringRep == "R":
-                if self.whiteCaptured[R + captured.number][1]== 1:
+                if self.blackCaptured[R + captured.number][1]== 1:
                     found = True
             elif captured.stringRep == "Q":
-                if self.whiteCaptured[Q + captured.number][1]== 1:
+                if self.blackCaptured[Q + captured.number][1]== 1:
                     found = True
         else:
             if captured.stringRep == "p":
-                if self.blackCaptured[captured.number][1]== 1:
+                if self.whiteCaptured[7-captured.number][1]== 1:
                     found = True    
             elif captured.stringRep == "B":
-                if self.blackCaptured[B + captured.number][0]== 1:
+                if self.whiteCaptured[7-(B + captured.number)][0]== 1:
                     found = True
             elif captured.stringRep == "N":
-                if self.blackCaptured[N + captured.number][0]== 1:
+                if self.whiteCaptured[7-(N + captured.number)][0]== 1:
                     found = True
             elif captured.stringRep == "R":
-                if self.blackCaptured[R + captured.number][0]== 1:
+                if self.whiteCaptured[7-(R + captured.number)][0]== 1:
                     found = True
             elif captured.stringRep == "Q":
-                if self.blackCaptured[Q + captured.number][0]== 1:
+                if self.whiteCaptured[7-(Q + captured.number)][0]== 1:
                     found = True
         return found
     
@@ -265,7 +265,7 @@ class ChessTable(XYTable):  #testing on when 1
             print()
             letter = captured.stringRep
             number = captured.number
-            if captured.side == WHITE:
+            if captured.side == BLACK:
                 if letter == "p":
                     capturedspace = C(0, number)
                 elif letter == "R":

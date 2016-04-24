@@ -6,6 +6,7 @@ import time
 from chessTable import *
 import sys
 import random
+from voiceListener import *
 
 from buttonListener import *
 #from BlueTooth import *
@@ -16,7 +17,7 @@ BLACK = False
 
 
 class Game:
-    def __init__(self, table, testingOptions = 0, btOption = 0, gameMode = 1, voiceControl = 0, led = False, reedBoard = True): #1 for use without motors
+    def __init__(self, table, testingOptions = 0, btOption = 0, gameMode = 1, voiceControl = 1, led = False, reedBoard = True): #1 for use without motors
         self.board = Board()
         self.led = led
         self.uciBoard = chess.Board()
@@ -44,9 +45,9 @@ class Game:
         self.voiceControl = voiceControl
         self.gameMode = gameMode
         if voiceControl:
-            self.VoiceListener1 = VoiceListener(1, True);
+            self.voiceListener1 = VoiceListener(1, True);
             if gameMode == 4:
-                self.VoiceListener2 = VoiceListener(2, False);
+                self.voiceListener2 = VoiceListener(2, False);
 
     def askForPlayerSide(self):
         if self.led == False:
@@ -90,6 +91,8 @@ class Game:
                         
                 if self.selectButton.wasPressed():
                     if optionChanged == False:
+                        self.selectButton.stopListener()
+                        self.selectButton.startListener()
                         continue
                     print("Select Button was Pressed")
                     self.ledMatrix.sendString("clear")
@@ -118,7 +121,7 @@ class Game:
             optionChanged = False
             while True:
                 if self.scrollButton.wasPressed():
-                    
+                    optionChanged = True
                     self.scrollButton.stopListener()
                     time.sleep(self.sleepTime)
                     self.scrollButton.startListener()
@@ -143,6 +146,8 @@ class Game:
                         
                 if self.selectButton.wasPressed():
                     if optionChanged == False:
+                        self.selectButton.stopListener()
+                        self.selectButton.startListener()
                         continue
                     print("Select Button was Pressed")
                     self.ledMatrix.sendString("clear")
@@ -208,12 +213,7 @@ class Game:
 
 
     def makeMove(self, move):
-        print()
-        #print("testing this dang thing")
-        print(move)
-        print(move.notation)
-        print("Making move : " + move.notation)
-        self.board.makeChosenMove(move)
+        parser = InputParser(self.board, self.playerSide)
         if move.kingsideCastle:
             if move.piece.side == WHITE:
                 castleMove = chess.Move.from_uci("e1g1")
@@ -227,8 +227,20 @@ class Game:
             else:
                 castleMove = chess.Move.from_uci("e8c1")
             self.uciBoard.push(castleMove)
+        elif move.notation:
+            notation = move.notation
+            self.uciBoard.push_san(notation)
         else:
-            self.uciBoard.push_san(move.notation)
+            #notation = parser.notationForMove(move)
+            fromString = self.board.positionToHumanCoord(move.oldPos)
+            toString = self.board.positionToHumanCoord(move.newPos)
+            moveString = fromString + toString
+            if move.promotion:
+                moveString = moveString + "q"
+            chessMove = chess.Move.from_uci(moveString)
+            self.uciBoard.push(chessMove)
+            
+        self.board.makeChosenMove(move)
         
     def printPointAdvantage(self):
         print("Currently, the point difference is : " +
@@ -308,14 +320,14 @@ class Game:
             #print(self.uciBoard)
             print()
             
-            if self.board.isCheckmate():
+            if self.uciBoard.is_game_over():
                 if self.board.currentSide == self.playerSide:
                     print("Checkmate, you lost")
                 else:
                     print("Checkmate! You won!")
                 return
             
-            if self.board.isStalemate():
+            if self.uciBoard.is_stalemate():
                 if self.board.currentSide == self.playerSide:
                     print("Stalemate")
                 else:
@@ -323,7 +335,7 @@ class Game:
                 return
             
             if self.board.currentSide == self.playerSide:
-                
+                voiceCommandMade = False
                 #if Bluetooth vs AI
                 if (self.gameMode == 3):
                     move = self.btMove(parser)
@@ -346,6 +358,10 @@ class Game:
                                     if scrollCount == 1 or scrollCount == 2:
                                         move = None
                                         break
+                                    #end the current game
+                                    elif scrollCount == 4 or scrollCount == 3:
+                                        self.table.moveto(0,0)
+                                        return
                                 else:
                                     move = self.table.getMove(self.board)
                                     break
@@ -372,9 +388,9 @@ class Game:
                                 if menuOpened == False:
                                     if self.voice1.wasPressed():
                                         voiceCommandMade = True
-                                        result, voicemove = VoiceListener1.listen(self.board)
+                                        result, voicemove = self.voiceListener1.listen(self.board)
                                         if result == "move":
-                                            if self.board.moveIsLegal(voicevove):  # fails if king would be in check after move
+                                            if self.board.moveIsLegal(voicemove):  # fails if king would be in check after move
                                                 move = voicemove
                                             else:
                                                 print("illegal move")
@@ -441,7 +457,7 @@ class Game:
                         elif result == "multiple targets":
                             print(result)
                             self.ledMatrix.sendMultLines("SPEAK","COORD")
-                    elif menuOppened:
+                    elif menuOpened:
                         self.ledMatrix.sendMultLines("YOUR","MOVE")
                     else:
                         self.ledMatrix.sendMultLines("MOVE","ERROR")
@@ -506,9 +522,9 @@ class Game:
                                 if menuOpened == False:
                                     if self.voice1.wasPressed():
                                         voiceCommandMade = True
-                                        result2, voicemove = VoiceListener1.listen(self.board)
+                                        result2, voicemove = self.voiceListener2.listen(self.board)
                                         if result2 == "move":
-                                            if self.board.moveIsLegal(voicevove):  # fails if king would be in check after move
+                                            if self.board.moveIsLegal(voicemove):  # fails if king would be in check after move
                                                 move = voicemove
                                             else:
                                                 print("illegal move")
