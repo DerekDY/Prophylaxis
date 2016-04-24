@@ -150,7 +150,8 @@ class ChessTable(XYTable):  #testing on when 1
                         moveTo.append(C(j,7-i))
                     else:
                         moveFrom.append(C(j,7-i))
-                            
+        print(moveFrom)
+        print(moveTo)
         #Check if there is an error
         if len(moveTo) > 2 or len(moveFrom) > 2:
             print("To Many Moves")

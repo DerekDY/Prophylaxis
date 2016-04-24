@@ -22,6 +22,8 @@ reedBoard = int(input(
 reedOption = False if reedBoard == 2 else True
 
 while True:
+    
+    
     if ledOption == False:
         gameMode = int(input(
             "Choose Game Mode \n   1 - Human vs AI \n   2 - Human vs Bluetooth \n   3 - Bluetooth vs AI \n   4 - Human vs Human \n"))
@@ -43,12 +45,10 @@ while True:
         scrollButton.startListener()
         selectButton.startListener()
         scrollCount = 0
-        sleepTime = 0.3
+        sleepTime = 0.5
         while True:
             if scrollButton.wasPressed():
                 scrollButton.stopListener()
-                time.sleep(sleepTime)
-                scrollButton.startListener()
                 scrollCount = scrollCount + 1
                 print("Scroll Button was Pressed")
                 print(scrollCount)
@@ -60,10 +60,13 @@ while True:
                     table.ledMatrix.sendMultLines("APP","V AI")
                 elif scrollCount == 4:
                     table.ledMatrix.sendMultLines("HUMAN","HUMAN")
+                elif scrollCount == 5:
+                    table.ledMatrix.sendMultLines("DEMO","MODE")
                 else:
                     table.ledMatrix.sendMultLines("HUMAN","V AI")
                     scrollCount = 1  
-                    
+                time.sleep(sleepTime)
+                scrollButton.startListener()    
             if selectButton.wasPressed():
                 print("Select Button was Pressed")
                 if scrollCount == 0:

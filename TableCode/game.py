@@ -75,10 +75,7 @@ class Game:
                 if self.scrollButton.wasPressed():
                     optionChanged = True
                     self.scrollButton.stopListener()
-                    time.sleep(self.sleepTime)
-                    self.scrollButton.startListener()
                     scrollCount = scrollCount + 1
-                    print("Scroll Button was Pressed")
                     #self.scrollButton.stopListener()
                     #self.scrollButton.startListener()
                     if scrollCount == 1:
@@ -88,7 +85,10 @@ class Game:
                     else:
                         self.ledMatrix.sendString("WHITE")
                         scrollCount = 1
-                        
+                    time.sleep(self.sleepTime)
+                    self.scrollButton.startListener()
+                    
+                    print("Scroll Button was Pressed")    
                 if self.selectButton.wasPressed():
                     if optionChanged == False:
                         self.selectButton.stopListener()
@@ -123,8 +123,7 @@ class Game:
                 if self.scrollButton.wasPressed():
                     optionChanged = True
                     self.scrollButton.stopListener()
-                    time.sleep(self.sleepTime)
-                    self.scrollButton.startListener()
+                    
                     scrollCount = scrollCount + 1
                     print("Scroll Button was Pressed")
                     print(scrollCount)
@@ -143,7 +142,8 @@ class Game:
                     else:
                         self.ledMatrix.sendMultLines("LEVEL","1/6")
                         scrollCount = 1  
-                        
+                    time.sleep(self.sleepTime)
+                    self.scrollButton.startListener()    
                 if self.selectButton.wasPressed():
                     if optionChanged == False:
                         self.selectButton.stopListener()
@@ -262,6 +262,10 @@ class Game:
                 print (move)
                 return move
         print ("Move Not Found")
+        
+    def printReedBoard(self, board):
+        for x in range(len(board)):
+            print(board[x])
 
     def getUCIEngineMove(self, time):
         self.engine.position(self.uciBoard)
@@ -323,8 +327,12 @@ class Game:
             if self.uciBoard.is_game_over():
                 if self.board.currentSide == self.playerSide:
                     print("Checkmate, you lost")
+                    self.ledMatrix.sendMultLines("YOU","LOST")
+                    time.sleep(5)
                 else:
                     print("Checkmate! You won!")
+                    self.ledMatrix.sendMultLines("YOU","WON")
+                    time.sleep(5)
                 return
             
             if self.uciBoard.is_stalemate():
@@ -339,11 +347,13 @@ class Game:
                 #if Bluetooth vs AI
                 if (self.gameMode == 3):
                     move = self.btMove(parser)
-                    move.notation = parser.notationForMove(move)
                     
                 else:
                     if self.led:
-                        self.ledMatrix.sendMultLines("YOUR","MOVE")
+                        if self.gameMode == 5:
+                            self.ledMatrix.sendMultLines("DEMO","MOVE")
+                        else:
+                            self.ledMatrix.sendMultLines("YOUR","MOVE")
                         self.scrollButton.startListener()
                         self.selectButton.startListener()
                         self.voice1.startListener()
@@ -363,8 +373,19 @@ class Game:
                                         self.table.moveto(0,0)
                                         return
                                 else:
-                                    move = self.table.getMove(self.board)
-                                    break
+                                    if self.gameMode == 5:
+                                        self.ledMatrix.sendString("load")
+                                        move = self.getUCIEngineMove(self.aiDepth*1000)
+                                        self.ledMatrix.sendString("l")
+                                        break
+                                    else:
+                                        move = self.table.getMove(self.board)
+                                        if move:
+                                            print("FOUND IT!")
+                                        else:
+                                            self.printReedBoard(self.table.playableBoard)
+                                        break
+                                self.selectButton.stopListener()
                             elif self.scrollButton.wasPressed():
                                 menuOpened = True
                                 self.scrollButton.stopListener()
@@ -434,8 +455,13 @@ class Game:
                             '''
                 if move:
                     self.makeMove(move)
-                    if voiceCommandMade:
+                    if voiceCommandMade or self.gameMode == 5:
+                        alphaPos = self.board.positionToHumanCoord(move.newPos)
+                        self.ledMatrix.sendString("move" + str(move.piece.stringRep).lower() + str(alphaPos).upper())
                         self.table.move(move)
+                        if move.pieceToCapture:
+                            self.ledMatrix.sendString("capture" + str(move.pieceToCapture.stringRep).lower())
+                            time.sleep(3)
                     print("Human Move: ")
                     print(move)
                     if self.bt == 0:
@@ -480,6 +506,7 @@ class Game:
                 
                 #if Human vs Bluetooth
                 if (self.gameMode == 2):
+                    self.ledMatrix.sendMultLines("BT","MOVE")
                     move = self.btMove(parser)
                     move.notation = parser.notationForMove(move)
                     
@@ -560,7 +587,6 @@ class Game:
                     self.ledMatrix.sendString("load")
                     move = self.getUCIEngineMove(self.aiDepth*1000)
                     self.ledMatrix.sendString("l")
-                    move.notation = parser.notationForMove(move)
                     #print(move.oldPos)
                     #print(move.newPos)
 
@@ -580,7 +606,7 @@ class Game:
                     if move.pieceToCapture:
                         print("there is a piece to capture")
                         self.ledMatrix.sendString("capture" + str(move.pieceToCapture.stringRep).lower())
-                        time.sleep(5)
+                        time.sleep(3)
                         
                 print("done making table move")
                 
@@ -606,9 +632,13 @@ class Game:
                         self.ledMatrix.sendMultLines("UNDO","MOVE")
                         time.sleep(3)
                     
-                if self.uciBoard.is_check():
+                if self.uciBoard.is_game_over():
                     print("King was put in check")
-                    self.ledMatrix.sendString("CHECK")
+                    self.ledMatrix.sendMultLines("CHECK", "MATE")
+                    time.sleep(5)
+                elif self.uciBoard.is_check():
+                    print("King was put in check")
+                    self.ledMatrix.sendMultLines("CHECK")
                     time.sleep(5)
                 self.ledMatrix.sendString("clear")
 
