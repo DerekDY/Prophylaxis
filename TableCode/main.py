@@ -8,17 +8,20 @@ table = ChessTable(1)
 print("Table Made")
 
 
-
+'''
 led = int(input(
         "Is LED Matrix Connected?\n   1 - Yes \n   2 - No \n"))
 #GameMode Input
-
+'''
+led = 1
 ledOption = False if led == 2 else True
 
+'''
 reedBoard = int(input(
         "Is Reed Board Connected?\n   1 - Yes \n   2 - No \n"))
 #GameMode Input
-
+'''
+reedBoard = 1
 reedOption = False if reedBoard == 2 else True
 
 while True:
@@ -32,11 +35,11 @@ while True:
     #Button Setup
     selectButton = ButtonListener(15)
     scrollButton = ButtonListener(14)
-
     print(ledOption)
     if ledOption:
-        table.ledMatrix.sendString("logo")      #switch with draw logo
-        time.sleep(3)
+        table.ledMatrix.sendString("logo")
+        time.sleep(1)
+        
         table.ledMatrix.sendString("clear")
         
         #Game Mode Selection using LED Display
@@ -52,6 +55,8 @@ while True:
                 scrollCount = scrollCount + 1
                 print("Scroll Button was Pressed")
                 print(scrollCount)
+                if scrollCount == 3:
+                    scrollCount = 4
                 if scrollCount == 1:
                     table.ledMatrix.sendMultLines("HUMAN","V AI")
                 elif scrollCount == 2:
@@ -77,6 +82,8 @@ while True:
                     table.ledMatrix.sendString("clear")
                     gameMode = scrollCount
                     print(gameMode)
+                    selectButton.stopListener()
+                    scrollButton.stopListener()
                     break
                     
     if gameMode == 1:
@@ -102,6 +109,9 @@ while True:
         game.ai = AI(game.board, not game.playerSide, game.aiDepth)
 
     try:
+        if ledOption:
+            selectButton.stopListener()
+            scrollButton.stopListener()
         game.startGame()
     except KeyboardInterrupt:
         sys.exit()

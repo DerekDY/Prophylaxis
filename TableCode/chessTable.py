@@ -51,24 +51,46 @@ class ChessTable(XYTable):  #testing on when 1
 
     def goto(self, space, carrying, offset):
         newColumn = space[0]
+        correction = inchesPerSpace/8
         newRow = 7-space[1]
-        dx = abs(self.column - newColumn)
-        dy = abs(self.row - newRow)
-        offsetX = .5 if dx > 1 else -.5
-        offsetY = -.5 if dy > 1 else .5
+        dxAbs = abs(self.column - newColumn)
+        dyAbs = abs(self.row - newRow)
+        dx = self.column - newColumn
+        dy = self.row - newRow
+        if dy == 0:
+           offsetY = -.5 if newRow > 6 else .5 
+        else:
+            offsetY = .5 if dy > 0 else -.5
+        offsetX = -.5 if dx > 0 else .5
+        correctionX = -correction if dx > 0 else correction
+        correctionY = -correction if dy > 0 else correction
         #Moving on a diagonal
-        if (dx == dy or not carrying or not offset):
-                self.moveto(newColumn*inchesPerSpace, newRow*inchesPerSpace)
+        if ((dxAbs == dyAbs or not carrying) and (not offset)):
+            print("in if statement ----------------------------------->")
+            if carrying:
+                self.moveto(newColumn*inchesPerSpace + correctionX, newRow*inchesPerSpace + correctionY)
+            self.moveto(newColumn*inchesPerSpace, newRow*inchesPerSpace)
         #Moving on lines
         elif (offset):
-		        self.moveto(self.x + (offsetX*inchesPerSpace) , self.y)	#move over .5 space in X
-		        self.moveto(self.x, (newRow*inchesPerSpace)+(offsetY*inchesPerSpace))	#move to .5 off space in Y
-		        self.moveto(newColumn*inchesPerSpace, self.y) #move to correct X
-		        self.moveto(self.x, newRow*inchesPerSpace) #move to correct Y 
+            print("in elif statement ----------------------------------->")
+            self.moveto(self.x + (offsetX*inchesPerSpace) , self.y)	#move over .5 space in X
+            self.moveto(self.x, (newRow*inchesPerSpace)+(offsetY*inchesPerSpace))	#move to .5 off space in Y
+            self.moveto(newColumn*inchesPerSpace, self.y) #move to correct X
+            self.moveto(newColumn*inchesPerSpace, newRow*inchesPerSpace + correctionY) #move to correct Y with correction
+            self.moveto(newColumn*inchesPerSpace, newRow*inchesPerSpace)
+                
 		#Moving in Y then in X	
         else:
-                self.moveto(self.x, newRow*inchesPerSpace)
-                self.moveto(newColumn*inchesPerSpace, self.y)
+            print("in else statement ----------------------------------->")
+            print(dx)
+            if dx == 0:
+                print("dx = 0 ---------------------------------------------->")
+                self.moveto(self.x, newRow*inchesPerSpace + correctionY)
+            self.moveto(self.x, newRow*inchesPerSpace)
+            if dx != 0:
+                print("dx != 0 ---------------------------------------------->")
+                self.moveto(newColumn*inchesPerSpace + correctionX, self.y)
+            self.moveto(newColumn*inchesPerSpace, self.y)
         #print (str(column) + " & " + str(row))
         self.row = newRow
         self.column = newColumn
@@ -94,16 +116,16 @@ class ChessTable(XYTable):  #testing on when 1
                 if self.blackCaptured[captured.number][0]== 1:
                     found = True
             elif captured.stringRep == "B":
-                if self.blackCaptured[B + captured.number][1]== 1:
+                if self.blackCaptured[(B + captured.number)][1]== 1:
                     found = True
             elif captured.stringRep == "N":
-                if self.blackCaptured[N + captured.number][1]== 1:
+                if self.blackCaptured[(N + captured.number)][1]== 1:
                     found = True
             elif captured.stringRep == "R":
-                if self.blackCaptured[R + captured.number][1]== 1:
+                if self.blackCaptured[(R + captured.number)][1]== 1:
                     found = True
             elif captured.stringRep == "Q":
-                if self.blackCaptured[Q + captured.number][1]== 1:
+                if self.blackCaptured[(Q + captured.number)][1]== 1:
                     found = True
         else:
             if captured.stringRep == "p":
@@ -126,6 +148,7 @@ class ChessTable(XYTable):  #testing on when 1
     def updateBoard(self):
         self.boardRep = self.reedBoard.getBoard()
         self.splitBoard()
+        
                 
     def getMove(self, board):
         self.updateBoard()
@@ -166,7 +189,7 @@ class ChessTable(XYTable):  #testing on when 1
                 print("Special Move")
                 if piece1.stringRep == "K":
                     king = piece1
-                    if piece2.strinRep == "R":
+                    if piece2.stringRep == "R":
                         rook = piece2
                 elif piece1.stringRep == "R":
                     rook = piece1
@@ -268,26 +291,26 @@ class ChessTable(XYTable):  #testing on when 1
             number = captured.number
             if captured.side == BLACK:
                 if letter == "p":
-                    capturedspace = C(0, number)
+                    capturedspace = C(0, 7-number)
                 elif letter == "R":
-                    capturedspace = C(1, R + number)
+                    capturedspace = C(1, 7-(R + number))
                 elif letter == "N":
-                    capturedspace = C(1, N + number)
+                    capturedspace = C(1, 7-(N + number))
                 elif letter == "Q":
-                    capturedspace = C(1, Q + number)
+                    capturedspace = C(1, 7-(Q + number))
                 elif letter == "B":
-                    capturedspace = C(1, B + number)
+                    capturedspace = C(1, 7-(B + number))
             else:
                 if letter == "p":
-                    capturedspace = C(11, 7-number)
+                    capturedspace = C(11, number)
                 elif letter == "R":
-                    capturedspace = C(10, 7-(R + number))
+                    capturedspace = C(10,(R + number))
                 elif letter == "N":
-                    capturedspace = C(10, 7-(N + number))
+                    capturedspace = C(10,(N + number))
                 elif letter == "Q":
-                    capturedspace = C(10, 7-(Q + number))
+                    capturedspace = C(10,(Q + number))
                 elif letter == "B":
-                    capturedspace = C(10, 7-(B + number))
+                    capturedspace = C(10,(B + number))
             self.goto(secondSpace, False, False)
             self.grab()
             self.goto(capturedspace, True, True)
@@ -302,3 +325,11 @@ class ChessTable(XYTable):  #testing on when 1
             self.grab()
             self.goto(secondSpace, True, False)
             self.release()
+            if move.kingsideCastle or move.queensideCastle:
+                rookStart = move.rookMove.oldPos + C(2,0)
+                rookEnd = move.rookMove.newPos + C(2,0)
+                self.goto(rookStart, False, False)
+                self.grab()
+                self.goto(rookEnd, True, True)
+                self.release()
+                

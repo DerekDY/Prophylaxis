@@ -82,7 +82,7 @@ void zero(){
   while (true) {
     if (digitalRead(limitPin) == HIGH){
       digitalWrite(dirPin, HIGH);
-      for (int i = 0; i < 1000; i++) {
+      for (int i = 0; i < 1575; i++) {
         digitalWrite(clkPin, LOW);  
         delayMicroseconds(initSpeed);        //10000 hz       
         digitalWrite(clkPin, HIGH);   

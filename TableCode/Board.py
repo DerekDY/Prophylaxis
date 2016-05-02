@@ -630,26 +630,26 @@ class Board:
         #changed all of these after working with test moves but not sure if it will work for main.py
         if side == BLACK:
             if letter == "p":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(0, number), number)])   
+                self.blackCaptured.extend([Captured( letter, BLACK, C(0, 7 - number), number)])   
             elif letter == "R":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(1, R + number), number)])
+                self.blackCaptured.extend([Captured( letter, BLACK, C(1, 7- (R + number)), number)])
             elif letter == "N":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(1, N + number), number)])  
+                self.blackCaptured.extend([Captured( letter, BLACK, C(1, 7 -(N + number)), number)])  
             elif letter == "Q":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(1, Q + number), number)])
+                self.blackCaptured.extend([Captured( letter, BLACK, C(1, 7 - (Q + number)), number)])
             elif letter == "B":
-                self.blackCaptured.extend([Captured( letter, BLACK, C(1, B + number), number)]) 
+                self.blackCaptured.extend([Captured( letter, BLACK, C(1, 7 - (B + number)), number)]) 
         else:
             if letter == "p":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, 7 - number), number)])   
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(1, number), number)])   
             elif letter == "R":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, 7-(R + number)), number)])
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, (R + number)), number)])
             elif letter == "N":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, 7 - (N + number)), number)]) 
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, (N + number)), number)]) 
             elif letter == "Q":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, 7 - (Q + number)), number)])
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, (Q + number)), number)])
             elif letter == "B":
-                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, 7 - (B + number)), number)]) 
+                self.whiteCaptured.extend([Captured( letter, WHITE, C(0, (B + number)), number)]) 
         #removing the piece from the 
         self.pieces.remove(pieceToRemove)
         print("Piece added to Captured bin")
@@ -696,6 +696,7 @@ class Board:
             if pieceToTake and pieceToTake.stringRep == 'K':
                 return False
         return True
+        
 
     def moveIsLegal(self, move):
         side = move.piece.side

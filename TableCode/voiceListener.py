@@ -34,8 +34,8 @@ class VoiceListener():
             while not self.bl.wasPressed():
                 pass
             self.bl.stopListener()
-        subprocess.Popen(["arecord", "-D", "plughw:" + str(self.card) + ",0", "-d", "2.5", "-f", "S16_LE", "-r", "16000", "out.wav"])
-        time.sleep(2.6)
+        subprocess.Popen(["arecord", "-D", "plughw:" + str(self.card) + ",0", "-d", "3", "-f", "S16_LE", "-r", "16000", "out.wav"])
+        time.sleep(3.1)
         self.decoder.start_utt()
         stream = open("out.wav", 'rb')
         while True:
@@ -55,11 +55,11 @@ class VoiceListener():
             return "bad record", None  # can't decipher speech
         move = self.decode(result)
         # check for promotion
-        try:
-            if move[0] == 0:
-                return "promote", move[1]
-        except:
-            pass
+        #try:
+        #    if move[0] == 0:
+        #        return "promote", move[1]
+        #except:
+        #    pass
         # check for castling, multiple target error
         try:
             if move == 1:  # king side castle
@@ -95,8 +95,8 @@ class VoiceListener():
         return self.checkLegal(move)
 
     def decode(self, result):
-        if result[0] == "promote":
-            return 0, result[2]
+        #if result[0] == "promote":
+        #    return 0, result[2]
         if result[2] == "castle":
             if result[0] == "king":
                 return 1

@@ -1,4 +1,4 @@
-from motorGraphics import *
+#from motorGraphics import *
 test = 1
 try:
     from motor import *  #real motor
@@ -229,7 +229,7 @@ class XYTable:
 			print(self.bt)
 			'''
 			
-		self.magnet = Magnet(0)
+		self.magnet = Magnet(26)
 		self.x = None  #need to initialize table before knowing 
 		self.y = None
     	
@@ -332,7 +332,7 @@ class XYTable:
 		self.motorXG.body.setFill('red')
 		self.motorYG.body.setFill('red')
 		'''
-		#self.magnet.grab()
+		self.magnet.grab()
 		print("Grabbing")
 
 
@@ -350,7 +350,7 @@ class XYTable:
 		self.motorYG.body.setFill('')
 		'''
 		print("Release")
-		#self.magnet.release()
+		self.magnet.release()
 		
 		 
 

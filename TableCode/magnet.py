@@ -18,3 +18,4 @@ class Magnet:
 		GPIO.output(self.pinout, GPIO.LOW)
 		#self.grab = 0
 		#print ("Magnet is released")
+		

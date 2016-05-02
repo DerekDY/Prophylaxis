@@ -7,6 +7,10 @@ from chessTable import *
 import sys
 import random
 from voiceListener import *
+from datetime import datetime
+
+import sys
+import os
 
 from buttonListener import *
 #from BlueTooth import *
@@ -44,6 +48,8 @@ class Game:
         self.bluetooth = self.table.bt
         self.voiceControl = voiceControl
         self.gameMode = gameMode
+        self.moveWasMade = 0
+        
         if voiceControl:
             self.voiceListener1 = VoiceListener(1, True);
             if gameMode == 4:
@@ -153,7 +159,9 @@ class Game:
                     self.ledMatrix.sendString("clear")
                     aiOption = scrollCount
                     break
-            
+        print()
+        print("AI LEVEL: ")
+        print(aiOption)
         if(aiOption == 1):
             self.engine.setoption({"Skill Level":0})
             depthInput = 1
@@ -173,12 +181,15 @@ class Game:
             self.engine.setoption({"Skill Level":20})
             depthInput = 15   
         else:
-            self.engine.setoption({"Skill Level":6})               
+            self.engine.setoption({"Skill Level":1})               
             depthInput = 2
-        print()      
+        print() 
+        self.engine.setoption({"Ponder": False})       
         self.aiDepth = depthInput
         print("AI Depth: ")
         print(self.aiDepth)
+        print("Engine: ")
+        print(self.engine)
 
 
     def printCommandOptions(self):
@@ -269,7 +280,14 @@ class Game:
 
     def getUCIEngineMove(self, time):
         self.engine.position(self.uciBoard)
-        uciMove = self.engine.go(depth=self.aiDepth, ponder = False) # Gets tuple of bestmove and ponder move. movetime=time,
+        if self.board.currentSide == self.playerSide:
+            uciMove = self.engine.go(depth=self.aiDepth, ponder = False) # Gets tuple of bestmove and ponder move. movetime=time,
+        else:
+            if self.aiDepth == 1 or self.aiDepth == 2:
+                player2Depth = 1
+            else:
+                player2Depth = round(self.aiDepth * .75)
+            uciMove = self.engine.go(depth=self.aiDepth, ponder = False) # Gets tuple of bestmove and ponder move. movetime=time,
         uciMove = uciMove[0].uci()
         print(uciMove)
         if (uciMove == 'e8g8' or uciMove == 'e8c8' or uciMove == 'e1g1' or uciMove == 'e1c1'):
@@ -281,6 +299,34 @@ class Game:
         print(moveTo)
         move = self.findMove(moveFrom, moveTo)
         return move
+        
+    def compareBoard(self, reedBoard): # reed board  is full board of 1s and 0s from the matrix
+        #convet current board and capture bins to ones and zeros 
+        white = self.board.whiteCaptured
+        black = self.board.blackCaptured
+        whiteCaptured = [[0 for x in range(2)] for y in range(8)]
+        for p in white:
+            whiteCaptured[7 - p.position[1]][p.position[0]] = 1   #engine boards sides were flipped from the engine board
+        blackCaptured = [[0 for x in range(2)] for y in range(8)]
+        for p in black:
+            blackCaptured[7 - p.position[1]][p.position[0]] = 1   #engine boards sides were flipped from the engine board
+        engineBoard = [[0 for x in range(8)] for y in range(8)]
+        for p in self.board.pieces:
+            engineBoard[7 - p.position[1]][p.position[0]] = 1   #engine boards sides were flipped from the engine board
+        totalBoard = [[0 for x in range(12)] for y in range(8)]
+        for y in range(8):
+            for x in range (12):
+                if x<2:
+                    totalBoard[y][x] = blackCaptured[y][x]
+                elif x <10:
+                    totalBoard[y][x] = engineBoard[y][x-2]
+                else:
+                    totalBoard[y][x] = whiteCaptured[y][x-10]
+        #print("Total")
+        #self.printReedBoard(totalBoard)
+        #print("Real")
+        #self.printReedBoard(reedBoard)
+        return totalBoard == reedBoard
 
     def btMove(self, parser):
         print("Taking move from phone")
@@ -341,7 +387,29 @@ class Game:
                 else:
                     print("Stalemate")
                 return
+            reedBoard = self.table.reedBoard.getBoard()
             
+            #verifies that the board is in the same state as the reed board 
+            selectButton.startListener()
+            while(True):
+                if selectButton.wasPressed():
+                    if self.compareBoard(reedBoard):
+                        print("Board Looks Good!!!!")
+                        selectButton.stopListener()
+                        break   #break out of while loop because board is correct
+                    else:
+                        print("Board not right!")
+                        
+                        if self.moveWasMade == 1:
+                            self.ledMatrix.sendMultLines("MOVE","ERROR")
+                            time.sleep(1.5)
+                        
+                        self.ledMatrix.sendMultLines("FIX","BOARD")
+                        time.sleep(2)
+                else:
+                    self.ledMatrix.sendMultLines("BOARD","CHECK")
+                
+                
             if self.board.currentSide == self.playerSide:
                 voiceCommandMade = False
                 #if Bluetooth vs AI
@@ -353,7 +421,10 @@ class Game:
                         if self.gameMode == 5:
                             self.ledMatrix.sendMultLines("DEMO","MOVE")
                         else:
-                            self.ledMatrix.sendMultLines("YOUR","MOVE")
+                            if self.playerSide == WHITE:
+                                self.ledMatrix.sendMultLines("WHITE","MOVE")
+                            else:
+                                self.ledMatrix.sendMultLines("BLACK","MOVE")
                         self.scrollButton.startListener()
                         self.selectButton.startListener()
                         self.voice1.startListener()
@@ -362,21 +433,47 @@ class Game:
                         scrollCount = 0
                         menuOpened = False
                         voiceCommandMade = False
+                        startTime = datetime.now()
+                        timerUp = False
                         while True:
-                            if self.selectButton.wasPressed():
+                            if (datetime.now() - startTime).total_seconds() >= 2:
+                                timerUp = True
+                            if self.selectButton.wasPressed() or (timerUp and not(menuOpened)):
                                 if menuOpened:
                                     if scrollCount == 1 or scrollCount == 2:
                                         move = None
+                                        self.scrollButton.stopListener()
+                                        self.selectButton.stopListener()
+                                        self.voice1.stopListener()
                                         break
                                     #end the current game
-                                    elif scrollCount == 4 or scrollCount == 3:
+                                    elif scrollCount == 3:
                                         self.table.moveto(0,0)
+                                        self.scrollButton.stopListener()
+                                        self.selectButton.stopListener()
+                                        self.voice1.stopListener()
                                         return
+                                    elif scrollCount == 4:
+                                        print("Closing the program and shutting down the Pi")
+                                        self.table.moveto(0,0)
+                                        self.scrollButton.stopListener()
+                                        self.selectButton.stopListener()
+                                        self.voice1.stopListener()
+                                        self.ledMatrix.sendMultLines("SHUT","DOWN")
+                                        time.sleep(1)
+                                        self.ledMatrix.sendMultLines("IN","5 SEC")
+                                        time.sleep(2)
+                                        self.ledMatrix.sendString("clear")
+                                        os.system("sudo shutdown -h now")
+                                        sys.exit(0)
                                 else:
                                     if self.gameMode == 5:
                                         self.ledMatrix.sendString("load")
                                         move = self.getUCIEngineMove(self.aiDepth*1000)
                                         self.ledMatrix.sendString("l")
+                                        self.scrollButton.stopListener()
+                                        self.selectButton.stopListener()
+                                        self.voice1.stopListener()
                                         break
                                     else:
                                         move = self.table.getMove(self.board)
@@ -384,6 +481,9 @@ class Game:
                                             print("FOUND IT!")
                                         else:
                                             self.printReedBoard(self.table.playableBoard)
+                                        self.scrollButton.stopListener()
+                                        self.selectButton.stopListener()
+                                        self.voice1.stopListener()
                                         break
                                 self.selectButton.stopListener()
                             elif self.scrollButton.wasPressed():
@@ -408,21 +508,23 @@ class Game:
                             elif self.voiceControl:
                                 if menuOpened == False:
                                     if self.voice1.wasPressed():
+                                        self.ledMatrix.sendMultLines("REC","VOICE") 
                                         voiceCommandMade = True
                                         result, voicemove = self.voiceListener1.listen(self.board)
                                         if result == "move":
-                                            if self.board.moveIsLegal(voicemove):  # fails if king would be in check after move
-                                                move = voicemove
-                                            else:
-                                                print("illegal move")
-                                                move = None
+                                            #if self.board.moveIsLegal(voicemove):  # fails if king would be in check after move
+                                            move = voicemove
+                                            #else:
+                                            #    print("illegal move")
+                                            #    move = None
+                                            #    self.ledMatrix.sendMultLines("MOVE","ERROR")
+                                            #    time.sleep(2)
                                         else:
                                             move = None
+                                        self.scrollButton.stopListener()
+                                        self.selectButton.stopListener()
+                                        self.voice1.stopListener()
                                         break   
-                                        
-                                        
-                                        
-                                    
                                 
                     else:                        
                         command = input("It's your move."
@@ -454,23 +556,28 @@ class Game:
                             time.sleep(3)
                             '''
                 if move:
-                    self.makeMove(move)
-                    if voiceCommandMade or self.gameMode == 5:
-                        alphaPos = self.board.positionToHumanCoord(move.newPos)
-                        self.ledMatrix.sendString("move" + str(move.piece.stringRep).lower() + str(alphaPos).upper())
-                        self.table.move(move)
-                        if move.pieceToCapture:
-                            self.ledMatrix.sendString("capture" + str(move.pieceToCapture.stringRep).lower())
-                            time.sleep(3)
-                    print("Human Move: ")
-                    print(move)
-                    if self.bt == 0:
-                        print("bluetooth is on")
-                        moveStr = str(move.oldPos[0]) + str(move.oldPos[1]) + str(move.newPos[0]) + str(move.newPos[1])
-                        print(moveStr)
-                        self.bluetooth.sendmove(moveStr)
+                    if self.board.moveIsLegal(move):
+                        self.makeMove(move)
+                        self.moveWasMade = 1
+                        if voiceCommandMade or self.gameMode == 5:
+                            alphaPos = self.board.positionToHumanCoord(move.newPos)
+                            self.ledMatrix.sendString("move" + str(move.piece.stringRep).lower() + str(alphaPos).upper())
+                            self.table.move(move)
+                            if move.pieceToCapture:
+                                self.ledMatrix.sendString("capture" + str(move.pieceToCapture.stringRep).lower())
+                                time.sleep(3)
+                        print("Human Move: ")
+                        print(move)
+                        if self.bt == 0:
+                            print("bluetooth is on")
+                            moveStr = str(move.oldPos[0]) + str(move.oldPos[1]) + str(move.newPos[0]) + str(move.newPos[1])
+                            print(moveStr)
+                            self.bluetooth.sendmove(moveStr)
+                        else:
+                            print("bt is off ")
                     else:
-                        print("bt is off ")
+                        self.ledMatrix.sendMultLines("MOVE","ERROR")
+                        time.sleep(2)
                     
                 else:
                     if voiceCommandMade:
@@ -483,17 +590,20 @@ class Game:
                         elif result == "multiple targets":
                             print(result)
                             self.ledMatrix.sendMultLines("SPEAK","COORD")
+                        time.sleep(2)
                     elif menuOpened:
-                        self.ledMatrix.sendMultLines("YOUR","MOVE")
+                        if self.playerSide == WHITE:
+                            self.ledMatrix.sendMultLines("WHITE","MOVE")
+                        else:
+                            self.ledMatrix.sendMultLines("BLACK","MOVE")
                     else:
                         self.ledMatrix.sendMultLines("MOVE","ERROR")
                         print("Couldn't parse input, enter a valid command or move.")
                         time.sleep(3)
                         self.ledMatrix.sendMultLines("UNDO","MOVE")
-                        time.sleep(3)
-                        #wait for
-                        #verify the board is in the same state!!!!!
+                        time.sleep(3) 
 
+            #Player 2
             else:
 				#if Human vs Bluetooth
                 if (self.gameMode == 2):
@@ -513,6 +623,17 @@ class Game:
                 elif (self.gameMode == 4):
                     print("gameMode is 4")
                     parser2 = InputParser(self.board, self.btSide)
+                    
+                    if self.led:
+                        if self.playerSide == WHITE:
+                            self.ledMatrix.sendMultLines("BLACK","MOVE")
+                        else:
+                            self.ledMatrix.sendMultLines("WHITE","MOVE")
+                        self.scrollButton.startListener()
+                        self.selectButton.startListener()
+                        #self.voice1.startListener()
+                        self.voice2.startListener()
+                        
                     if self.reedBoardOption:
                         scrollCount = 0
                         menuOpened = False
@@ -522,9 +643,34 @@ class Game:
                                 if menuOpened:
                                     if scrollCount == 1 or scrollCount == 2:
                                         move = None
+                                        self.scrollButton.stopListener()
+                                        self.selectButton.stopListener()
+                                        self.voice2.stopListener()      #switched from voice 1 to voice 2
                                         break
+                                    elif scrollCount == 3:
+                                        self.table.moveto(0,0)
+                                        self.scrollButton.stopListener()
+                                        self.selectButton.stopListener()
+                                        self.voice2.stopListener()
+                                        return
+                                    elif scrollCount == 4:
+                                        print("Closing the program and shutting down the Pi")
+                                        self.table.moveto(0,0)
+                                        self.scrollButton.stopListener()
+                                        self.selectButton.stopListener()
+                                        self.voice1.stopListener()
+                                        self.ledMatrix.sendMultLines("SHUT","DOWN")
+                                        time.sleep(1)
+                                        self.ledMatrix.sendMultLines("IN","5 SEC")
+                                        time.sleep(2)
+                                        self.ledMatrix.sendString("clear")
+                                        os.system("sudo shutdown -h now")
+                                        sys.exit(0)
                                 else:
                                     move = self.table.getMove(self.board)
+                                    self.scrollButton.stopListener()
+                                    self.selectButton.stopListener()
+                                    self.voice2.stopListener()
                                     break
                             elif self.scrollButton.wasPressed():
                                 menuOpened = True
@@ -547,21 +693,30 @@ class Game:
                                     scrollCount = 2
                             elif self.voiceControl:
                                 if menuOpened == False:
-                                    if self.voice1.wasPressed():
+                                    if self.voice2.wasPressed():
+                                        self.ledMatrix.sendMultLines("REC","VOICE")
                                         voiceCommandMade = True
                                         result2, voicemove = self.voiceListener2.listen(self.board)
                                         if result2 == "move":
-                                            if self.board.moveIsLegal(voicemove):  # fails if king would be in check after move
-                                                move = voicemove
+                                            #if self.board.moveIsLegal(voicemove):  # fails if king would be in check after move
+                                            move = voicemove
+                                            '''
                                             else:
                                                 print("illegal move")
                                                 move = None
+                                                self.ledMatrix.sendMultLines("MOVE","ERROR")
+                                                time.sleep(2)
+                                            '''
                                         else:
                                             move = None
+                                        self.scrollButton.stopListener()
+                                        self.selectButton.stopListener()
+                                        self.voice2.stopListener()
+                                        
                                         break
                     
                     
-                    
+                    '''
                     command = input("It's your move."
                                     " Type '?' for options. ? ").lower()
                  
@@ -581,21 +736,15 @@ class Game:
                     else:
                         parser2.side = self.btSide
                         move = parser2.moveForShortNotation(command)
-
+                    '''
                     
                 else:
                     self.ledMatrix.sendString("load")
                     move = self.getUCIEngineMove(self.aiDepth*1000)
                     self.ledMatrix.sendString("l")
-                    #print(move.oldPos)
-                    #print(move.newPos)
-
-                    #move = self.ai.getBestMove()
-                    #move.notation = parser.notationForMove(move)
-                
-                #print("move: \n")      #for testing purposes
-                #print(move)            #for testing purposes      
-                
+                    
+                         
+                '''
                 if self.gameMode != 4:
                     self.ledMatrix.sendString("clear")
                     alphaPos = self.board.positionToHumanCoord(move.newPos)
@@ -609,22 +758,38 @@ class Game:
                         time.sleep(3)
                         
                 print("done making table move")
+                '''
                 
                 if move:
-                    self.makeMove(move)
+                    if self.board.moveIsLegal(move):
+                        self.makeMove(move)
+                        if self.gameMode != 4:
+                            alphaPos = self.board.positionToHumanCoord(move.newPos)
+                            self.ledMatrix.sendString("move" + str(move.piece.stringRep).lower() + str(alphaPos).upper())
+                            self.table.move(move)
+                            if move.pieceToCapture:
+                                self.ledMatrix.sendString("capture" + str(move.pieceToCapture.stringRep).lower())
+                                time.sleep(3)
+                    else:
+                        self.ledMatrix.sendMultLines("MOVE","ERROR")
+                        time.sleep(2)
                 else:
                     if voiceCommandMade:
                         if result2 == "illegal move":
-                            print(result)
+                            print(result2)
                             self.ledMatrix.sendMultLines("MOVE","ERROR")
                         elif result2 == "bad record":
-                            print(result)
+                            print(result2)
                             self.ledMatrix.sendMultLines("SPEAK","AGAIN")
                         elif result2 == "multiple targets":
-                            print(result)
+                            print(result2)
                             self.ledMatrix.sendMultLines("SPEAK","COORD")
-                    elif menuOppened:
-                        self.ledMatrix.sendMultLines("YOUR","MOVE")
+                        time.sleep(2)
+                    elif menuOpened:
+                        if self.playerSide == WHITE:
+                            self.ledMatrix.sendMultLines("BLACK","MOVE")
+                        else:
+                            self.ledMatrix.sendMultLines("WHITE","MOVE")
                     else:
                         self.ledMatrix.sendMultLines("MOVE","ERROR")
                         print("Couldn't parse input, enter a valid command or move.")
@@ -638,7 +803,7 @@ class Game:
                     time.sleep(5)
                 elif self.uciBoard.is_check():
                     print("King was put in check")
-                    self.ledMatrix.sendMultLines("CHECK")
+                    self.ledMatrix.sendString("CHECK")
                     time.sleep(5)
                 self.ledMatrix.sendString("clear")
 
