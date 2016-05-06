@@ -1,6 +1,5 @@
 from Board import Board
 from InputParser import InputParser
-from AI import AI
 import chess.uci
 import time
 from chessTable import *
@@ -13,6 +12,7 @@ import sys
 import os
 
 from buttonListener import *
+from buttonListener2 import *
 #from BlueTooth import *
 from ledmatrix import *
 
@@ -29,21 +29,25 @@ class Game:
         self.playerSide = WHITE
         self.btSide = BLACK
         self.aiDepth = 2
-        self.ai = AI(self.board, not self.playerSide, self.aiDepth)
+        self.moveTime = 0
         #self.engine = chess.uci.popen_engine(r"C:\Users\Owner\Desktop\stockfish-7-win\Windows\stockfish 7 x64.exe")
         self.engine = chess.uci.popen_engine("/usr/games/stockfish")
-        self.engine.uci()
         self.engine.setoption({"Threads":4})
-        self.engine.setoption({"Skill Level":3})
+        #self.engine.setoption({"Skill Level":1})
+        self.engine.uci()
+        print(self.engine.name)
         self.bt = btOption
         self.ledMatrix = self.table.ledMatrix
         self.sleepTime = 0.3
+        self.ledMatrix.sendString("zero")
         self.table.initialize_Coord() 
+        self.ledMatrix.sendString("z")
+        self.ledMatrix.sendString("clear")
         #Set up buttons
-        self.selectButton = ButtonListener(15)
-        self.scrollButton = ButtonListener(14)
+        self.selectButton = ButtonListener2(15)
+        self.scrollButton = ButtonListener2(14)
         self.voice2 = ButtonListener(23)
-        self.voice1 = ButtonListener(18)
+        self.voice1 = ButtonListener2(18)
         self.reedBoardOption = reedBoard
         self.bluetooth = self.table.bt
         self.voiceControl = voiceControl
@@ -72,7 +76,7 @@ class Game:
             
             #Choose Player Side
             time.sleep(self.sleepTime)
-            self.ledMatrix.sendMultLines("SIDE","W/B ?") 
+            self.ledMatrix.sendMultLines("@SIDE","W/B ?") 
             self.scrollButton.startListener()
             self.selectButton.startListener()
             scrollCount = 0
@@ -120,7 +124,7 @@ class Game:
             
             #Choose Player Side
             time.sleep(self.sleepTime)
-            self.ledMatrix.sendMultLines("AI","SKILL") 
+            self.ledMatrix.sendMultLines("@AI","SKILL") 
             self.scrollButton.startListener()
             self.selectButton.startListener()
             scrollCount = 0
@@ -162,34 +166,49 @@ class Game:
         print()
         print("AI LEVEL: ")
         print(aiOption)
+        depthInput = 0
+        timeInput = 0
         if(aiOption == 1):
-            self.engine.setoption({"Skill Level":0})
-            depthInput = 1
-        elif(aiOption == 2):
-            self.engine.setoption({"Skill Level":1})
-            depthInput = 2           
-        elif(aiOption == 3):
-            self.engine.setoption({"Skill Level":6})
-            depthInput = 5           
-        elif(aiOption == 4):
-            self.engine.setoption({"Skill Level":11})
-            depthInput = 10        
-        elif(aiOption == 5):
-            self.engine.setoption({"Skill Level":17})
-            depthInput = 13      
-        elif(aiOption == 6):
-            self.engine.setoption({"Skill Level":20})
-            depthInput = 15   
-        else:
-            self.engine.setoption({"Skill Level":1})               
+            self.engine.setoption({'Skill Level': 0})
+            self.engine.setoption({'Contempt Factor': -50})
+            self.engine.setoption({"UCI_LimitStrength":True})
+            self.engine.setoption({"UCI_Elo":10})
             depthInput = 2
+        elif(aiOption == 2):
+            #self.engine.setoption({'Skill Level': 3})  
+            #depthInput = 4
+            self.engine.setoption({'Skill Level': 0})
+            self.engine.setoption({'Contempt Factor': 50})
+            self.engine.setoption({"UCI_LimitStrength":True})
+            self.engine.setoption({"UCI_Elo":10})
+            depthInput = 4      
+        elif(aiOption == 3):
+            depthInput = 6   
+            self.engine.setoption({'Skill Level': 5})        
+        elif(aiOption == 4):
+            depthInput = 10
+            self.engine.setoption({'Skill Level': 10})        
+        elif(aiOption == 5):
+            depthInput = 12
+            self.engine.setoption({'Skill Level': 15})     
+        elif(aiOption == 6):
+            depthInput = 15 
+            self.engine.setoption({'Skill Level': 20})  
+        else:             
+            depthInput = 2
+            self.engine.setoption({'Skill Level': 0}) 
         print() 
         self.engine.setoption({"Ponder": False})       
         self.aiDepth = depthInput
+        self.moveTime = timeInput
         print("AI Depth: ")
         print(self.aiDepth)
+        print("Move Time: ")
+        print(self.moveTime)
         print("Engine: ")
         print(self.engine)
+        print(self.engine.options)
+        time.sleep(.5)
 
 
     def printCommandOptions(self):
@@ -280,27 +299,21 @@ class Game:
 
     def getUCIEngineMove(self, time):
         self.engine.position(self.uciBoard)
-        if self.board.currentSide == self.playerSide:
-            uciMove = self.engine.go(depth=self.aiDepth, ponder = False) # Gets tuple of bestmove and ponder move. movetime=time,
-        else:
-            if self.aiDepth == 1 or self.aiDepth == 2:
-                player2Depth = 1
-            else:
-                player2Depth = round(self.aiDepth * .75)
-            uciMove = self.engine.go(depth=self.aiDepth, ponder = False) # Gets tuple of bestmove and ponder move. movetime=time,
-        uciMove = uciMove[0].uci()
-        print(uciMove)
-        if (uciMove == 'e8g8' or uciMove == 'e8c8' or uciMove == 'e1g1' or uciMove == 'e1c1'):
+        uciMove = self.engine.go(depth=self.aiDepth, ponder = False) # Gets tuple of bestmove and ponder move. movetime=time,
+        print(self.aiDepth)
+        uciMoveString = uciMove[0].uci()
+        print(uciMoveString)
+        if (uciMoveString == 'e8g8' or uciMoveString == 'e8c8' or uciMoveString == 'e1g1' or uciMoveString == 'e1c1'):
             print( "Move is a castle")
-        moveFrom = uciMove[:2]
+        moveFrom = uciMoveString[:2]
         print("testing find move functionality...")
         print(moveFrom)
-        moveTo = uciMove[2:]
+        moveTo = uciMoveString[2:4]
         print(moveTo)
         move = self.findMove(moveFrom, moveTo)
         return move
         
-    def compareBoard(self, reedBoard): # reed board  is full board of 1s and 0s from the matrix
+    def compareBoard(self, reedBoard, moveError = False): # reed board  is full board of 1s and 0s from the matrix
         #convet current board and capture bins to ones and zeros 
         white = self.board.whiteCaptured
         black = self.board.blackCaptured
@@ -315,17 +328,73 @@ class Game:
             engineBoard[7 - p.position[1]][p.position[0]] = 1   #engine boards sides were flipped from the engine board
         totalBoard = [[0 for x in range(12)] for y in range(8)]
         for y in range(8):
-            for x in range (12):
+            for x in range(12):
                 if x<2:
                     totalBoard[y][x] = blackCaptured[y][x]
                 elif x <10:
                     totalBoard[y][x] = engineBoard[y][x-2]
                 else:
                     totalBoard[y][x] = whiteCaptured[y][x-10]
+        
         #print("Total")
         #self.printReedBoard(totalBoard)
         #print("Real")
         #self.printReedBoard(reedBoard)
+        
+        '''
+        incorrectPos = ""
+        for y in range(8):
+            for x in range(12):
+                if totalBoard[y][x] != reedBoard[y][x]:
+                    print("incorrect board")
+                    print(x)
+                    print(y)
+                    incorrectPos += str(x)
+                    incorrectPos += str(y)
+                    
+        print("incorrect position string: ")
+        print(incorrectPos)
+        '''
+        
+        if totalBoard == reedBoard:
+            print("board is good")
+        else:
+            self.ledMatrix.sendMultLines("!FIX","BOARD") 
+            time.sleep(2)
+            reedString = ""
+            for y in range(8):
+                for x in range (12):
+                    if totalBoard[y][x] != reedBoard[y][x]:
+                        if totalBoard[y][x] == 1:
+                            reedString += 'g'
+                        else:
+                            reedString += 'r'
+                    else:
+                        if totalBoard[y][x] == 1:
+                            reedString += 'b'
+                        else:
+                            reedString += 'x'
+                            
+            print("reedString")
+            print(reedString)
+            
+            #get length of incorrectPos and send that into the ledMatrix
+            
+            #length = len(incorrectPos)
+            
+            self.selectButton.stopListener()
+            self.selectButton.startListener()
+            
+            self.ledMatrix.sendString("rb" + reedString)
+            
+            while(True):
+                if self.selectButton.wasPressed():
+                    print("breaking out of while loop")
+                    self.selectButton.stopListener()
+                    break
+            reedBoard = self.table.reedBoard.getBoard()              
+            self.compareBoard(reedBoard)    
+
         return totalBoard == reedBoard
 
     def btMove(self, parser):
@@ -373,12 +442,14 @@ class Game:
             if self.uciBoard.is_game_over():
                 if self.board.currentSide == self.playerSide:
                     print("Checkmate, you lost")
+                    self.table.moveto(0,0)
                     self.ledMatrix.sendMultLines("YOU","LOST")
-                    time.sleep(5)
+                    time.sleep(3)
                 else:
                     print("Checkmate! You won!")
+                    self.table.moveto(0,0)
                     self.ledMatrix.sendMultLines("YOU","WON")
-                    time.sleep(5)
+                    time.sleep(3)
                 return
             
             if self.uciBoard.is_stalemate():
@@ -387,27 +458,10 @@ class Game:
                 else:
                     print("Stalemate")
                 return
+                
             reedBoard = self.table.reedBoard.getBoard()
             
-            #verifies that the board is in the same state as the reed board 
-            selectButton.startListener()
-            while(True):
-                if selectButton.wasPressed():
-                    if self.compareBoard(reedBoard):
-                        print("Board Looks Good!!!!")
-                        selectButton.stopListener()
-                        break   #break out of while loop because board is correct
-                    else:
-                        print("Board not right!")
-                        
-                        if self.moveWasMade == 1:
-                            self.ledMatrix.sendMultLines("MOVE","ERROR")
-                            time.sleep(1.5)
-                        
-                        self.ledMatrix.sendMultLines("FIX","BOARD")
-                        time.sleep(2)
-                else:
-                    self.ledMatrix.sendMultLines("BOARD","CHECK")
+            self.compareBoard(reedBoard)
                 
                 
             if self.board.currentSide == self.playerSide:
@@ -438,7 +492,7 @@ class Game:
                         while True:
                             if (datetime.now() - startTime).total_seconds() >= 2:
                                 timerUp = True
-                            if self.selectButton.wasPressed() or (timerUp and not(menuOpened)):
+                            if self.selectButton.wasPressed() or (timerUp and not(menuOpened) and self.gameMode == 5):
                                 if menuOpened:
                                     if scrollCount == 1 or scrollCount == 2:
                                         move = None
@@ -459,9 +513,9 @@ class Game:
                                         self.scrollButton.stopListener()
                                         self.selectButton.stopListener()
                                         self.voice1.stopListener()
-                                        self.ledMatrix.sendMultLines("SHUT","DOWN")
+                                        self.ledMatrix.sendMultLines("!SHUT","DOWN")
                                         time.sleep(1)
-                                        self.ledMatrix.sendMultLines("IN","5 SEC")
+                                        self.ledMatrix.sendMultLines("!IN","5 SEC")
                                         time.sleep(2)
                                         self.ledMatrix.sendString("clear")
                                         os.system("sudo shutdown -h now")
@@ -476,10 +530,12 @@ class Game:
                                         self.voice1.stopListener()
                                         break
                                     else:
-                                        move = self.table.getMove(self.board)
+                                        moveReturn = self.table.getMove(self.board)
+                                        move = moveReturn[0]
                                         if move:
                                             print("FOUND IT!")
                                         else:
+                                            moveError = moveReturn[1]
                                             self.printReedBoard(self.table.playableBoard)
                                         self.scrollButton.stopListener()
                                         self.selectButton.stopListener()
@@ -495,7 +551,7 @@ class Game:
                                 print("Scroll Button was Pressed")
                                 print(scrollCount)
                                 if scrollCount == 1:
-                                    self.ledMatrix.sendMultLines("GAME","MENU") 
+                                    self.ledMatrix.sendMultLines("@GAME","MENU") 
                                 elif scrollCount == 2:
                                     self.ledMatrix.sendMultLines("CARRY","ON") 
                                 elif scrollCount == 3:
@@ -560,12 +616,17 @@ class Game:
                         self.makeMove(move)
                         self.moveWasMade = 1
                         if voiceCommandMade or self.gameMode == 5:
+                            '''
                             alphaPos = self.board.positionToHumanCoord(move.newPos)
                             self.ledMatrix.sendString("move" + str(move.piece.stringRep).lower() + str(alphaPos).upper())
                             self.table.move(move)
                             if move.pieceToCapture:
                                 self.ledMatrix.sendString("capture" + str(move.pieceToCapture.stringRep).lower())
                                 time.sleep(3)
+                            '''
+                            alphaPos = self.board.positionToHumanCoord(move.newPos)
+                            self.table.move(move, self.ledMatrix, alphaPos)
+                            
                         print("Human Move: ")
                         print(move)
                         if self.bt == 0:
@@ -597,11 +658,23 @@ class Game:
                         else:
                             self.ledMatrix.sendMultLines("BLACK","MOVE")
                     else:
-                        self.ledMatrix.sendMultLines("MOVE","ERROR")
-                        print("Couldn't parse input, enter a valid command or move.")
-                        time.sleep(3)
-                        self.ledMatrix.sendMultLines("UNDO","MOVE")
-                        time.sleep(3) 
+                        reedBoard = self.table.reedBoard.getBoard()              
+                         
+                        if moveError == 1:
+                            self.ledMatrix.sendMultLines("CHECK","BOARD")
+                            time.sleep(2)
+                            self.compareBoard(reedBoard)
+                        elif moveError == 3:
+                            self.ledMatrix.sendMultLines("MOVE","ERROR")
+                            time.sleep(2)
+                            self.compareBoard(reedBoard)
+                        elif moveError == 2:
+                            self.ledMatrix.sendMultLines("MAKE","MOVE")
+                            time.sleep(2)
+                        else:
+                            self.ledMatrix.sendMultLines("MOVE","ERROR")
+                            time.sleep(2)
+                            self.compareBoard(reedBoard)
 
             #Player 2
             else:
@@ -631,7 +704,6 @@ class Game:
                             self.ledMatrix.sendMultLines("WHITE","MOVE")
                         self.scrollButton.startListener()
                         self.selectButton.startListener()
-                        #self.voice1.startListener()
                         self.voice2.startListener()
                         
                     if self.reedBoardOption:
@@ -659,15 +731,17 @@ class Game:
                                         self.scrollButton.stopListener()
                                         self.selectButton.stopListener()
                                         self.voice1.stopListener()
-                                        self.ledMatrix.sendMultLines("SHUT","DOWN")
+                                        self.ledMatrix.sendMultLines("!SHUT","DOWN")
                                         time.sleep(1)
-                                        self.ledMatrix.sendMultLines("IN","5 SEC")
+                                        self.ledMatrix.sendMultLines("!IN","5 SEC")
                                         time.sleep(2)
                                         self.ledMatrix.sendString("clear")
                                         os.system("sudo shutdown -h now")
                                         sys.exit(0)
                                 else:
-                                    move = self.table.getMove(self.board)
+                                    moveReturn = self.table.getMove(self.board)
+                                    move = moveReturn[0]
+                                    moveError = moveReturn[1]
                                     self.scrollButton.stopListener()
                                     self.selectButton.stopListener()
                                     self.voice2.stopListener()
@@ -681,7 +755,7 @@ class Game:
                                 print("Scroll Button was Pressed")
                                 print(scrollCount)
                                 if scrollCount == 1:
-                                    self.ledMatrix.sendMultLines("GAME","MENU") 
+                                    self.ledMatrix.sendMultLines("@GAME","MENU") 
                                 elif scrollCount == 2:
                                     self.ledMatrix.sendMultLines("CARRY","ON") 
                                 elif scrollCount == 3:
@@ -700,13 +774,6 @@ class Game:
                                         if result2 == "move":
                                             #if self.board.moveIsLegal(voicemove):  # fails if king would be in check after move
                                             move = voicemove
-                                            '''
-                                            else:
-                                                print("illegal move")
-                                                move = None
-                                                self.ledMatrix.sendMultLines("MOVE","ERROR")
-                                                time.sleep(2)
-                                            '''
                                         else:
                                             move = None
                                         self.scrollButton.stopListener()
@@ -715,55 +782,19 @@ class Game:
                                         
                                         break
                     
-                    
-                    '''
-                    command = input("It's your move."
-                                    " Type '?' for options. ? ").lower()
-                 
-                    if command == 'u':
-                        self.undoLastTwoMoves()
-                        continue
-                    elif command == '?':
-                        self.printCommandOptions()
-                        continue
-                    elif command == 'l':
-                        self.printAllLegalMoves(parser2)
-                        continue
-                    elif command == 'r':
-                        move = self.getRandomMove(parser2)
-                    elif command == 'quit':
-                        return
-                    else:
-                        parser2.side = self.btSide
-                        move = parser2.moveForShortNotation(command)
-                    '''
-                    
                 else:
                     self.ledMatrix.sendString("load")
                     move = self.getUCIEngineMove(self.aiDepth*1000)
                     self.ledMatrix.sendString("l")
                     
-                         
-                '''
-                if self.gameMode != 4:
-                    self.ledMatrix.sendString("clear")
-                    alphaPos = self.board.positionToHumanCoord(move.newPos)
-                    self.ledMatrix.sendString("move" + str(move.piece.stringRep).lower() + str(alphaPos).upper())
-                        
-                    self.table.move(move)
-                    
-                    if move.pieceToCapture:
-                        print("there is a piece to capture")
-                        self.ledMatrix.sendString("capture" + str(move.pieceToCapture.stringRep).lower())
-                        time.sleep(3)
-                        
-                print("done making table move")
-                '''
                 
                 if move:
                     if self.board.moveIsLegal(move):
                         self.makeMove(move)
                         if self.gameMode != 4:
+                            alphaPos = self.board.positionToHumanCoord(move.newPos) 
+                            self.table.move(move, self.ledMatrix, alphaPos)  
+                        elif voiceCommandMade:
                             alphaPos = self.board.positionToHumanCoord(move.newPos)
                             self.ledMatrix.sendString("move" + str(move.piece.stringRep).lower() + str(alphaPos).upper())
                             self.table.move(move)
@@ -791,11 +822,24 @@ class Game:
                         else:
                             self.ledMatrix.sendMultLines("WHITE","MOVE")
                     else:
-                        self.ledMatrix.sendMultLines("MOVE","ERROR")
+                        reedBoard = self.table.reedBoard.getBoard()              
+                         
+                        if moveError == 1:
+                            self.ledMatrix.sendMultLines("CHECK","BOARD")
+                            time.sleep(2)
+                            self.compareBoard(reedBoard)
+                        elif moveError == 3:
+                            self.ledMatrix.sendMultLines("MOVE","ERROR")
+                            time.sleep(2)
+                            self.compareBoard(reedBoard)
+                        elif moveError == 2:
+                            self.ledMatrix.sendMultLines("MAKE","MOVE")
+                            time.sleep(2)
+                        else:
+                            self.ledMatrix.sendMultLines("MOVE","ERROR")
+                            time.sleep(2)
+                            self.compareBoard(reedBoard)
                         print("Couldn't parse input, enter a valid command or move.")
-                        time.sleep(3)
-                        self.ledMatrix.sendMultLines("UNDO","MOVE")
-                        time.sleep(3)
                     
                 if self.uciBoard.is_game_over():
                     print("King was put in check")

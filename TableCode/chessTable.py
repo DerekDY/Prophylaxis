@@ -75,9 +75,16 @@ class ChessTable(XYTable):  #testing on when 1
             print("in elif statement ----------------------------------->")
             self.moveto(self.x + (offsetX*inchesPerSpace) , self.y)	#move over .5 space in X
             self.moveto(self.x, (newRow*inchesPerSpace)+(offsetY*inchesPerSpace))	#move to .5 off space in Y
-            self.moveto(newColumn*inchesPerSpace, self.y) #move to correct X
-            self.moveto(newColumn*inchesPerSpace, newRow*inchesPerSpace + correctionY) #move to correct Y with correction
-            self.moveto(newColumn*inchesPerSpace, newRow*inchesPerSpace)
+            if newColumn > 9:
+                columnPosition = newColumn*inchesPerSpace + .2*inchesPerSpace
+            elif newColumn < 2:
+                columnPosition = newColumn*inchesPerSpace - .2*inchesPerSpace
+            else:
+                columnPosition = newColumn*inchesPerSpace
+                
+            self.moveto(columnPosition, self.y) #move to correct X
+            self.moveto(columnPosition, newRow*inchesPerSpace + correctionY) #move to correct Y with correction
+            self.moveto(columnPosition, newRow*inchesPerSpace)
                 
 		#Moving in Y then in X	
         else:
@@ -178,7 +185,7 @@ class ChessTable(XYTable):  #testing on when 1
         #Check if there is an error
         if len(moveTo) > 2 or len(moveFrom) > 2:
             print("To Many Moves")
-            return None
+            return [None, 1]
         else:
             #special moves
             if len(moveFrom) == 2:
@@ -221,7 +228,7 @@ class ChessTable(XYTable):  #testing on when 1
                                 print("Couldnt Find it")
                                 
                         if moveMade:
-                            return moveMade
+                            return [moveMade, 0]
                             break
                             
                 if pawn1 and pawn2:
@@ -234,7 +241,7 @@ class ChessTable(XYTable):  #testing on when 1
                         else:
                             moveMade = None
                         if moveMade:
-                            return moveMade
+                            return [moveMade, 0]
                             break
                 
             #normal moves
@@ -259,22 +266,22 @@ class ChessTable(XYTable):  #testing on when 1
                             moveMade = move
                         
                     if moveMade:
-                        return moveMade
+                        return [moveMade, 0]
                         break
                 
                 
             else:
                 print("Piece Not Moved")
-                return None
+                return [None, 2]
         piece1 = board.pieceAtPosition(moveFrom[0])
-        
+        return [None, 3]
         print("*******************************")
     
     
 
 
 
-    def move(self, move):
+    def move(self, move, ledMatrix = None, alphaPos = None):
         #print("MADE IT TO MOVE IN TABLE")
         #print ("Moving: " + str(move.piece))
         print()
@@ -283,7 +290,10 @@ class ChessTable(XYTable):  #testing on when 1
         secondSpace = move.newPos + C(2,0)
         #print ("To: " + str(secondSpace[0]) + "," + str(secondSpace[1]))
         captured = move.pieceToCapture
-        if (captured):
+        if (captured): 
+            if ledMatrix:
+                ledMatrix.sendString("capture" + str(move.pieceToCapture.stringRep).lower())   #New Code
+            
             #if all crazy things
             print ("Captured: " + str(captured))
             print()
@@ -311,10 +321,21 @@ class ChessTable(XYTable):  #testing on when 1
                     capturedspace = C(10,(Q + number))
                 elif letter == "B":
                     capturedspace = C(10,(B + number))
-            self.goto(secondSpace, False, False)
+            if move.pessant:
+                print(move.pieceToCapture.position)
+                if move.piece.side == WHITE:
+                    self.goto(move.newPos + C(2,-1), False, False)
+                else:
+                    self.goto(move.newPos + C(2,1), False, False)
+            else:
+                self.goto(secondSpace, False, False)
             self.grab()
             self.goto(capturedspace, True, True)
             self.release()
+            
+        if ledMatrix:
+            ledMatrix.sendString("move" + str(move.piece.stringRep).lower() + str(alphaPos).upper())   #New Code
+        
         if(move.piece.stringRep == 'N'):
             self.goto(firstSpace, False, False)
             self.grab()

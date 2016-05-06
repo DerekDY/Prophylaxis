@@ -2,14 +2,14 @@ from Coordinate import Coordinate as C
 
 class Move:
 
-    def __init__(self, piece, newPos, pieceToCapture=None):
+    def __init__(self, piece, newPos, pieceToCapture=None, pessant=False):
         self.notation = None
         self.check = False
         self.checkmate = False
         self.kingsideCastle = False
         self.queensideCastle = False
         self.promotion = False
-        self.pessant = False
+        self.pessant = pessant
         self.stalemate = False
 
         self.rookMovePos = C(0,0)

@@ -299,7 +299,7 @@ class VoiceListener():
                     try:
                         lm = self.board.getLastMove()
                         if lm.piece.stringRep == "p" and lm.oldPos - lm.newPos == C(0, 2 * offset) and lm.newPos + C(0, offset) == move.newPos:
-                            return "move", Move.Move(move.piece, move.newPos, self.board.pieceAtPosition(C(move.newPos[0], move.newPos[1] - offset)))
+                            return "move", Move.Move(move.piece, move.newPos, self.board.pieceAtPosition(C(move.newPos[0], move.oldPos[1])), True)
                     except:
                         return "illegal move", None
                 if dx == 0 and dy == offset:

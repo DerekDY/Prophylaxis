@@ -2,6 +2,9 @@ import time
 from game import *
 from ledmatrix import *
 from buttonListener import *
+import sys
+import os
+
 
 
 table = ChessTable(1)
@@ -33,8 +36,8 @@ while True:
             
             
     #Button Setup
-    selectButton = ButtonListener(15)
-    scrollButton = ButtonListener(14)
+    selectButton = ButtonListener2(15)
+    scrollButton = ButtonListener2(14)
     print(ledOption)
     if ledOption:
         table.ledMatrix.sendString("logo")
@@ -43,7 +46,7 @@ while True:
         table.ledMatrix.sendString("clear")
         
         #Game Mode Selection using LED Display
-        table.ledMatrix.sendMultLines("PICK","MODE") 
+        table.ledMatrix.sendMultLines("@PICK","MODE") 
         
         scrollButton.startListener()
         selectButton.startListener()
@@ -67,6 +70,8 @@ while True:
                     table.ledMatrix.sendMultLines("HUMAN","HUMAN")
                 elif scrollCount == 5:
                     table.ledMatrix.sendMultLines("DEMO","MODE")
+                elif scrollCount == 6:
+                    table.ledMatrix.sendMultLines("!TURN","OFF")
                 else:
                     table.ledMatrix.sendMultLines("HUMAN","V AI")
                     scrollCount = 1  
@@ -79,6 +84,14 @@ while True:
                     selectButton.startListener()
                     continue
                 else:
+                    if scrollCount == 6:
+                        table.ledMatrix.sendMultLines("!SHUT","DOWN")
+                        time.sleep(1)
+                        table.ledMatrix.sendMultLines("!IN","5 SEC")
+                        time.sleep(2)
+                        table.ledMatrix.sendString("clear")
+                        os.system("sudo shutdown -h now")
+                        sys.exit(0)
                     table.ledMatrix.sendString("clear")
                     gameMode = scrollCount
                     print(gameMode)
@@ -106,7 +119,6 @@ while True:
     print()
     if gameMode != 2 and gameMode != 4:
         game.askForDepthOfAI()
-        game.ai = AI(game.board, not game.playerSide, game.aiDepth)
 
     try:
         if ledOption:

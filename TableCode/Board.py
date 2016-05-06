@@ -512,7 +512,7 @@ class Board:
 
         elif move.pessant:
             pawnToMove = move.piece
-            pawnToTake = move.specialMovePiece
+            pawnToTake = move.pieceToCapture
             pawnToMove.position = move.newPos
             self.pieces.remove(pawnToTake)
             pawnToMove.movesMade += 1
