@@ -290,7 +290,7 @@ class Board:
     def addMoveToHistory(self, move):
         pieceTaken = None
         if move.pessant:
-            pieceTaken = move.specialMovePiece
+            pieceTaken = move.pieceToCapture
             self.history.append([move, pieceTaken])
             return
         pieceTaken = move.pieceToCapture
@@ -561,7 +561,7 @@ class Board:
 
             elif move.pessant:
                 pawnToMove = move.piece
-                pawnToTake = move.specialMovePiece
+                pawnToTake = move.pieceToCapture
                 pawnToMove.position = move.newPos
                 self.removePiece(pawnToTake)
                 pawnToMove.movesMade += 1

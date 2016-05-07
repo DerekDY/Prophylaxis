@@ -336,31 +336,11 @@ class Game:
                 else:
                     totalBoard[y][x] = whiteCaptured[y][x-10]
         
-        #print("Total")
-        #self.printReedBoard(totalBoard)
-        #print("Real")
-        #self.printReedBoard(reedBoard)
-        
-        '''
-        incorrectPos = ""
-        for y in range(8):
-            for x in range(12):
-                if totalBoard[y][x] != reedBoard[y][x]:
-                    print("incorrect board")
-                    print(x)
-                    print(y)
-                    incorrectPos += str(x)
-                    incorrectPos += str(y)
-                    
-        print("incorrect position string: ")
-        print(incorrectPos)
-        '''
-        
         if totalBoard == reedBoard:
             print("board is good")
         else:
             self.ledMatrix.sendMultLines("!FIX","BOARD") 
-            time.sleep(2)
+            time.sleep(1.5)
             reedString = ""
             for y in range(8):
                 for x in range (12):
@@ -378,20 +358,46 @@ class Game:
             print("reedString")
             print(reedString)
             
-            #get length of incorrectPos and send that into the ledMatrix
-            
-            #length = len(incorrectPos)
-            
             self.selectButton.stopListener()
             self.selectButton.startListener()
-            
+            self.scrollButton.stopListener()
+            self.scrollButton.startListener()
             self.ledMatrix.sendString("rb" + reedString)
-            
+            menuOpened = False
+            scrollOption = 0 
             while(True):
                 if self.selectButton.wasPressed():
+                    if menuOpened:
+                        if scrollOption == 1:
+                            menuOpened == False
+                            break
+                        if scrollOption == 2:
+                            self.table.moveto(0,0)
+                            self.ledMatrix.sendMultLines("!FLIP","OFF")
+                            time.sleep(1)
+                            self.ledMatrix.sendMultLines("!FLIP","ON")
+                            time.sleep(2)
+                            self.ledMatrix.sendString("clear")
+                            os.system("sudo shutdown -h now")
+                            sys.exit(0)
+                            
                     print("breaking out of while loop")
                     self.selectButton.stopListener()
+                    self.selectButton.startListener()
                     break
+                elif self.scrollButton.wasPressed():
+                    menuOpened = True
+                    scrollOption += 1
+                    if scrollOption == 1:
+                        self.ledMatrix.sendMultLines("CARRY","ON")
+                    elif scrollOption == 2:
+                        self.ledMatrix.sendMultLines("!HARD","RESET")
+                    else:
+                        scrollOption = 1
+                        self.ledMatrix.sendMultLines("CARRY","ON")
+                    print("breaking out of while loop")
+                    self.scrollButton.stopListener()
+                    self.scrollButton.startListener()
             reedBoard = self.table.reedBoard.getBoard()              
             self.compareBoard(reedBoard)    
 
@@ -413,18 +419,6 @@ class Game:
                 return move
         print("move is invalid")   
         self.btMove(parser)     
-
-        
-        '''          
-                    #check if move is valid                     
-                    if move:
-                        print(move)
-                    else:
-                        print("Couldn't parse input, enter a valid command or move.")
-                        message = self.bluetooth.waitformove()
-                        print(message)
-                        move = parser.moveForShortNotation(message)
-        '''
         return move
 
 
@@ -438,32 +432,27 @@ class Game:
             print(self.board)
             #print(self.uciBoard)
             print()
+            reedBoard = self.table.reedBoard.getBoard()
+            self.compareBoard(reedBoard)
             
             if self.uciBoard.is_game_over():
-                if self.board.currentSide == self.playerSide:
-                    print("Checkmate, you lost")
+                if self.uciBoard.is_stalemate():
+                    print("Stalemate")
+                    self.ledMatrix.sendMultLines("STALE","MATE")
                     self.table.moveto(0,0)
+                    time.sleep(1)
+                elif self.board.currentSide == self.playerSide:
+                    print("Checkmate, you lost")
                     self.ledMatrix.sendMultLines("YOU","LOST")
-                    time.sleep(3)
+                    self.table.moveto(0,0)
+                    time.sleep(1)
                 else:
                     print("Checkmate! You won!")
-                    self.table.moveto(0,0)
                     self.ledMatrix.sendMultLines("YOU","WON")
-                    time.sleep(3)
+                    self.table.moveto(0,0)
+                    time.sleep(1)
                 return
-            
-            if self.uciBoard.is_stalemate():
-                if self.board.currentSide == self.playerSide:
-                    print("Stalemate")
-                else:
-                    print("Stalemate")
-                return
-                
-            reedBoard = self.table.reedBoard.getBoard()
-            
-            self.compareBoard(reedBoard)
-                
-                
+        
             if self.board.currentSide == self.playerSide:
                 voiceCommandMade = False
                 #if Bluetooth vs AI
@@ -557,7 +546,7 @@ class Game:
                                 elif scrollCount == 3:
                                     self.ledMatrix.sendMultLines("NEW","GAME") 
                                 elif scrollCount == 4:
-                                    self.ledMatrix.sendMultLines("END","GAME")
+                                    self.ledMatrix.sendMultLines("!END","GAME")
                                 else:
                                     self.ledMatrix.sendMultLines("CARRY","ON")
                                     scrollCount = 2
@@ -761,7 +750,7 @@ class Game:
                                 elif scrollCount == 3:
                                     self.ledMatrix.sendMultLines("NEW","GAME") 
                                 elif scrollCount == 4:
-                                    self.ledMatrix.sendMultLines("END","GAME")
+                                    self.ledMatrix.sendMultLines("!END","GAME")
                                 else:
                                     self.ledMatrix.sendMultLines("CARRY","ON")
                                     scrollCount = 2
@@ -840,12 +829,7 @@ class Game:
                             time.sleep(2)
                             self.compareBoard(reedBoard)
                         print("Couldn't parse input, enter a valid command or move.")
-                    
-                if self.uciBoard.is_game_over():
-                    print("King was put in check")
-                    self.ledMatrix.sendMultLines("CHECK", "MATE")
-                    time.sleep(5)
-                elif self.uciBoard.is_check():
+                if self.uciBoard.is_check():
                     print("King was put in check")
                     self.ledMatrix.sendString("CHECK")
                     time.sleep(5)
